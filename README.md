@@ -1,7 +1,3 @@
-Ah, verdade! Vacilo meu, você já está voando nas entidades! 😂 Vamos atualizar esse README para que quem bater o olho no seu GitHub já saiba que o sistema não é só um "cadastrinho", mas um ecossistema escolar completo.
-
-Aqui está a versão atualizada com o Backlog de respeito que você pediu:
-
 🎓 Sistema Básico de Escola
 Este é um projeto de API para gerenciamento escolar, desenvolvido com o objetivo de aplicar conceitos avançados de Clean Architecture, Domain-Driven Design (DDD) e C#. O sistema foca em um fluxo robusto, utilizando o Result Pattern para garantir a estabilidade e previsibilidade das respostas.
 
