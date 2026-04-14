@@ -23,9 +23,9 @@ public class UsesCasesAtualizarEstudante
         {
             // 1. Busca o estudante existente no banco
             var resultBusca = await _repositorioEstudante.ObterPorIdAsync(id);
-            if (!resultBusca.Sucesso) return Result<EstudanteDtoResponse>.Falha(resultBusca.Mensagem);
+            if (resultBusca == null) return Result<EstudanteDtoResponse>.Falha("Estudante não encontrado.");
 
-            var estudante = resultBusca.Dados;
+            var estudante = resultBusca;
 
             // 2. Usa o método da ENTIDADE para atualizar os campos (Regra de Negócio)
             // Lembra que criamos o 'AtualizarDados' lá no começo?
@@ -37,11 +37,12 @@ public class UsesCasesAtualizarEstudante
             );
 
             // 3. Persiste a mudança no banco
-            var resultUpdate = await _repositorioEstudante.AtualizarAsync(estudante);
-            if (!resultUpdate.Sucesso) return Result<EstudanteDtoResponse>.Falha(resultUpdate.Mensagem);
+            _repositorioEstudante.Atualizar(estudante);
+            var resultUpdate = await _repositorioEstudante.SalvarAlteracoesAsync();
+            if (!resultUpdate) return Result<EstudanteDtoResponse>.Falha("Falha ao atualizar o estudante.");
 
             // 4. Retorna o DTO de resposta
-            return Result<EstudanteDtoResponse>.Ok(resultUpdate.Dados.ToEstudanteDtoResponse());
+            return Result<EstudanteDtoResponse>.Ok(estudante.ToEstudanteDtoResponse());
         }
         catch (Exception ex)
         {

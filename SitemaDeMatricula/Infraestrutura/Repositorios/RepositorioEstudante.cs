@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SitemaDeMatricula.Domain;
 using SitemaDeMatricula.Domain.Interfaces;
 using SitemaDeMatricula.Domain.Modelos;
 using SitemaDeMatricula.InfraEstrutura.Data;
@@ -8,112 +7,48 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios;
 
 public class RepositorioEstudante : IRepositorioEstudante
 {
-    private readonly AppDbContext _Context;
+    private readonly AppDbContext _context;
 
     public RepositorioEstudante(AppDbContext context)
     {
-        _Context = context;
+        _context = context;
     }
 
-    public async Task<Result<Estudante>> AdicionarAsync(Estudante estudante)
+    public async Task<IEnumerable<Estudante>> ObterTodosAsync()
     {
-        try
-        {
-            if (estudante == null) return Result<Estudante>.Falha("Estudante não pode ser nulo");
-
-            if (estudante.Cpf == null) return Result<Estudante>.Falha("CPF é obrigatório");
-
-            if (await _Context.Estudantes.AnyAsync(e => e.Cpf.Valor == estudante.Cpf.Valor)) return Result<Estudante>.Falha("CPF já cadastrado para outro estudante");
-
-            await _Context.Estudantes.AddAsync(estudante);
-
-            var salvar = await _Context.SaveChangesAsync();
-
-            if (salvar == 0) return Result<Estudante>.Falha("Erro ao adicionar estudante");
-            return Result<Estudante>.Ok(estudante);
-        }
-        catch (Exception ex)
-        {
-            // Aqui você captura o erro, mas não deixa o app travar
-            // Você pode tratar erros específicos, como CPF duplicado
-            return Result<Estudante>.Falha($"Erro interno ao salvar: {ex.Message}");
-        }
+        // Repositório apenas busca. Se não tiver nada, retorna lista vazia.
+        return await _context.Estudantes
+            .AsNoTracking()
+            .ToListAsync();
     }
 
-    public async Task<Result<Estudante>> AtualizarAsync(Estudante estudante)
+    public async Task<Estudante?> ObterPorIdAsync(Guid estudanteId)
     {
-        try
-        {
-            if (estudante == null) return Result<Estudante>.Falha("Estudante não pode ser nulo");
-
-            _Context.Estudantes.Update(estudante);
-
-            var salvar = await _Context.SaveChangesAsync();
-
-            if (salvar == 0) return Result<Estudante>.Falha("Erro ao atualizar estudante");
-
-            return Result<Estudante>.Ok(estudante);
-        }
-        catch (Exception ex)
-        {
-            return Result<Estudante>.Falha($"Erro interno ao atualizar: {ex.Message}");
-        }
+        // Retorna o objeto ou null. O Use Case que vai dizer se isso é um erro 404.
+        return await _context.Estudantes
+            .FirstOrDefaultAsync(e => e.EstudanteId == estudanteId);
     }
 
-    public async Task<Result<Estudante>> ObterPorIdAsync(Guid estudanteId)
+    public async Task AdicionarAsync(Estudante estudante)
     {
-        try
-        {
-            if (estudanteId == Guid.Empty) return Result<Estudante>.Falha("ID do estudante é inválido");
-
-            var estudante = await _Context.Estudantes
-                .Include(e => e.Matriculas) // Inclui as matrículas relacionadas
-                .FirstOrDefaultAsync(e => e.EstudanteId == estudanteId);
-
-            if (estudante == null) return Result<Estudante>.Falha("Estudante não encontrado");
-
-            return Result<Estudante>.Ok(estudante);
-        }
-        catch (Exception ex)
-        {
-            return Result<Estudante>.Falha($"Erro interno ao obter estudante: {ex.Message}");
-        }
+        await _context.Estudantes.AddAsync(estudante);
     }
 
-    public async Task<Result<IEnumerable<Estudante>>> ObterTodosAsync()
+    public void Atualizar(Estudante estudante)
     {
-        try
-        {
-            var estudantes = await _Context.Estudantes
-                .AsNoTracking() // Dica de performance!
-                .Include(e => e.Matriculas)
-                .ToListAsync();
-
-            // Remova os IFs de erro para lista vazia.
-            // Se a lista vier vazia, retornamos OK com a lista vazia.
-            return Result<IEnumerable<Estudante>>.Ok(estudantes);
-        }
-        catch (Exception ex)
-        {
-            return Result<IEnumerable<Estudante>>.Falha($"Erro interno: {ex.Message}");
-        }
+        // No EF, se a entidade já veio do banco, ele já rastreia.
+        // O Update apenas garante que o estado mude para Modified.
+        _context.Estudantes.Update(estudante);
     }
 
-    public async Task<Result<bool>> RemoverAsync(Guid estudanteId)
+    public void Remover(Estudante estudante)
     {
-        try
-        {
-            if (estudanteId == Guid.Empty) return Result<bool>.Falha("ID do estudante é inválido");
-            var estudante = await _Context.Estudantes.FindAsync(estudanteId);
-            if (estudante == null) return Result<bool>.Falha("Estudante não encontrado");
-            _Context.Estudantes.Remove(estudante);
-            var salvar = await _Context.SaveChangesAsync();
-            if (salvar == 0) return Result<bool>.Falha("Erro ao remover estudante");
-            return Result<bool>.Ok(true);
-        }
-        catch (Exception ex)
-        {
-            return Result<bool>.Falha($"Erro interno ao remover estudante: {ex.Message}");
-        }
+        _context.Estudantes.Remove(estudante);
+    }
+
+    public async Task<bool> SalvarAlteracoesAsync()
+    {
+        // Retorna true se salvou pelo menos uma linha
+        return await _context.SaveChangesAsync() > 0;
     }
 }

@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Aplicacao\ProfessorListarTodosUsecases.cs" />
     <Compile Remove="WeatherForecast.cs" />
   </ItemGroup>
 

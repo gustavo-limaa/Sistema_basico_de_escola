@@ -4,13 +4,15 @@ namespace SitemaDeMatricula.Domain.Interfaces;
 
 public interface IRepositorioEstudante
 {
-    Task<Result<IEnumerable<Estudante>>> ObterTodosAsync();
+    Task<IEnumerable<Estudante>> ObterTodosAsync();
 
-    Task<Result<Estudante>> ObterPorIdAsync(Guid estudanteId);
+    Task<Estudante?> ObterPorIdAsync(Guid estudanteId); // Pode retornar null se não achar
 
-    Task<Result<Estudante>> AdicionarAsync(Estudante estudante);
+    Task AdicionarAsync(Estudante estudante);
 
-    Task<Result<Estudante>> AtualizarAsync(Estudante estudante);
+    void Atualizar(Estudante estudante); // Geralmente void porque o EF já rastreia
 
-    Task<Result<bool>> RemoverAsync(Guid estudanteId);
+    void Remover(Estudante estudante);
+
+    Task<bool> SalvarAlteracoesAsync(); // O método que realmente "comita" no banco
 }

@@ -26,14 +26,21 @@ public class UsesCasesCriarEstudante
             var novoEstudante = dto.ToEstudante();
 
             // 2. Tenta salvar e CAPTURA o resultado do repositório
-            var resultRepositorio = await _repositorioEstudante.AdicionarAsync(novoEstudante);
+            await _repositorioEstudante.AdicionarAsync(novoEstudante);
+            if (novoEstudante is null)
+                return Result<EstudanteDtoResponse>.Falha("Falha ao criar o estudante.");
+
+            if (novoEstudante.Cpf.Valor != dto.Cpf)
+                return Result<EstudanteDtoResponse>.Falha("CPF inválido.");
+
+            var resultRepositorio = await _repositorioEstudante.SalvarAlteracoesAsync();
 
             // 3. Se o repositório falhou (ex: CPF duplicado), o Use Case repassa a falha
-            if (!resultRepositorio.Sucesso)
-                return Result<EstudanteDtoResponse>.Falha(resultRepositorio.Mensagem);
+            if (!resultRepositorio)
+                return Result<EstudanteDtoResponse>.Falha("Falha ao criar o estudante.");
 
-            // 4. Se deu certo, transforma a entidade salva (resultRepositorio.Dados) em DTO de resposta
-            var respostaDto = resultRepositorio.Dados.ToEstudanteDtoResponse();
+            // 4. Se deu certo, transforma a entidade salva (novoEstudante) em DTO de resposta
+            var respostaDto = novoEstudante.ToEstudanteDtoResponse();
 
             return Result<EstudanteDtoResponse>.Ok(respostaDto);
         }

@@ -25,10 +25,10 @@ public class UsesCasesPegarPorIdEstudante
                 return Result<EstudanteDtoResponse>.Falha("Erro ao acessar o repositório de estudantes.");
 
             // 2. Verifica se o repositório retornou uma falha (ex: erro de banco ou estudante não encontrado)
-            if (!result.Sucesso)
-                return Result<EstudanteDtoResponse>.Falha(result.Mensagem);
+            if (result is null)
+                return Result<EstudanteDtoResponse>.Falha("Estudante não encontrado.");
             // 3. Mapeia a Entidade (que está dentro de result.Dados) para DTO
-            var estudanteDto = result.Dados.ToEstudanteDtoResponse();
+            var estudanteDto = result.ToEstudanteDtoResponse();
             return Result<EstudanteDtoResponse>.Ok(estudanteDto);
         }
         catch (Exception ex)

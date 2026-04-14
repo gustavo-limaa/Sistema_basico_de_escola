@@ -1,5 +1,6 @@
 ﻿using SitemaDeMatricula.Aplicacao.Usecases;
 using SitemaDeMatricula.Aplicacao.Usecases.Estudante;
+using SitemaDeMatricula.Aplicacao.Usecases.Professor;
 using SitemaDeMatricula.Domain.Interfaces;
 using SitemaDeMatricula.Infraestrutura.Repositorios;
 
@@ -14,9 +15,16 @@ namespace SitemaDeMatricula.Aplicacao
             services.AddScoped<UsesCasesPegarPorIdEstudante>();
             services.AddScoped<UsesCasesListarTodosEstudante>();
             services.AddScoped<UsesCasesAtualizarEstudante>();
-            services.AddScoped<UsesCasesDeletarEstudante>(); // Esse que você acabou de fazer!
+            services.AddScoped<UsesCasesDeletarEstudante>();
+            services.AddScoped<ProfessorCriarUsecases>();
+            services.AddScoped<ProfessorObterTodosUsecases>();
+            services.AddScoped<ProfessorObterPorIdUsecases>();
+            services.AddScoped<ProfessorObterPorCpfUsecases>();
+            services.AddScoped<ProfessorAtualizarUsecase>();
+            services.AddScoped<ProfessorRemoverUsecase>();
 
             services.AddScoped<IRepositorioEstudante, RepositorioEstudante>();
+            services.AddScoped<IRepositorioProfessor, RepositorioProfessor>();
             return services;
         }
     }
