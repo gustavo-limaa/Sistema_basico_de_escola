@@ -4,7 +4,7 @@ using SitemaDeMatricula.Domain.Interfaces;
 using SitemaDeMatricula.Domain.Mapper;
 using SitemaDeMatricula.Domain.Modelos;
 
-namespace SitemaDeMatricula.Aplicacao.Usecases;
+namespace SitemaDeMatricula.Aplicacao.Usecases.Estudante;
 
 public class UsesCasesPegarPorIdEstudante
 {

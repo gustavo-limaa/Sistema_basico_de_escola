@@ -1,4 +1,4 @@
-﻿using SitemaDeMatricula.Aplicaçao.Dtos.Professor;
+﻿using SitemaDeMatricula.Aplicacao.Dtos.Professor;
 using SitemaDeMatricula.Domain.Modelos;
 using SitemaDeMatricula.Domain.Uteis;
 using SitemaDeMatricula.Domain.Value_Object;

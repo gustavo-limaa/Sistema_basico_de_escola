@@ -6,11 +6,13 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
+      "launchBrowser": true, // Garante que o navegador vai abrir
+      "launchUrl": "scalar/v1", // Aqui a mágica acontece!
       "applicationUrl": "https://localhost:7048;http://localhost:5052"
     },
     "Container (Dockerfile)": {
       "commandName": "Docker",
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/scalar/v1", // No Docker também!
       "environmentVariables": {
         "ASPNETCORE_HTTPS_PORTS": "8081",
         "ASPNETCORE_HTTP_PORTS": "8080"

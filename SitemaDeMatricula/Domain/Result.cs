@@ -13,7 +13,24 @@ public class Result<T>
         Mensagem = mensagem;
     }
 
-    public static Result<T> Ok(T dados) => new(true, dados, "Operação realizada com sucesso.");
+    /// <summary>
+    /// Sucesso com dados e mensagem opcional
+    /// </summary>
+    /// <param name="dados"></param>
+    /// <param name="mensagem"></param>
+    /// <returns></returns>
+    public static Result<T> Ok(T dados, string mensagem = "Operação realizada com sucesso.")
+        => new(true, dados, mensagem);
 
-    public static Result<T> Falha(string mensagem) => new(false, default, mensagem);
+    /// <summary>
+    /// Sucesso sem dados (para Updates/Deletes)
+    /// usar para deletar ou atualizar sem retornar dados, apenas a mensagem de sucesso
+    /// </summary>
+    /// <param name="mensagem"></param>
+    /// <returns></returns>
+    public static Result<T> SemConteudo(string mensagem = "Operação realizada com sucesso.")
+        => new(true, default, mensagem);
+
+    public static Result<T> Falha(string mensagem)
+        => new(false, default, mensagem);
 }

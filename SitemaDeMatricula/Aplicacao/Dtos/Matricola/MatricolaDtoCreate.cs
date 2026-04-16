@@ -1,4 +1,4 @@
-﻿namespace SitemaDeMatricula.Aplicaçao.Dtos.Matricula
+﻿namespace SitemaDeMatricula.Aplicacao.Dtos.Matricola
 {
     public class MatricolaDtoCreate
     {

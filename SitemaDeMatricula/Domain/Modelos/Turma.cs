@@ -1,32 +1,51 @@
-﻿namespace SitemaDeMatricula.Domain.Modelos
+﻿namespace SitemaDeMatricula.Domain.Modelos;
+
+public class Turma
 {
-    public class Turma
+    public Guid TurmaId { get; private set; }
+    public string CodigoTurma { get; private set; }
+    public bool Ativo { get; private set; } // Importante para o Soft Delete
+
+    // Relacionamentos
+    public Guid ProfessorId { get; private set; }
+
+    public virtual Professor Professor { get; private set; }
+
+    public Guid DisciplinaId { get; private set; }
+    public virtual Disciplina Disciplina { get; private set; }
+
+    public List<Matricula> Matriculas { get; private set; } = new();
+
+    // Construtor Público para criação (Domínio)
+    public Turma(string codigo, Guid professorId, Guid disciplinaId)
     {
-        public Guid TurmaId { get; private set; } = Guid.NewGuid();
-        public string CodigoTurma { get; private set; } // Ex: "MAT-2026-A"
+        // Validação básica: se o código for vazio, o sistema nem deixa criar
+        if (string.IsNullOrWhiteSpace(codigo)) throw new ArgumentException("Código da turma é obrigatório.");
 
-        // Relacionamentos
-        public Guid ProfessorId { get; private set; }
+        TurmaId = Guid.NewGuid();
+        CodigoTurma = codigo;
+        ProfessorId = professorId;
+        DisciplinaId = disciplinaId;
+        Ativo = true;
+    }
 
-        public Professor Professor { get; private set; }
+    // Construtor para o Entity Framework (O "fantasma" que o banco usa)
+    protected Turma()
+    { }
 
-        public Guid DisciplinaId { get; private set; }
-        public Disciplina Disciplina { get; private set; }
+    // Comportamentos
+    public void Desativar() => Ativo = false;
 
-        // Uma turma tem uma lista de matrículas (Estudantes)
-        public List<Matricula> Matriculas { get; private set; } = new();
+    public void AlternarStatus()
+    {
+        Ativo = !Ativo; // Inverte o valor booleano
+    }
 
-        public ICollection<Estudante> Estudantes { get; private set; } = new List<Estudante>();
+    public void AtualizarDados(string novoCodigo, Guid novoProfessorId)
+    {
+        if (string.IsNullOrWhiteSpace(novoCodigo)) throw new ArgumentException("Código inválido.");
 
-        public Turma(string codigo, Guid professorId, Guid disciplinaId)
-        {
-            CodigoTurma = codigo;
-            ProfessorId = professorId;
-            DisciplinaId = disciplinaId;
-        }
-
-        public Turma()
-        {
-        }
+        CodigoTurma = novoCodigo;
+        ProfessorId = novoProfessorId;
     }
 }

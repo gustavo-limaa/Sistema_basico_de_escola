@@ -6,7 +6,7 @@ using SitemaDeMatricula.Domain.Modelos;
 using SitemaDeMatricula.Domain.Value_Object;
 using SitemaDeMatricula.Domain.Value_Objetc;
 
-namespace SitemaDeMatricula.Aplicacao.Usecases;
+namespace SitemaDeMatricula.Aplicacao.Usecases.Estudante;
 
 public class UsesCasesAtualizarEstudante
 {

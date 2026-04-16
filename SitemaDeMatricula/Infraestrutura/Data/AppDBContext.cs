@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SitemaDeMatricula.Domain.Modelos;
+using SitemaDeMatricula.Domain.Value_Object;
 
 namespace SitemaDeMatricula.InfraEstrutura.Data;
 
@@ -62,7 +63,7 @@ public class AppDbContext : DbContext
             p.ComplexProperty(x => x.Cpf, p =>
                 p.Property(v => v.Valor).HasColumnName("Cpf").HasMaxLength(11));
 
-            p.ComplexProperty(x => x.Nome, p =>
+            p.ComplexProperty(x => x.NomeCompleto, p =>
                 p.Property(v => v.Valor).HasColumnName("Nome").HasMaxLength(80));
 
             p.ComplexProperty(x => x.Telefone, p =>
@@ -70,28 +71,45 @@ public class AppDbContext : DbContext
 
             p.Property(x => x.Categoria).HasColumnName("Categoria").IsRequired();
         }); // <--- FECHA Professor aqui
-
-        // 3. DISCIPLINA
+            // 3. DISCIPLINA
         modelBuilder.Entity<Disciplina>(d =>
         {
             d.HasKey(x => x.DisciplinaId);
+
+            // Configurando o Value Object para o Banco de Dados
+            d.Property(x => x.Nome)
+             .HasConversion(
+                 v => v.Valor,               // Converte de NomeDisciplina para string ao salvar
+                 v => new NomeDisciplina(v)   // Converte de string para NomeDisciplina ao ler
+             )
+             .HasMaxLength(100)              // Define como VARCHAR(100) no banco
+             .IsRequired();
+
             d.HasMany(t => t.Turmas)
              .WithOne(t => t.Disciplina)
              .HasForeignKey(t => t.DisciplinaId);
         });
-
         // 4. TURMA
         modelBuilder.Entity<Turma>(t =>
         {
             t.HasKey(x => x.TurmaId);
 
+            // 1. Relacionamento com Disciplina (Essencial!)
+            t.HasOne(x => x.Disciplina)
+             .WithMany() // Se a Disciplina não tiver List<Turma>, deixe vazio
+             .HasForeignKey(x => x.DisciplinaId)
+             .OnDelete(DeleteBehavior.Restrict); // Evita apagar disciplina com turma ativa
+
+            // 2. Relacionamento com Professor
+            t.HasOne(p => p.Professor)
+             .WithMany() // Se o Professor tiver List<Turma>, coloque p => p.Turmas
+             .HasForeignKey(p => p.ProfessorId)
+             .OnDelete(DeleteBehavior.Restrict);
+
+            // 3. Relacionamento com Matrículas (Um-para-Muitos)
             t.HasMany(m => m.Matriculas)
              .WithOne(m => m.Turma)
              .HasForeignKey(m => m.TurmaId);
-
-            t.HasOne(p => p.Professor)
-             .WithMany()
-             .HasForeignKey(p => p.ProfessorId);
         });
 
         // 5. MATRICULA (A tabela N:N que faltava mapear)

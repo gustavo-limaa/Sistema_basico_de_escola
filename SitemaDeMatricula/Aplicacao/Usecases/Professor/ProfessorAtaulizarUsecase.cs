@@ -1,4 +1,4 @@
-﻿using SitemaDeMatricula.Aplicaçao.Dtos.Professor;
+﻿using SitemaDeMatricula.Aplicacao.Dtos.Professor;
 using SitemaDeMatricula.Domain;
 using SitemaDeMatricula.Domain.Interfaces;
 using SitemaDeMatricula.Domain.Mapper;

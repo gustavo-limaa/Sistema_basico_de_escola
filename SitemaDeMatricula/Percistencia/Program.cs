@@ -1,19 +1,24 @@
 using Microsoft.EntityFrameworkCore;
 using SitemaDeMatricula.Aplicacao;
 using SitemaDeMatricula.InfraEstrutura.Data;
+using Scalar.AspNetCore;
+using SitemaDeMatricula.Percistencia.Controllers;
+
+// <-- Adicione esse using!
 
 var builder = WebApplication.CreateBuilder(args);
 
 // --- TUDO QUE É CONFIGURAÇÃO DE SERVIÇO FICA AQUI (ANTES DO BUILD) ---
-
-builder.Services.AddControllers();
+// No Program.cs, procure a linha do AddControllers e mude para isso:
+builder.Services.AddControllers()
+    .AddApplicationPart(typeof(ProfessorController).Assembly)
+    //.AddApplicationPart(typeof(EstudanteController).Assembly)
+    .AddApplicationPart(typeof(DisciplinaController).Assembly);
 builder.Services.AddOpenApi();
-builder.Services.AddApplication(); // Método de extensão para registrar os Use Cases (Dependency Injection)
+builder.Services.AddApplication();
 
-// 1. Recupera a Connection String do User Secrets
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// 2. Configura o DbContext para usar o MySQL (Pomelo)
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseMySql(
@@ -24,12 +29,22 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 var app = builder.Build();
 
-// --- DAQUI PARA BAIXO É O PIPELINE DE EXECUÇÃO ---
-
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
+    app.MapScalarApiReference(options =>
+    {
+        options.WithTitle("Sistema de Matrícula - API")
+               .WithTheme(ScalarTheme.Mars)
+               .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+
+        // Se o WithEndpoint der erro, não use ele.
+        // Por padrão o Scalar já tenta ler o /openapi/v1.json
+    });
 }
+
+app.MapGet("/api/teste", () => "O servidor está ouvindo!").WithName("Teste");
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SitemaDeMatricula.Aplicaçao.Dtos.Professor;
+namespace SitemaDeMatricula.Aplicacao.Dtos.Professor;
 
 public record ProfessorDtoUpdate
 (

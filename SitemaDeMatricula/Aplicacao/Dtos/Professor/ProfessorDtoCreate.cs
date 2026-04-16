@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
-namespace SitemaDeMatricula.Aplicaçao.Dtos.Professor;
+namespace SitemaDeMatricula.Aplicacao.Dtos.Professor;
 
 public record ProfessorDtoCreate
 (
