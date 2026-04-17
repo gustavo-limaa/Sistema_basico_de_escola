@@ -1,7 +1,7 @@
 ﻿using SitemaDeMatricula.Domain;
 using SitemaDeMatricula.Domain.Interfaces;
 
-namespace SitemaDeMatricula.Aplicacao.Usecases.Turma;
+namespace SitemaDeMatricula.Aplicacao.Usecases.Turmas;
 
 public class RemoverTurmaUseCase
 {

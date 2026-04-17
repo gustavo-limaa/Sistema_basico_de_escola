@@ -1,8 +1,7 @@
 ﻿using SitemaDeMatricula.Aplicacao.Usecases.Disciplinas;
 using SitemaDeMatricula.Aplicacao.Usecases.Estudante;
 using SitemaDeMatricula.Aplicacao.Usecases.Professor;
-using SitemaDeMatricula.Aplicacao.Usecases.Turma;
-using SitemaDeMatricula.Aplicaçao.Usecases.Turmas;
+using SitemaDeMatricula.Aplicacao.Usecases.Turmas;
 using SitemaDeMatricula.Domain.Interfaces;
 using SitemaDeMatricula.Infraestrutura.Repositorios;
 

@@ -1,4 +1,4 @@
-﻿using SitemaDeMatricula.Aplicaçao.Dtos.turma;
+﻿using SitemaDeMatricula.Aplicacao.Dtos.turma;
 using SitemaDeMatricula.Domain.Modelos;
 
 namespace SitemaDeMatricula.Domain.Mapper

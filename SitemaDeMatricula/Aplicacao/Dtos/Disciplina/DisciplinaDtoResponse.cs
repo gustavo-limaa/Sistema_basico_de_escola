@@ -1,4 +1,4 @@
-﻿using SitemaDeMatricula.Aplicaçao.Dtos.turma;
+﻿using SitemaDeMatricula.Aplicacao.Dtos;
 
 namespace SitemaDeMatricula.Aplicacao.Dtos.Disciplina;
 

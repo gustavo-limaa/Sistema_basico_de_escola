@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SitemaDeMatricula.Aplicaçao.Dtos.turma;
-using SitemaDeMatricula.Aplicacao.Usecases.Turma;
-using SitemaDeMatricula.Aplicaçao.Usecases.Turmas;
+using SitemaDeMatricula.Aplicacao.Dtos.turma;
+
+using SitemaDeMatricula.Aplicacao.Usecases.Turmas;
 
 namespace SitemaDeMatricula.Percistencia.Controllers;
 

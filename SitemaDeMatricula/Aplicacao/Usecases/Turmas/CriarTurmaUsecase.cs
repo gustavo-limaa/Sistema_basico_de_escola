@@ -1,9 +1,9 @@
-﻿using SitemaDeMatricula.Aplicaçao.Dtos.turma;
+﻿using SitemaDeMatricula.Aplicacao.Dtos.turma;
 using SitemaDeMatricula.Domain;
 using SitemaDeMatricula.Domain.Interfaces;
 using SitemaDeMatricula.Domain.Modelos;
 
-namespace SitemaDeMatricula.Aplicaçao.Usecases.Turmas;
+namespace SitemaDeMatricula.Aplicacao.Usecases.Turmas;
 
 public class CriarTurmaUseCase
 {
@@ -30,10 +30,12 @@ public class CriarTurmaUseCase
 
         // 2. DESAFIO: Validar se a Disciplina existe
         // Dica: Use o _discRepo e o dto.DisciplinaId
-        // [ESCREVA SEU CÓDIGO AQUI]
+        var disciplina = await _discRepo.ObterPorIdAsync(dto.DisciplinaId);
+        if (disciplina == null)
+            return Result<Guid>.Falha("Disciplina não encontrada.");
 
         // 3. Criar a entidade (O construtor que definimos)
-        var novaTurma = new Turma(dto.CodigoTurma, dto.ProfessorId, dto.DisciplinaId);
+        var novaTurma = new Domain.Modelos.Turma(dto.CodigoTurma, dto.ProfessorId, dto.DisciplinaId);
 
         // 4. Salvar (O seu repositório já chama o SaveChanges!)
         await _turmaRepo.AdicionarAsync(novaTurma);

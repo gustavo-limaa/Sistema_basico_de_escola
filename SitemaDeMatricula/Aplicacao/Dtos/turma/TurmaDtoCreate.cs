@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SitemaDeMatricula.Aplicaçao.Dtos.turma;
+namespace SitemaDeMatricula.Aplicacao.Dtos.turma;
 
 public record TurmaDtoCreate(
 [Required(ErrorMessage = "Código da turma é obrigatório.")]

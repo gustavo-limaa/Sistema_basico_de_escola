@@ -1,9 +1,9 @@
-﻿using SitemaDeMatricula.Aplicaçao.Dtos.turma;
+﻿using SitemaDeMatricula.Aplicacao.Dtos.turma;
 using SitemaDeMatricula.Domain;
 using SitemaDeMatricula.Domain.Interfaces;
 using SitemaDeMatricula.Domain.Mapper;
 
-namespace SitemaDeMatricula.Aplicacao.Usecases.Turma
+namespace SitemaDeMatricula.Aplicacao.Usecases.Turmas
 {
     public class ObterPorIdTurma
     {
