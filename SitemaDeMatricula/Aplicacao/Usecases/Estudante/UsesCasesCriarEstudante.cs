@@ -3,6 +3,7 @@ using SitemaDeMatricula.Domain;
 using SitemaDeMatricula.Domain.Interfaces;
 using SitemaDeMatricula.Domain.Mapper;
 using SitemaDeMatricula.Domain.Modelos;
+using Xunit;
 
 namespace SitemaDeMatricula.Aplicacao.Usecases.Estudante;
 
@@ -22,26 +23,20 @@ public class UsesCasesCriarEstudante
             if (dto is null)
                 return Result<EstudanteDtoResponse>.Falha("Dados de estudante são obrigatórios.");
 
-            // 1. Transforma em Entidade
+            // --- ADICIONE ISSO AQUI ---
+            if (await _repositorioEstudante.ExisteCpfAsync(dto.Cpf))
+                return Result<EstudanteDtoResponse>.Falha("CPF já cadastrado.");
+            // --------------------------
+
             var novoEstudante = dto.ToEstudante();
 
-            // 2. Tenta salvar e CAPTURA o resultado do repositório
             await _repositorioEstudante.AdicionarAsync(novoEstudante);
-            if (novoEstudante is null)
-                return Result<EstudanteDtoResponse>.Falha("Falha ao criar o estudante.");
-
-            if (novoEstudante.Cpf.Valor != dto.Cpf)
-                return Result<EstudanteDtoResponse>.Falha("CPF inválido.");
-
             var resultRepositorio = await _repositorioEstudante.SalvarAlteracoesAsync();
 
-            // 3. Se o repositório falhou (ex: CPF duplicado), o Use Case repassa a falha
             if (!resultRepositorio)
-                return Result<EstudanteDtoResponse>.Falha("Falha ao criar o estudante.");
+                return Result<EstudanteDtoResponse>.Falha("Falha ao salvar no banco de dados.");
 
-            // 4. Se deu certo, transforma a entidade salva (novoEstudante) em DTO de resposta
             var respostaDto = novoEstudante.ToEstudanteDtoResponse();
-
             return Result<EstudanteDtoResponse>.Ok(respostaDto);
         }
         catch (Exception ex)

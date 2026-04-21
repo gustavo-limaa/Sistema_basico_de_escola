@@ -51,4 +51,9 @@ public class RepositorioEstudante : IRepositorioEstudante
         // Retorna true se salvou pelo menos uma linha
         return await _context.SaveChangesAsync() > 0;
     }
+
+    public async Task<bool> ExisteCpfAsync(string cpf)
+    {
+        return await _context.Estudantes.AnyAsync(e => e.Cpf.Valor == cpf);
+    }
 }

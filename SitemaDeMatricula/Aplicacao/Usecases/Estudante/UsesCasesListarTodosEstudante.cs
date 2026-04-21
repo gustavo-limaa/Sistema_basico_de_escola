@@ -17,21 +17,27 @@ public class UsesCasesListarTodosEstudante
 
     public async Task<Result<List<EstudanteDtoResponse>>> ExecuteAsync()
     {
-        // 1. Chama o repositório
-        var result = await _repositorioEstudante.ObterTodosAsync();
-        if (result is null)
-            return Result<List<EstudanteDtoResponse>>.Falha("Erro ao acessar o repositório de estudantes.");
+        try
+        {
+            // 1. Chama o repositório
+            var result = await _repositorioEstudante.ObterTodosAsync();
 
-        // 2. Verifica se o repositório retornou uma falha (ex: erro de banco)
-        if (result is null)
-            return Result<List<EstudanteDtoResponse>>.Falha("Erro ao acessar o repositório de estudantes.");
+            // Se o repositório retornar null em vez de uma lista (mesmo que vazia)
+            if (result is null)
+                return Result<List<EstudanteDtoResponse>>.Falha("Erro ao acessar o repositório de estudantes.");
 
-        // 3. Mapeia a lista de Entidades (que está dentro de result.Dados) para DTOs
-        // Use o .Select (do LINQ) para transformar cada item
-        var estudantesDto = result
-            .Select(e => e.ToEstudanteDtoResponse())
-            .ToList();
+            // 2. Mapeia a lista
+            var estudantesDto = result
+                .Select(e => e.ToEstudanteDtoResponse())
 
-        return Result<List<EstudanteDtoResponse>>.Ok(estudantesDto);
+                .ToList();
+
+            return Result<List<EstudanteDtoResponse>>.Ok(estudantesDto);
+        }
+        catch (Exception ex)
+        {
+            // Agora sim! O catch captura a Exception do Mock e transforma no seu Result.Falha
+            return Result<List<EstudanteDtoResponse>>.Falha($"Erro ao listar estudantes: {ex.Message}");
+        }
     }
 }

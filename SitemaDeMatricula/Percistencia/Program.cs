@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using SitemaDeMatricula.Aplicacao;
 using SitemaDeMatricula.InfraEstrutura.Data;
 using Scalar.AspNetCore;
 using SitemaDeMatricula.Percistencia.Controllers;
+using SitemaDeMatricula.Infraestrutura;
 
 // <-- Adicione esse using!
 

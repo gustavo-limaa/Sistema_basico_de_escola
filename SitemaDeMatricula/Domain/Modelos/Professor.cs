@@ -10,7 +10,7 @@ namespace SitemaDeMatricula.Domain.Modelos;
 public class Professor
 {
     // Construtor para garantir que o Professor nasça com dados válidos
-    public Professor(ObjectNomeCompleto nomeCompleto, ObjectCPF cpf, ObjectEmail email, ValorMonetario salario, CategoriaProfessor categoria, ObjectDataNascimento dataNascimento)
+    public Professor(ObjectNomeCompleto nomeCompleto, ObjectCPF cpf, ObjectEmail email, ValorMonetario salario, CategoriaProfessor categoria, ObjectDataNascimento dataNascimento, ObjectTelefone telefone)
     {
         ProfessorId = Guid.NewGuid();
         NomeCompleto = nomeCompleto;
@@ -19,6 +19,7 @@ public class Professor
         Salario = salario;
         Categoria = categoria;
         DataNascimento = dataNascimento;
+        Telefone = telefone;
     }
 
     protected Professor()

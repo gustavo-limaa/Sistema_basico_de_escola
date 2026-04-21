@@ -5,7 +5,7 @@ using SitemaDeMatricula.Aplicacao.Usecases.Turmas;
 using SitemaDeMatricula.Domain.Interfaces;
 using SitemaDeMatricula.Infraestrutura.Repositorios;
 
-namespace SitemaDeMatricula.Aplicacao
+namespace SitemaDeMatricula.Infraestrutura
 {
     public static class DependencyInjection
     {

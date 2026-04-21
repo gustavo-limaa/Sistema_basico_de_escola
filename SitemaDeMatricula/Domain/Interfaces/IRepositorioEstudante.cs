@@ -4,6 +4,8 @@ namespace SitemaDeMatricula.Domain.Interfaces;
 
 public interface IRepositorioEstudante
 {
+    Task<bool> ExisteCpfAsync(string cpf);
+
     Task<IEnumerable<Estudante>> ObterTodosAsync();
 
     Task<Estudante?> ObterPorIdAsync(Guid estudanteId); // Pode retornar null se não achar

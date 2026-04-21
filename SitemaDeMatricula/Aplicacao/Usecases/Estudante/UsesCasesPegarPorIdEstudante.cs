@@ -19,20 +19,22 @@ public class UsesCasesPegarPorIdEstudante
     {
         try
         {
-            // 1. Chama o repositório
-            var result = await _repositorioEstudante.ObterPorIdAsync(id);
-            if (result is null)
-                return Result<EstudanteDtoResponse>.Falha("Erro ao acessar o repositório de estudantes.");
+            // 1. Busca o estudante no banco
+            var estudante = await _repositorioEstudante.ObterPorIdAsync(id);
 
-            // 2. Verifica se o repositório retornou uma falha (ex: erro de banco ou estudante não encontrado)
-            if (result is null)
+            // 2. Se não encontrou, mata o processo aqui (Fail-First)
+            if (estudante is null)
                 return Result<EstudanteDtoResponse>.Falha("Estudante não encontrado.");
-            // 3. Mapeia a Entidade (que está dentro de result.Dados) para DTO
-            var estudanteDto = result.ToEstudanteDtoResponse();
+
+            // 3. Se passou pelo IF, o C# sabe que 'estudante' existe.
+            // Agora é só mapear e retornar sucesso!
+            var estudanteDto = estudante.ToEstudanteDtoResponse();
+
             return Result<EstudanteDtoResponse>.Ok(estudanteDto);
         }
         catch (Exception ex)
         {
+            // Aqui é onde entram os erros reais de banco ou conexão
             return Result<EstudanteDtoResponse>.Falha($"Erro ao obter estudante por ID: {ex.Message}");
         }
     }

@@ -30,7 +30,8 @@ namespace SitemaDeMatricula.Domain.Mapper
                 new ObjectEmail(professorDtoCreate.Email),
                 new ValorMonetario(professorDtoCreate.Salario),
                 Enum.Parse<CategoriaProfessor>(professorDtoCreate.Categoria),
-                new ObjectDataNascimento(professorDtoCreate.DataNascimento)
+                new ObjectDataNascimento(professorDtoCreate.DataNascimento),
+                new ObjectTelefone(professorDtoCreate.Telefone)
             );
         }
 
