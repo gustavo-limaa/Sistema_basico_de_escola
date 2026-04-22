@@ -21,6 +21,8 @@ public class UsesCasesAtualizarEstudante
     {
         try
         {
+            if (dto is null) return Result<EstudanteDtoResponse>.Falha("Dados de atualização inválidos.");
+
             // 1. Busca o estudante existente no banco
             var resultBusca = await _repositorioEstudante.ObterPorIdAsync(id);
             if (resultBusca == null) return Result<EstudanteDtoResponse>.Falha("Estudante não encontrado.");

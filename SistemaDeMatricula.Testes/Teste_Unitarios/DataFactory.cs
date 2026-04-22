@@ -6,6 +6,7 @@ using SitemaDeMatricula.Domain.Value_Object;
 using SitemaDeMatricula.Domain.Value_Objetc;
 using Xunit.Sdk;
 using System.Globalization;
+using SitemaDeMatricula.Aplicacao.Dtos.estudante;
 
 namespace SistemaDeMatricula.Testes.Teste_Unitarios;
 
@@ -27,7 +28,9 @@ public static class DataFactory
                 new ObjectEmail(f.Internet.Email()),
                 new ObjectTelefone(f.Phone.PhoneNumber("119########"))
             );
-        });
+        }
+
+        );
 
     public static Faker<Turma> TurmaFaker =>
      new Faker<Turma>("pt_BR")
@@ -75,4 +78,25 @@ public static class DataFactory
             new ObjectTelefone(f.Phone.PhoneNumber("119########"))
         );
     });
+
+    public static Faker<EstudanteDtoUpdate> EstudanteDtoUpdateFaker => new Faker<EstudanteDtoUpdate>()
+        .CustomInstantiator(f =>
+        {
+            var dataDateTime = f.Date.Past(20, DateTime.Now.AddYears(-18));
+            var dataNascimentoOnly = DateOnly.FromDateTime(dataDateTime);
+            return new EstudanteDtoUpdate(
+                f.Random.Replace("###########"),
+                f.Internet.Email(),
+                dataNascimentoOnly,
+                f.Phone.PhoneNumber("119########")
+            );
+        });
+
+    public static Faker<EstudanteDtoUpdate> EstudanteDtoUpdateFalhoFaker => new Faker<EstudanteDtoUpdate>()
+    .CustomInstantiator(f => new EstudanteDtoUpdate(
+        "",                    // CPF vazio
+        "email_invalido.com",  // Email sem @
+        DateOnly.FromDateTime(DateTime.Now.AddYears(5)), // Data de nascimento no futuro (inválido)
+        "123"                  // Telefone curto demais
+    ));
 };

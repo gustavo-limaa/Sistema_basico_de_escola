@@ -22,7 +22,7 @@ public class UsesCasesDeletarEstudante
             // 1. Chama o repositório para deletar
             var result = await _repositorioEstudante.ObterPorIdAsync(id);
             if (result is null)
-                return Result<bool>.Falha("Erro ao acessar o repositório de estudantes.");
+                return Result<bool>.Falha("Estudante não encontrado.");
 
             // 2. Verifica se o repositório retornou uma falha (ex: erro de banco ou estudante não encontrado)
             if (result is null)
