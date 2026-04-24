@@ -12,26 +12,26 @@ namespace SitemaDeMatricula.Domain.Mapper
         {
             return new ProfessorDtoResponse(
                 professor.ProfessorId,
-                professor.NomeCompleto.ToString(),
-                professor.Cpf.ToString(),
+                professor.NomeCompleto.Valor, // Se o Nome for um VO record, use .Valor aqui também!
+                professor.Cpf.Valor,               // <--- AQUI! Troque .ToString() por .Valor
                 professor.DataNascimento.Valor,
-                professor.Email.ToString(),
-                professor.Telefone.ToString(),
-                professor.Salario.ToString(),
-                professor.Categoria.ToString()
+                professor.Email.Valor,             // <--- Use .Valor aqui também
+                professor.Telefone.Valor,          // <--- E aqui
+                professor.Salario.Valor,
+                professor.Categoria.ToString()     // Aqui o .ToString() funciona porque é um Enum
             );
         }
 
-        public static Professor ToProfessor(this ProfessorDtoCreate professorDtoCreate)
+        public static Professor ToProfessor(this ProfessorDtoCreate dto)
         {
             return new Professor(
-                new ObjectNomeCompleto(professorDtoCreate.NomeCompleto),
-                new ObjectCPF(professorDtoCreate.Cpf),
-                new ObjectEmail(professorDtoCreate.Email),
-                new ValorMonetario(professorDtoCreate.Salario),
-                Enum.Parse<CategoriaProfessor>(professorDtoCreate.Categoria),
-                new ObjectDataNascimento(professorDtoCreate.DataNascimento),
-                new ObjectTelefone(professorDtoCreate.Telefone)
+                new ObjectNomeCompleto(dto.NomeCompleto),
+                new ObjectCPF(dto.Cpf),
+                new ObjectEmail(dto.Email),
+                new ValorMonetario(dto.Salario), // Aqui o decimal entra liso!
+                Enum.Parse<CategoriaProfessor>(dto.Categoria),
+                new ObjectDataNascimento(dto.DataNascimento),
+                new ObjectTelefone(dto.Telefone)
             );
         }
 
