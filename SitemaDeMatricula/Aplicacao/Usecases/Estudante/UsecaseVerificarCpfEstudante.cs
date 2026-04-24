@@ -32,6 +32,6 @@ public class UsecaseVerificarCpfEstudante
         }
 
         // 4. Se existe (true), retorna sucesso
-        return Result<bool>.Ok(true, "Estudante encontrado com sucesso.");
+        return Result<bool>.Ok(true, "Estudante Localizado.");
     }
 };
