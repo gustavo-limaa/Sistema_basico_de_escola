@@ -16,7 +16,7 @@ public record ProfessorDtoCreate
     [Required][Phone]
     string Telefone,
     [Required]
-    string Salario,
+    Decimal Salario,
     [Required]
     string Categoria
 

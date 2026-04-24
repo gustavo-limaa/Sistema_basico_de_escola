@@ -17,7 +17,7 @@ public record ProfessorDtoResponse
     [Required][Phone]
     string Telefone,
     [Required]
-    string Salario,
+    decimal Salario,
     [Required]
     string Categoria
  );
