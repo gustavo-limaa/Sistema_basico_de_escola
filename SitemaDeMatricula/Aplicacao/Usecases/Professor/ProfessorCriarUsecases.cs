@@ -16,39 +16,35 @@ public class ProfessorCriarUsecases
 
     public async Task<Result<ProfessorDtoResponse>> ExecutarAsync(ProfessorDtoCreate dto)
     {
-        // 1. Fail Fast: Dados básicos
+        // 1. Fail Fast Simples
         if (dto == null) return Result<ProfessorDtoResponse>.Falha("Dados não fornecidos.");
-
-        // 2. Regra de Negócio: Verificar duplicidade NO BANCO antes de qualquer coisa
-        var professorExistente = await _repositorioProfessor.ObterPorCpfAsync(dto.Cpf);
-
-        if (professorExistente != null)
-        {
-            return Result<ProfessorDtoResponse>.Falha("Já existe um professor cadastrado com este CPF.");
-        }
 
         try
         {
-            // 3. Mapeamento (Aqui os seus Value Objects são criados e validados)
+            // 2. O Domínio valida a lógica de formato (CPF, Email, Salário)
+            // Se o DTO tiver lixo, o ToProfessor() estoura uma exceção de validação aqui mesmo
             var professor = dto.ToProfessor();
 
-            // 4. Persistência (Só chegamos aqui se tudo estiver OK)
-            await _repositorioProfessor.AdicionarAsync(professor);
+            // 3. O Use Case foca na Regra de Negócio que exige o Banco
+            var professorExistente = await _repositorioProfessor.ObterPorCpfAsync(dto.Cpf);
+            if (professorExistente != null)
+                return Result<ProfessorDtoResponse>.Falha("Já existe um professor cadastrado com este CPF.");
 
+            // 4. Persistência
+            await _repositorioProfessor.AdicionarAsync(professor);
             var sucesso = await _repositorioProfessor.SalvarAlteracoesAsync();
 
-            if (!sucesso)
-            {
-                return Result<ProfessorDtoResponse>.Falha("Erro ao persistir os dados no banco.");
-            }
-
-            // 5. Retorno limpo
-            return Result<ProfessorDtoResponse>.Ok(professor.ToProfessorDtoResponse());
+            return sucesso
+                ? Result<ProfessorDtoResponse>.Ok(professor.ToProfessorDtoResponse())
+                : Result<ProfessorDtoResponse>.Falha("Erro ao persistir os dados no banco.");
+        }
+        catch (ArgumentException ex) // Ou a sua Exception personalizada de Domínio
+        {
+            return Result<ProfessorDtoResponse>.Falha(ex.Message);
         }
         catch (Exception ex)
         {
-            // Se o seu Value Object lançar uma exceção de validação, você captura aqui
-            return Result<ProfessorDtoResponse>.Falha($"Erro de validação: {ex.Message}");
+            return Result<ProfessorDtoResponse>.Falha($"Erro inesperado: {ex.Message}");
         }
     }
 }

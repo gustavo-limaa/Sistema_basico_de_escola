@@ -16,6 +16,8 @@ public record NomeDisciplina
         Valor = valor.Trim();
     }
 
+    private NomeDisciplina() { } // Construtor privado para uso interno, se necessário
+
     // Conversão implícita para facilitar a vida: permite usar o VO como string
     public static implicit operator string(NomeDisciplina nome) => nome.Valor;
     public static implicit operator NomeDisciplina(string valor) => new NomeDisciplina(valor);

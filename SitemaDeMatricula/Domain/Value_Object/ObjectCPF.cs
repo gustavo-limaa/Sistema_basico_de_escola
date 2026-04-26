@@ -9,8 +9,24 @@
         [GeneratedRegex(@"[^\d]")]
         private static partial Regex ApenasNumerosRegex();
 
-        public ObjectCPF(string valor) => Valor = valor;
+        public ObjectCPF(string valor)
+        {
+            var (cpf, error) = Criar(valor);
 
+            if (cpf is null)
+                throw new ArgumentException(error);
+
+            // Se chegou aqui, o Criar já validou tudo. É só guardar o valor!
+            Valor = cpf.Valor;
+        }
+
+        // 2. CONSTRUTOR PRIVADO (Para o Factory Method usar)
+        private ObjectCPF(string valor, bool validado)
+        {
+            Valor = valor;
+        }
+
+        // 3. FACTORY METHOD (A Bomba foi desarmada!)
         public static (ObjectCPF? Cpf, string Error) Criar(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
@@ -24,7 +40,8 @@
             if (!ValidarDigitos(cpfLimpo))
                 return (null, "CPF matematicamente inválido.");
 
-            return (new ObjectCPF(cpfLimpo), string.Empty);
+            // Retorna direto usando o construtor privado, passando 'true'
+            return (new ObjectCPF(cpfLimpo, true), string.Empty);
         }
 
         private static bool TodosNumerosIguais(string cpf) =>

@@ -1,5 +1,6 @@
 ﻿// SistemaDeMatricula.Testes\Teste_Unitarios\DataFactory.cs
 using Bogus;
+using Bogus.Extensions.Brazil;
 using SitemaDeMatricula.Domain.Modelos;
 using SitemaDeMatricula.Domain.Uteis;
 using SitemaDeMatricula.Domain.Value_Object;
@@ -12,38 +13,37 @@ namespace SistemaDeMatricula.Testes.Teste_Unitarios;
 
 public static class DataFactory
 {
-    public static Faker<Estudante> EstudanteFaker =>
-    new Faker<Estudante>("pt_BR")
+    public static Faker<Estudante> EstudanteFaker => new Faker<Estudante>("pt_BR")
         .CustomInstantiator(f =>
         {
             var dataDateTime = f.Date.Past(20, DateTime.Now.AddYears(-18));
-
             var dataNascimentoOnly = DateOnly.FromDateTime(dataDateTime);
             var id = Guid.NewGuid();
+
             return new Estudante(
                 id,
                 new ObjectNomeCompleto(f.Person.FullName),
                 new ObjectDataNascimento(dataNascimentoOnly),
-                new ObjectCPF(f.Random.Replace("###########")),
+                // O segredo está aqui: .Cpf(false) gera um CPF válido matematicamente
+                // sem pontos e traços, exatamente como o seu ObjectCPF espera.
+                new ObjectCPF(f.Person.Cpf(false)),
                 new ObjectEmail(f.Internet.Email()),
                 new ObjectTelefone(f.Phone.PhoneNumber("119########"))
             );
-        }
-
-        );
+        });
 
     public static Faker<Turma> TurmaFaker =>
-     new Faker<Turma>("pt_BR")
-         .CustomInstantiator(f =>
-         {
-             var disciplinaId = Guid.NewGuid();
+         new Faker<Turma>("pt_BR")
+             .CustomInstantiator(f =>
+             {
+                 var disciplinaId = Guid.NewGuid();
 
-             return new Turma(
-                 f.Random.AlphaNumeric(5).ToUpper(),
-                 Guid.NewGuid(),
-                 disciplinaId
-             );
-         });
+                 return new Turma(
+                     f.Random.AlphaNumeric(5).ToUpper(),
+                     Guid.NewGuid(),
+                     disciplinaId
+                 );
+             });
 
     public static Matricula GerarMatricula(Guid? estudanteId = null, Guid? turmaId = null)
     {
@@ -66,37 +66,37 @@ public static class DataFactory
     .CustomInstantiator(f =>
     {
         var dataNascimentoOnly = DateOnly.FromDateTime(f.Date.Past(40, DateTime.Now.AddYears(-25)));
-        var salariofaker = ValorMonetario.Criar(f.Random.Decimal(3000, 15000)).Resultado;
 
         return new Professor(
             new ObjectNomeCompleto(f.Person.FullName),
-            new ObjectCPF(f.Random.Replace("###########")),
+
+            // 1. O SEGREDO DO CPF: O 'false' gera sem os pontos e traços,
+            // passando perfeitamente pela sua validação matemática!
+            new ObjectCPF(f.Person.Cpf(false)),
+
             new ObjectEmail(f.Internet.Email()),
-            salariofaker!,
+
+            // 2. SALÁRIO LIMPO: Usando o construtor explosivo direto e arredondando
+            // para 2 casas para o Assert.Equal não chorar.
+            new ValorMonetario(Math.Round(f.Random.Decimal(3000, 15000), 2)),
+
             f.PickRandom<CategoriaProfessor>(),
             new ObjectDataNascimento(dataNascimentoOnly),
             new ObjectTelefone(f.Phone.PhoneNumber("119########"))
         );
     });
 
-    public static Faker<EstudanteDtoUpdate> EstudanteDtoUpdateFaker => new Faker<EstudanteDtoUpdate>()
+    public static Faker<EstudanteDtoUpdate> EstudanteDtoUpdateFaker => new Faker<EstudanteDtoUpdate>("pt_BR")
         .CustomInstantiator(f =>
         {
             var dataDateTime = f.Date.Past(20, DateTime.Now.AddYears(-18));
             var dataNascimentoOnly = DateOnly.FromDateTime(dataDateTime);
+
             return new EstudanteDtoUpdate(
-                f.Random.Replace("###########"),
-                f.Internet.Email(),
-                dataNascimentoOnly,
-                f.Phone.PhoneNumber("119########")
+                f.Person.FullName,                 // 1. NomeCompleto
+                f.Internet.Email(),                // 2. Email
+                dataNascimentoOnly,                // 3. DataNascimento
+                f.Phone.PhoneNumber("119########") // 4. Telefone
             );
         });
-
-    public static Faker<EstudanteDtoUpdate> EstudanteDtoUpdateFalhoFaker => new Faker<EstudanteDtoUpdate>()
-    .CustomInstantiator(f => new EstudanteDtoUpdate(
-        "",                    // CPF vazio
-        "email_invalido.com",  // Email sem @
-        DateOnly.FromDateTime(DateTime.Now.AddYears(5)), // Data de nascimento no futuro (inválido)
-        "123"                  // Telefone curto demais
-    ));
 };

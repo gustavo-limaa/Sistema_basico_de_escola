@@ -6,35 +6,32 @@ public partial record ObjectTelefone
 {
     public string Valor { get; init; }
 
-    // Regex que aceita apenas números e verifica se tem entre 10 e 11 dígitos
     [GeneratedRegex(@"^\d{10,11}$")]
     private static partial Regex TelefoneRegex();
 
-    // Regex para remover qualquer caractere que não seja número (limpeza)
     [GeneratedRegex(@"[^\d]")]
     private static partial Regex ApenasNumerosRegex();
 
-    public ObjectTelefone(string valor) => Valor = valor;
+    public ObjectTelefone(string valor)
+    {
+        var (telefone, error) = Criar(valor);
+        if (telefone is null) throw new ArgumentException(error);
+        Valor = telefone.Valor;
+    }
+
+    // Porta dos Fundos
+    private ObjectTelefone(string valor, bool validado) => Valor = valor;
 
     public static (ObjectTelefone? Telefone, string Error) Criar(string input)
     {
-        if (string.IsNullOrWhiteSpace(input))
-            return (null, "O telefone é obrigatório.");
-
-        // Limpa parênteses, pontos, traços e espaços
+        if (string.IsNullOrWhiteSpace(input)) return (null, "O telefone é obrigatório.");
         var numeros = ApenasNumerosRegex().Replace(input, "");
+        if (!TelefoneRegex().IsMatch(numeros)) return (null, "Telefone inválido. Deve conter DDD + número (10 ou 11 dígitos).");
 
-        if (!TelefoneRegex().IsMatch(numeros))
-            return (null, "Telefone inválido. Deve conter DDD + número (10 ou 11 dígitos).");
-
-        return (new ObjectTelefone(numeros), string.Empty);
+        return (new ObjectTelefone(numeros, true), string.Empty);
     }
 
-    // Método auxiliar para formatar na hora de exibir
-    public string Formatar()
-    {
-        return Valor.Length == 11
-            ? long.Parse(Valor).ToString(@"(00) 00000-0000")
-            : long.Parse(Valor).ToString(@"(00) 0000-0000");
-    }
+    public string Formatar() => Valor.Length == 11
+        ? long.Parse(Valor).ToString(@"(00) 00000-0000")
+        : long.Parse(Valor).ToString(@"(00) 0000-0000");
 }

@@ -27,7 +27,7 @@ public class CriarEstudanteUsecaseTests
         // Arrange
         var estudanteFake = DataFactory.EstudanteFaker.Generate();
         var dto = new EstudanteDtoCreate(
-            estudanteFake.NomeCompleto.ToString(),
+            estudanteFake.NomeCompleto.Valor,
             estudanteFake.Email.Valor,
             estudanteFake.DataNascimento.Valor,
             estudanteFake.Cpf.Valor,
@@ -59,7 +59,7 @@ public class CriarEstudanteUsecaseTests
         // Arrange
         var estudanteFake = DataFactory.EstudanteFaker.Generate();
         var dto = new EstudanteDtoCreate(
-            estudanteFake.NomeCompleto.ToString(),
+            estudanteFake.NomeCompleto.Valor,
             estudanteFake.Email.Valor,
             estudanteFake.DataNascimento.Valor,
             estudanteFake.Cpf.Valor,
@@ -84,7 +84,7 @@ public class CriarEstudanteUsecaseTests
     {
         var estudanteFake = DataFactory.EstudanteFaker.Generate();
         var dto = new EstudanteDtoCreate(
-            estudanteFake.NomeCompleto.ToString(),
+            estudanteFake.NomeCompleto.Valor,
             estudanteFake.Email.Valor,
             estudanteFake.DataNascimento.Valor,
             estudanteFake.Cpf.Valor,
@@ -113,7 +113,7 @@ public class CriarEstudanteUsecaseTests
     {
         var estudanteFake = DataFactory.EstudanteFaker.Generate();
         var dto = new EstudanteDtoCreate(
-            estudanteFake.NomeCompleto.ToString(),
+            estudanteFake.NomeCompleto.Valor,
             estudanteFake.Email.Valor,
             estudanteFake.DataNascimento.Valor,
             estudanteFake.Cpf.Valor,

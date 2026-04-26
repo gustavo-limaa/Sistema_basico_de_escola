@@ -1,38 +1,32 @@
-﻿namespace SitemaDeMatricula.Domain.Value_Objetc
+﻿using System.Text.RegularExpressions;
+
+namespace SitemaDeMatricula.Domain.Value_Objetc;
+
+public partial record ObjectNomeCompleto
 {
-    using System.Text.RegularExpressions;
+    public string Valor { get; init; }
 
-    public partial record ObjectNomeCompleto
+    [GeneratedRegex(@"^[a-zA-ZÀ-ÿ' ]+$")]
+    private static partial Regex NomeRegex();
+
+    public ObjectNomeCompleto(string valor)
     {
-        public string Valor { get; init; }
+        var (nome, error) = Criar(valor);
+        if (nome is null) throw new ArgumentException(error);
+        Valor = nome.Valor;
+    }
 
-        // Regex para permitir letras, acentos e apóstrofos (D'Ávila)
-        [GeneratedRegex(@"^[a-zA-ZÀ-ÿ' ]+$")]
-        private static partial Regex NomeRegex();
+    // Porta dos Fundos
+    private ObjectNomeCompleto(string valor, bool validado) => Valor = valor;
 
-        public ObjectNomeCompleto(string valor) => Valor = valor;
+    public static (ObjectNomeCompleto? Nome, string Error) Criar(string input)
+    {
+        if (string.IsNullOrWhiteSpace(input)) return (null, "Nome é obrigatório.");
+        var nomeTratado = Regex.Replace(input.Trim(), @"\s+", " ");
+        if (nomeTratado.Length < 3 || nomeTratado.Length > 80) return (null, "O nome deve ter entre 3 e 80 caracteres.");
+        if (!nomeTratado.Contains(' ')) return (null, "Digite o nome e o sobrenome.");
+        if (!NomeRegex().IsMatch(nomeTratado)) return (null, "O nome contém caracteres inválidos.");
 
-        public static (ObjectNomeCompleto? Nome, string Error) Criar(string input)
-        {
-            if (string.IsNullOrWhiteSpace(input))
-                return (null, "Nome é obrigatório.");
-
-            // 1. Limpa espaços extras (Ex: "  João   Silva  " vira "João Silva")
-            var nomeTratado = Regex.Replace(input.Trim(), @"\s+", " ");
-
-            // 2. Validação de Tamanho (Mín 3, Máx 80)
-            if (nomeTratado.Length < 3 || nomeTratado.Length > 80)
-                return (null, "O nome deve ter entre 3 e 80 caracteres.");
-
-            // 3. Validação de Sobrenome (Precisa de pelo menos um espaço)
-            if (!nomeTratado.Contains(' '))
-                return (null, "Digite o nome e o sobrenome.");
-
-            // 4. Validação de Caracteres Especiais
-            if (!NomeRegex().IsMatch(nomeTratado))
-                return (null, "O nome contém caracteres inválidos.");
-
-            return (new ObjectNomeCompleto(nomeTratado), string.Empty);
-        }
+        return (new ObjectNomeCompleto(nomeTratado, true), string.Empty);
     }
 }
