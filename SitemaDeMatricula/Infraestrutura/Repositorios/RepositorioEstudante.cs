@@ -61,4 +61,9 @@ public class RepositorioEstudante : IRepositorioEstudante
     {
         return await _context.Estudantes.AnyAsync(m => m.EstudanteId == estudanteId);
     }
+
+    public Task<bool> ExisteEmailAsync(string email, Guid id)
+    {
+        return _context.Estudantes.AnyAsync(e => e.Email.Valor == email && e.EstudanteId != id);
+    }
 }

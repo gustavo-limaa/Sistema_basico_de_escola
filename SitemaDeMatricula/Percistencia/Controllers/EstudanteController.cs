@@ -81,6 +81,14 @@ public class EstudanteController : ControllerBase
             return BadRequest("O ID do estudante deve ser informado.");
         if (estudanteDto == null)
             return BadRequest("Os dados do estudante devem ser informados.");
+        if (!await _repositorioEstudante.ExisteMatriculaAsync(id))
+        {
+            return NotFound("Estudante não encontrado para o ID fornecido.");
+        }
+        if (estudanteDto.Email != null && await _repositorioEstudante.ExisteEmailAsync(estudanteDto.Email, id))
+        {
+            return Conflict("Já existe um estudante cadastrado com este e-mail.");
+        }
 
         var result = await useCase.ExecuteAsync(id, estudanteDto);
 
