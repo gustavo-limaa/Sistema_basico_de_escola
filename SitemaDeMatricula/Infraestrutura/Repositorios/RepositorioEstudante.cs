@@ -59,6 +59,6 @@ public class RepositorioEstudante : IRepositorioEstudante
 
     public async Task<bool> ExisteMatriculaAsync(Guid estudanteId)
     {
-        return await _context.Matriculas.AnyAsync(m => m.EstudanteId == estudanteId);
+        return await _context.Estudantes.AnyAsync(m => m.EstudanteId == estudanteId);
     }
 }

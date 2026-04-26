@@ -96,7 +96,11 @@ public class EstudanteController : ControllerBase
     public async Task<IActionResult> Deletar([FromServices] UsesCasesDeletarEstudante useCase, Guid id)
     {
         if (id == Guid.Empty)
-            return BadRequest("O ID do estudante deve ser informado.");
+            return NotFound("O ID do estudante deve ser informado.");
+        if (!await _repositorioEstudante.ExisteMatriculaAsync(id))
+        {
+            return NotFound("Estudante não encontrado para o ID fornecido.");
+        }
 
         var result = await useCase.ExecuteAsync(id);
 
