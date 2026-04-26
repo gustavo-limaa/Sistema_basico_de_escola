@@ -4,7 +4,7 @@
 
     public partial record ObjectCPF
     {
-        public string Valor { get; init; }
+        public string Valor { get; private init; }
 
         [GeneratedRegex(@"[^\d]")]
         private static partial Regex ApenasNumerosRegex();
@@ -26,6 +26,9 @@
             Valor = valor;
         }
 
+        private ObjectCPF()
+        {
+        }
         // 3. FACTORY METHOD (A Bomba foi desarmada!)
         public static (ObjectCPF? Cpf, string Error) Criar(string input)
         {

@@ -4,6 +4,8 @@ namespace SitemaDeMatricula.Domain.Interfaces;
 
 public interface IRepositorioEstudante
 {
+    Task<bool> ExisteEmailAsync(string email, Guid id);
+
     Task<bool> ExisteMatriculaAsync(Guid estudanteId);
 
     Task<bool> ExisteCpfAsync(string cpf);

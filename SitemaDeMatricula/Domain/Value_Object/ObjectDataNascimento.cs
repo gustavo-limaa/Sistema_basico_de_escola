@@ -1,8 +1,11 @@
-﻿namespace SitemaDeMatricula.Domain.Value_Object;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
+namespace SitemaDeMatricula.Domain.Value_Object;
+
+[ComplexType]
 public sealed class ObjectDataNascimento
 {
-    public DateOnly Valor { get; }
+    public DateOnly Valor { get; private init; }
 
     public ObjectDataNascimento(DateOnly valor)
     {
@@ -13,6 +16,9 @@ public sealed class ObjectDataNascimento
 
     // Porta dos Fundos
     private ObjectDataNascimento(DateOnly valor, bool validado) => Valor = valor;
+
+    private ObjectDataNascimento()
+    { } // Construtor privado para uso interno, se necessário
 
     public static (ObjectDataNascimento? Data, string Error) Criar(DateOnly dataInput)
     {

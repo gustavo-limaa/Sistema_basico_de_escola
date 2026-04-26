@@ -4,7 +4,7 @@ namespace SitemaDeMatricula.Domain.Value_Objetc;
 
 public partial record ObjectNomeCompleto
 {
-    public string Valor { get; init; }
+    public string Valor { get; private init; }
 
     [GeneratedRegex(@"^[a-zA-ZÀ-ÿ' ]+$")]
     private static partial Regex NomeRegex();
@@ -16,6 +16,9 @@ public partial record ObjectNomeCompleto
         Valor = nome.Valor;
     }
 
+    private ObjectNomeCompleto()
+    {
+    }
     // Porta dos Fundos
     private ObjectNomeCompleto(string valor, bool validado) => Valor = valor;
 

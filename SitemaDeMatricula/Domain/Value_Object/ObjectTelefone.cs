@@ -4,7 +4,7 @@ namespace SitemaDeMatricula.Domain.Value_Objetc;
 
 public partial record ObjectTelefone
 {
-    public string Valor { get; init; }
+    public string Valor { get; private init; }
 
     [GeneratedRegex(@"^\d{10,11}$")]
     private static partial Regex TelefoneRegex();
@@ -17,6 +17,9 @@ public partial record ObjectTelefone
         var (telefone, error) = Criar(valor);
         if (telefone is null) throw new ArgumentException(error);
         Valor = telefone.Valor;
+    }
+    private ObjectTelefone()
+    {
     }
 
     // Porta dos Fundos
