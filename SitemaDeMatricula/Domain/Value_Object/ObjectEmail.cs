@@ -4,7 +4,7 @@ namespace SitemaDeMatricula.Domain.Value_Objetc;
 
 public partial record ObjectEmail
 {
-    public string Valor { get; init; }
+    public string Valor { get; private init; }
 
     [GeneratedRegex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.IgnoreCase)]
     private static partial Regex EmailRegex();
@@ -15,6 +15,9 @@ public partial record ObjectEmail
         var (email, error) = Criar(valor);
         if (email == null) throw new ArgumentException(error);
         Valor = email.Valor;
+    }
+    private ObjectEmail()
+    {
     }
 
     // 2. Porta dos Fundos

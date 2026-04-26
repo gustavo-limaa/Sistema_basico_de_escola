@@ -2,7 +2,7 @@
 
 public record NomeDisciplina
 {
-    public string Valor { get; }
+    public string Valor { get; private init; }
 
     public NomeDisciplina(string valor)
     {
