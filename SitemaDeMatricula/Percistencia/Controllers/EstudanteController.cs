@@ -47,6 +47,10 @@ public class EstudanteController : ControllerBase
     {
         if (estudanteDto == null)
             return BadRequest("Os dados do estudante devem ser informados.");
+        if (await _repositorioEstudante.ExisteCpfAsync(estudanteDto.Cpf))
+        {
+            return Conflict("Já existe um estudante cadastrado com este CPF.");
+        }
 
         var result = await useCase.ExecuteAsync(estudanteDto);
 

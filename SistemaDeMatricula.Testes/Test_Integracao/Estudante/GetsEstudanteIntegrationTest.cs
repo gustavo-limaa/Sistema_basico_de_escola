@@ -149,4 +149,15 @@ public class GetsEstudanteIntegrationTest : IAsyncLifetime // <--- O segredo da 
         var estudantesRetornados = await getResponse.Content.ReadFromJsonAsync<List<EstudanteDtoResponse>>();
         estudantesRetornados.Should().BeEmpty();
     }
+
+    [Fact]
+    public async Task Deve_Retornar_BadRequest_Quando_Fizer_Get_Com_Id_Vazio()
+    {
+        // 1. ARRANGE: Define um ID vazio
+        var idVazio = Guid.Empty;
+        // 2. ACT: Tenta buscar usando o ID vazio
+        var getResponse = await _client.GetAsync($"/api/Estudante/{idVazio}");
+        // 3. ASSERT: Esperamos um BadRequest (400) por causa do ID vazio
+        getResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+    }
 }
