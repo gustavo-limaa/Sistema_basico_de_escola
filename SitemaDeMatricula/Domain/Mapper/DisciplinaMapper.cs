@@ -1,5 +1,6 @@
 ﻿using SitemaDeMatricula.Aplicacao.Dtos.Disciplina;
 using SitemaDeMatricula.Domain.Modelos;
+using SitemaDeMatricula.Domain.Value_Object;
 
 namespace SitemaDeMatricula.Domain.Mapper;
 
@@ -7,14 +8,14 @@ public static class DisciplinaMapper
 {
     // 1. Criar: Passamos apenas o que o construtor pede
     public static Disciplina ToDisciplina(this DisciplinaDtoCreate dto)
-        => new Disciplina(dto.Nome, dto.CargaHoraria);
+        => new Disciplina(dto.Nome, new CargaHoraria(dto.CargaHoraria));
 
     // 2. Responder: O record aceita os campos diretos
     public static DisciplinaDtoResponse ToResponse(this Disciplina disciplina)
         => new DisciplinaDtoResponse(
             disciplina.DisciplinaId,
             disciplina.Nome.Valor,
-            disciplina.CargaHoraria,
+            disciplina.CargaHoraria.Valor,
             disciplina.Ativo
 
         );

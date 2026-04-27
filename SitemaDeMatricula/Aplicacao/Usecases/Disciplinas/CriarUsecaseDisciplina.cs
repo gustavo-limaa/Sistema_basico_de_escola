@@ -1,34 +1,38 @@
 ﻿using SitemaDeMatricula.Aplicacao.Dtos.Disciplina;
 using SitemaDeMatricula.Domain;
 using SitemaDeMatricula.Domain.Interfaces;
+using SitemaDeMatricula.Domain.Mapper;
 
-namespace SitemaDeMatricula.Aplicacao.Usecases.Disciplinas
+namespace SitemaDeMatricula.Aplicacao.Usecases.Disciplinas;
+
+public class CriarUsecaseDisciplina
 {
-    public class CriarUsecaseDisciplina
+    private readonly IDisciplinaRepositorio _disciplinaRepositorio;
+
+    public CriarUsecaseDisciplina(IDisciplinaRepositorio disciplinaRepositorio)
     {
-        private readonly IDisciplinaRepositorio _disciplinaRepositorio;
+        _disciplinaRepositorio = disciplinaRepositorio;
+    }
 
-        public CriarUsecaseDisciplina(IDisciplinaRepositorio disciplinaRepositorio)
-        {
-            _disciplinaRepositorio = disciplinaRepositorio;
-        }
+    // 1. Mude o retorno para Result<DisciplinaDtoResponse>
+    public async Task<Result<DisciplinaDtoResponse>> Executar(DisciplinaDtoCreate dto)
+    {
+        if (dto == null)
+            return Result<DisciplinaDtoResponse>.Falha("Dados da disciplina são obrigatórios.");
 
-        public async Task<Result<bool>> Executar(DisciplinaDtoCreate dto)
-        {
-            if (dto == null)
-                return Result<bool>.Falha("Dados da disciplina são obrigatórios.");
-            // Verificar se já existe uma disciplina com o mesmo nome
+        // Verificar se já existe uma disciplina com o mesmo nome
+        if (await _disciplinaRepositorio.ExisteDisciplinaComMesmoNomeAsync(dto.Nome))
+            return Result<DisciplinaDtoResponse>.Falha("Já existe uma disciplina com esse nome.");
 
-            if (await _disciplinaRepositorio.ExisteDisciplinaComMesmoNomeAsync(dto.Nome))
-                return Result<bool>.Falha("Já existe uma disciplina com esse nome.");
+        var novaDisciplina = new Domain.Modelos.Disciplina(dto.Nome, dto.CargaHoraria);
 
-            var novaDisciplina = new Domain.Modelos.Disciplina(dto.Nome, dto.CargaHoraria);
+        await _disciplinaRepositorio.AdicionarAsync(novaDisciplina);
+        await _disciplinaRepositorio.SalvarAlteracoesAsync();
 
-            await _disciplinaRepositorio.AdicionarAsync(novaDisciplina);
+        // 2. Aqui está o segredo: Retornamos o DTO mapeado!
+        // Usando aquele ToResponse() que você criou no Mapper
+        var response = novaDisciplina.ToResponse();
 
-            var resultado = await _disciplinaRepositorio.SalvarAlteracoesAsync();
-
-            return Result<bool>.Ok(resultado);
-        }
+        return Result<DisciplinaDtoResponse>.Ok(response);
     }
 }

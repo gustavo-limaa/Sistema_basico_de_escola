@@ -1,8 +1,15 @@
-﻿namespace SitemaDeMatricula.Domain;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
+namespace SitemaDeMatricula.Domain;
+
+[DebuggerDisplay("{Sucesso ? \"✅ OK\" : \"❌ Falha\"}: {Mensagem}")]
 public class Result<T>
 {
+    [MemberNotNullWhen(true, nameof(Dados))]
+    [MemberNotNullWhen(false, nameof(Mensagem))]
     public bool Sucesso { get; private set; }
+
     public T? Dados { get; private set; }
     public string Mensagem { get; private set; }
 

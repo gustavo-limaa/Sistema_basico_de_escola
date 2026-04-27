@@ -12,9 +12,13 @@ public class DisciplinaController : ControllerBase
     public async Task<IActionResult> Criar([FromBody] DisciplinaDtoCreate dto, [FromServices] CriarUsecaseDisciplina useCase)
     {
         var resultado = await useCase.Executar(dto);
-        if (!resultado.Sucesso) return BadRequest(resultado.Mensagem);
 
-        return CreatedAtAction(nameof(ObterPorId), new { id = resultado.Dados }, resultado);
+        if (!resultado.Sucesso)
+            return BadRequest(resultado.Mensagem);
+
+        // ✅ Retornamos apenas o DTO (resultado.Dados)
+        // para o JSON ficar no formato que o teste espera
+        return CreatedAtAction(nameof(ObterPorId), new { id = resultado!.Dados!.DisciplinaId }, resultado!.Dados);
     }
 
     [HttpGet("{id}")]
