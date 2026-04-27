@@ -25,21 +25,30 @@ public class DisciplinaController : ControllerBase
     public async Task<IActionResult> ObterPorId(Guid id, [FromServices] ObterPorIdUsecaseDisciplina useCase)
     {
         var resultado = await useCase.Executar(id);
-        return resultado.Sucesso ? Ok(resultado) : NotFound(resultado.Mensagem);
+        return resultado.Sucesso ? Ok(resultado.Dados) : NotFound(resultado.Mensagem);
     }
 
     [HttpGet]
     public async Task<IActionResult> ObterTodas([FromServices] ObterTodasDisciplinaUseCase useCase)
     {
         var resultado = await useCase.Executar();
-        return Ok(resultado);
+
+        // 1. Se o UseCase falhou (erro de banco, etc), mandamos 400.
+        if (!resultado.Sucesso)
+            return BadRequest(resultado.Mensagem);
+
+        // 2. Se deu sucesso, a Controller checa o conteúdo:
+        // Tem itens? 200 OK. Tá vazia? 204 No Content.
+        return resultado.Dados.Any()
+            ? Ok(resultado.Dados)
+            : NoContent();
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Atualizar(Guid id, [FromBody] DisciplinaDtoUpdate dto, [FromServices] AtualizarUseCaseDisciplina useCase)
     {
         var resultado = await useCase.Executar(id, dto);
-        return resultado.Sucesso ? Ok(resultado) : BadRequest(resultado.Mensagem);
+        return resultado.Sucesso ? Ok(resultado.Dados) : BadRequest(resultado.Mensagem);
     }
 
     [HttpDelete("{id}")]

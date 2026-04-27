@@ -12,7 +12,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SistemaDeMatricula.Testes.Test_Integracao.Disciplina;
+namespace SistemaDeMatricula.Testes.Test_Integracao.Disciplinas;
 
 [Collection("ApiMatrix")]
 public class CriarDiciplinaIntegracaoTest : IAsyncLifetime
