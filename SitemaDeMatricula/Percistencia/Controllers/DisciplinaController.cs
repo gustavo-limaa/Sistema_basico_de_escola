@@ -62,6 +62,34 @@ public class DisciplinaController : ControllerBase
     public async Task<IActionResult> Deletar(Guid id, [FromServices] RemoverUseCaseDisciplina useCase)
     {
         var resultado = await useCase.Executar(id);
-        return resultado.Sucesso ? NoContent() : BadRequest(resultado.Mensagem);
+
+        if (resultado.Sucesso) return NoContent();
+
+        // Se a mensagem for de "não encontrada", mandamos 404. Se for outra coisa, 400.
+        return resultado.Mensagem.Contains("não encontrada")
+            ? NotFound(resultado.Mensagem)
+            : BadRequest(resultado.Mensagem);
+    }
+
+    [HttpPatch("{id}/restaurar")]
+    public async Task<IActionResult> Restaurar(Guid id, [FromServices] RestaurarUseCaseDisciplina useCase)
+    {
+        var resultado = await useCase.Executar(id);
+
+        // Se deu certo, retorna 200 OK com os dados. Se não, 404.
+        // 1. Caso de Sucesso
+        if (resultado.Sucesso)
+            return Ok(resultado.Dados);
+
+        // 2. Caso de Conflito (Já está ativa)
+        if (resultado.Mensagem.Contains("Esta disciplina já está ativa e não precisa ser restaurada."))
+            return Conflict(resultado.Mensagem);
+
+        // 3. Caso de Não Encontrado (ID inexistente ou não desativado)
+        if (resultado.Mensagem.Contains("Disciplina desativada não encontrada."))
+            return NotFound(resultado.Mensagem);
+
+        // 4. Caso genérico de erro (Fallback)
+        return BadRequest(resultado.Mensagem);
     }
 }

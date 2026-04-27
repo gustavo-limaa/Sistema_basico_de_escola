@@ -1,4 +1,5 @@
-﻿using SitemaDeMatricula.Domain;
+﻿using SitemaDeMatricula.Aplicacao.Dtos.Disciplina;
+using SitemaDeMatricula.Domain;
 using SitemaDeMatricula.Domain.Interfaces;
 
 namespace SitemaDeMatricula.Aplicacao.Usecases.Disciplinas
@@ -12,13 +13,13 @@ namespace SitemaDeMatricula.Aplicacao.Usecases.Disciplinas
             _disciplinaRepositorio = disciplinaRepositorio;
         }
 
-        public async Task<Result<bool>> Executar(Guid id)
+        public async Task<Result<DisciplinaDtoResponse>> Executar(Guid id)
         {
             // 1. Busca a disciplina
             var disciplina = await _disciplinaRepositorio.ObterPorIdAsync(id);
 
             if (disciplina == null)
-                return Result<bool>.Falha("Disciplina não encontrada.");
+                return Result<DisciplinaDtoResponse>.Falha("Disciplina não encontrada.");
 
             // 2. Em vez de _repo.Remover, usamos a regra de negócio da Entidade!
             disciplina.Desativar();
@@ -28,7 +29,7 @@ namespace SitemaDeMatricula.Aplicacao.Usecases.Disciplinas
 
             var resultado = await _disciplinaRepositorio.SalvarAlteracoesAsync();
 
-            return Result<bool>.SemConteudo("Disciplina desativada com sucesso!");
+            return Result<DisciplinaDtoResponse>.SemConteudo("Disciplina desativada com sucesso!");
         }
     }
 }
