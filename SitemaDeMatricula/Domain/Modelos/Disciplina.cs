@@ -17,8 +17,8 @@ public class Disciplina
     public NomeDisciplina Nome { get; private set; }
 
     [Required(ErrorMessage = "A carga horária é obrigatória.")]
-    [Range(1, int.MaxValue, ErrorMessage = "A carga horária deve ser um valor positivo.")]
-    public int CargaHoraria { get; private set; }
+    [Range(1, 200, ErrorMessage = "A carga horária deve ser um valor positivo.")]
+    public CargaHoraria CargaHoraria { get; private set; }
 
     [Required(ErrorMessage = "O status da disciplina é obrigatório.")]
     public bool Ativo { get; private set; } = true;

@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SitemaDeMatricula.InfraEstrutura.Data;
 using System.Collections.Generic;
 
-namespace SistemaDeMatricula.Testes.Testes_Integracao.Setup;
+namespace SistemaDeMatricula.Testes.Test_Integracao.Setup;
 
 public class SistemaMatriculaFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {

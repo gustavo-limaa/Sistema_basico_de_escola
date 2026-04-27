@@ -1,4 +1,4 @@
-﻿// SistemaDeMatricula.Testes\Teste_Unitarios\DataFactory.cs
+﻿//SistemaDeMatricula.Testes\Teste_Unitarios\DataFactory.cs
 using Bogus;
 using Bogus.Extensions.Brazil;
 using SitemaDeMatricula.Domain.Modelos;
@@ -56,9 +56,12 @@ public static class DataFactory
     public static Faker<Disciplina> DisciplinaFaker => new Faker<Disciplina>()
         .CustomInstantiator(f =>
         {
+            var materias = new[] { "Matemática", "Cálculo", "Algoritmos", "Banco de Dados", "História" };
+            var nomeSorteado = f.PickRandom(materias) + " " + f.Random.Replace("##");
+
             return new Disciplina(
-                f.Person.FullName,
-                f.Random.Int(1, 30)
+                nomeSorteado,
+                f.Random.Int(1, 200) // Disciplinas geralmente têm mais horas que 1-30
             );
         });
 

@@ -1,5 +1,4 @@
 ﻿using Moq;
-using SistemaDeMatricula.Testes.Teste_Unitarios;
 using SitemaDeMatricula.Aplicacao.Dtos.estudante;
 using SitemaDeMatricula.Aplicacao.Usecases.Estudante;
 using SitemaDeMatricula.Domain.Interfaces;

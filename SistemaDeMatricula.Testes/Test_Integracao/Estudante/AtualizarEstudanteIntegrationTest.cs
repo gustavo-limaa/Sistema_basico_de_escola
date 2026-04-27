@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using SistemaDeMatricula.Testes.Test_Integracao.Setup;
 using SistemaDeMatricula.Testes.Teste_Unitarios;
-using SistemaDeMatricula.Testes.Testes_Integracao.Setup;
 using SitemaDeMatricula.Aplicacao.Dtos.estudante;
 using SitemaDeMatricula.InfraEstrutura.Data;
 using System;

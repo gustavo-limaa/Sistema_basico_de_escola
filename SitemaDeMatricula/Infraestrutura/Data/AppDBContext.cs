@@ -76,6 +76,8 @@ public class AppDbContext : DbContext
         {
             d.HasKey(x => x.DisciplinaId);
 
+            d.HasQueryFilter(x => x.Ativo);
+
             // Configurando o Value Object para o Banco de Dados
             d.Property(x => x.Nome)
              .HasConversion(
@@ -84,6 +86,13 @@ public class AppDbContext : DbContext
              )
              .HasMaxLength(100)              // Define como VARCHAR(100) no banco
              .IsRequired();
+
+            d.Property(x => x.CargaHoraria)
+                .HasConversion(
+                v => v.Valor,           // Salva como int no banco
+                v => new CargaHoraria(v) // Volta como VO para o C#
+                )
+                .IsRequired();
 
             d.HasMany(t => t.Turmas)
              .WithOne(t => t.Disciplina)

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SistemaDeMatricula.Testes.Testes_Integracao.Setup;
+namespace SistemaDeMatricula.Testes.Test_Integracao.Setup;
 
 // 1. Damos um nome para a nossa Collection
 [CollectionDefinition("ApiMatrix")]
