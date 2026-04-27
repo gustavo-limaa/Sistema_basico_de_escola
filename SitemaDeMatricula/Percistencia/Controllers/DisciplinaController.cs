@@ -48,7 +48,14 @@ public class DisciplinaController : ControllerBase
     public async Task<IActionResult> Atualizar(Guid id, [FromBody] DisciplinaDtoUpdate dto, [FromServices] AtualizarUseCaseDisciplina useCase)
     {
         var resultado = await useCase.Executar(id, dto);
-        return resultado.Sucesso ? Ok(resultado.Dados) : BadRequest(resultado.Mensagem);
+
+        if (!resultado.Sucesso)
+        {
+            return resultado.Mensagem.Contains("não encontrada")
+                ? NotFound(resultado.Mensagem)
+                : BadRequest(resultado.Mensagem);
+        }
+        return Ok(resultado.Dados);
     }
 
     [HttpDelete("{id}")]

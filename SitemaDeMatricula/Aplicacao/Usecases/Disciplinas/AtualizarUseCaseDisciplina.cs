@@ -14,39 +14,31 @@ namespace SitemaDeMatricula.Aplicacao.Usecases.Disciplinas
             _disciplinaRepositorio = disciplinaRepositorio;
         }
 
-        public async Task<Result<bool>> Executar(Guid id, DisciplinaDtoUpdate dto)
+        // 1. Mude o retorno para Result<DisciplinaDtoResponse>
+        public async Task<Result<DisciplinaDtoResponse>> Executar(Guid id, DisciplinaDtoUpdate dto)
         {
-            // 1. O Repositório vai lá no banco perguntar: "Tem alguém com esse nome?"
-            var nomeJaExiste = await _disciplinaRepositorio.ExisteDisciplinaComMesmoNomeAsync(dto.Nome);
-
-            // 2. Se o repositório responder que SIM (true), a gente para tudo aqui
-            if (nomeJaExiste)
-            {
-                // O seu Result.Falha é o que vai levar a mensagem até o Swagger/Controller
-                return Result<bool>.Falha($"Já existe uma disciplina cadastrada com o nome '{dto.Nome}'.");
-            }
-
             var disciplina = await _disciplinaRepositorio.ObterPorIdAsync(id);
             if (disciplina == null)
-                return Result<bool>.Falha("Disciplina não encontrada.");
+                return Result<DisciplinaDtoResponse>.Falha("Disciplina não encontrada.");
 
-            // 1. Validação de Nome Inteligente
-            // Só verificamos o banco se o nome que veio no DTO for DIFERENTE do nome atual
+            // 2. Validação de Nome (Removi a checagem duplicada que estava no topo)
             if (dto.Nome.Trim().ToLower() != disciplina.Nome.Valor.ToLower())
             {
                 if (await _disciplinaRepositorio.ExisteDisciplinaComMesmoNomeAsync(dto.Nome))
-                    return Result<bool>.Falha("Já existe outra disciplina com esse nome.");
+                    return Result<DisciplinaDtoResponse>.Falha("Já existe outra disciplina com esse nome.");
             }
 
-            // 2. Usar o Mapper (Lembra que ele já cuida do Ativar/Desativar?)
-            // Em vez de fazer na mão, chame a extensão que criamos:
+            // 3. Atualiza os dados
             disciplina.ToAtualizarDisciplina(dto);
-
-            // 3. Persistência
             _disciplinaRepositorio.Atualizar(disciplina);
-            var resultado = await _disciplinaRepositorio.SalvarAlteracoesAsync();
 
-            return Result<bool>.SemConteudo("Disciplina atualizada com sucesso!");
+            var salvou = await _disciplinaRepositorio.SalvarAlteracoesAsync();
+
+            if (!salvou)
+                return Result<DisciplinaDtoResponse>.Falha("Erro ao persistir os dados.");
+
+            // 4. RETORNO CORRETO: Mapeia a entidade atualizada para o DTO de resposta
+            return Result<DisciplinaDtoResponse>.Ok(disciplina.ToResponse());
         }
     }
 }
