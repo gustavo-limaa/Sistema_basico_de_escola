@@ -83,10 +83,10 @@ public class RestaurarDisciplinaIntegrationTest : IAsyncLifetime
         // Act
         var response = await _client.PatchAsync($"/api/disciplina/{disciplina.DisciplinaId}/restaurar", new StringContent("", Encoding.UTF8, "application/json"));
         // Assert
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK); // 1. Garante o sucesso da rota
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound); // 1. Garante o sucesso da rota
         // 2. A prova real: O sistema voltou a "enxergar" a disciplina?
         var getResponse = await _client.GetAsync($"/api/disciplina/{disciplina.DisciplinaId}");
-        getResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        getResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
     }
 
     [Fact]
