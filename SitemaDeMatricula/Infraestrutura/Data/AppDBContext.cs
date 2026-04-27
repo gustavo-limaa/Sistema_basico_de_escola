@@ -76,6 +76,8 @@ public class AppDbContext : DbContext
         {
             d.HasKey(x => x.DisciplinaId);
 
+            d.HasQueryFilter(x => x.Ativo);
+
             // Configurando o Value Object para o Banco de Dados
             d.Property(x => x.Nome)
              .HasConversion(
