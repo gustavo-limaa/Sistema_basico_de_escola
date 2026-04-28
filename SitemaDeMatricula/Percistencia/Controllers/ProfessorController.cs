@@ -4,6 +4,7 @@ using SitemaDeMatricula.Aplicacao.Dtos.Professor;
 using SitemaDeMatricula.Aplicacao.Usecases.Professor;
 using SitemaDeMatricula.Domain;
 using SitemaDeMatricula.Domain.Interfaces;
+using static SitemaDeMatricula.Aplicacao.Usecases.Professor.ProfessorResturarUseCase;
 
 namespace SitemaDeMatricula.Percistencia.Controllers;
 
@@ -11,112 +12,58 @@ namespace SitemaDeMatricula.Percistencia.Controllers;
 [Route("api/[controller]")]
 public class ProfessorController : ControllerBase
 {
+    // O "Coração" da limpeza: Centraliza a tradução do Result Pattern para HTTP
+    private IActionResult TratarResultado<T>(Result<T> result)
+    {
+        // 1. Sucesso? 200 OK e tchau.
+        if (result.Sucesso) return Ok(result.Dados);
+
+        // 2. Erros específicos (Filtros)
+
+        // Se não encontrou -> 404
+        if (result.Mensagem.Contains("não encontrado", StringComparison.OrdinalIgnoreCase))
+            return NotFound(new { mensagem = result.Mensagem });
+
+        // Se já existe (Conflito) -> 409
+        if (result.Mensagem.Contains("já existe", StringComparison.OrdinalIgnoreCase))
+            return Conflict(new { mensagem = result.Mensagem });
+
+        // 3. Caso não seja nada específico, cai no erro genérico de cliente -> 400
+        return BadRequest(new { mensagem = result.Mensagem });
+    }
+
+    // Busca por ID - Curto e grosso
     [HttpGet("{id}")]
     public async Task<IActionResult> ObterPorId([FromServices] ProfessorObterPorIdUsecases useCase, Guid id)
-    {
-        // 1. O Controller faz uma validação básica de entrada (opcional, mas bom)
-        if (id == Guid.Empty)
-            return BadRequest("O ID do professor deve ser informado.");
+        => TratarResultado(await useCase.ExecutarAsync(id));
 
-        // 2. Chama o Use Case
-        var result = await useCase.ExecutarAsync(id);
-
-        // 3. Tradução do Result Pattern para HTTP
-        if (!result.Sucesso)
-        {
-            // Se a mensagem diz que não encontrou, mandamos 404
-            if (result.Mensagem.Contains("não encontrado", StringComparison.OrdinalIgnoreCase))
-                return NotFound(result);
-
-            // Caso contrário, erro de requisição 400
-            return BadRequest(result);
-        }
-
-        // 4. Se deu certo, 200 OK com os dados
-        return Ok(result);
-    }
+    [HttpGet("cpf/{cpf:length(11)}")] // A rota só ativa se o CPF tiver 11 caracteres
+    public async Task<IActionResult> ObterPorCpf([FromServices] ProfessorObterPorCpfUsecases useCase, string cpf)
+        => TratarResultado(await useCase.ExecutarAsync(cpf));
 
     [HttpGet]
     public async Task<IActionResult> ObterTodos([FromServices] ProfessorObterTodosUsecases useCase)
-    {
-        var result = await useCase.ExecutarAsync();
-
-        if (!result.Sucesso)
-        {
-            return BadRequest(result);
-        }
-        return Ok(result);
-    }
-
-    [HttpGet("cpf/{cpf}")]
-    public async Task<IActionResult> ObterPorCpf([FromServices] ProfessorObterPorCpfUsecases useCase, string cpf)
-    {
-        if (string.IsNullOrWhiteSpace(cpf))
-            return BadRequest("O CPF do professor deve ser informado.");
-
-        var result = await useCase.ExecutarAsync(cpf);
-
-        if (!result.Sucesso)
-        {
-            if (result.Mensagem.Contains("não encontrado", StringComparison.OrdinalIgnoreCase))
-                return NotFound(result);
-
-            return BadRequest(result);
-        }
-
-        return Ok(result);
-    }
+        => TratarResultado(await useCase.ExecutarAsync());
 
     [HttpPost]
-    public async Task<IActionResult> Criar([FromServices] ProfessorCriarUsecases useCase, [FromBody] ProfessorDtoCreate professorDto)
+    public async Task<IActionResult> Criar([FromServices] ProfessorCriarUsecases useCase, ProfessorDtoCreate professorDto)
     {
-        if (professorDto == null)
-            return BadRequest("Os dados do professor devem ser informados.");
-
-        if (string.IsNullOrWhiteSpace(professorDto.NomeCompleto))
-            return BadRequest("O nome completo do professor é obrigatório.");
-
         var result = await useCase.ExecutarAsync(professorDto);
 
         if (!result.Sucesso)
-        {
-            return BadRequest(result);
-        }
-        return CreatedAtAction(nameof(ObterPorId), new { id = result.Dados.ProfessorId }, result);
+            return TratarResultado(result);
+        return CreatedAtAction(nameof(ObterPorId), new { id = result.Dados.ProfessorId }, result.Dados);
     }
 
     [HttpPut]
-    public async Task<IActionResult> Atualizar([FromServices] ProfessorAtualizarUsecase useCase, [FromBody] ProfessorDtoUpdate professorDto)
-    {
-        if (professorDto == null)
-            return BadRequest("Os dados do professor devem ser informados.");
-
-        if (professorDto.ProfessorId == Guid.Empty)
-            return BadRequest("O ID do professor deve ser informado para atualização.");
-
-        var result = await useCase.ExecutarAsync(professorDto);
-        if (!result.Sucesso)
-        {
-            if (result.Mensagem.Contains("não encontrado", StringComparison.OrdinalIgnoreCase))
-                return NotFound(result);
-            return BadRequest(result);
-        }
-        return Ok(result);
-    }
+    public async Task<IActionResult> Atualizar([FromServices] ProfessorAtualizarUsecase useCase, ProfessorDtoUpdate professorDto)
+        => TratarResultado(await useCase.ExecutarAsync(professorDto));
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Deletar([FromServices] ProfessorRemoverUsecase useCase, Guid id)
-    {
-        if (id == Guid.Empty)
-            return BadRequest("O ID do professor deve ser informado para exclusão.");
+        => TratarResultado(await useCase.ExecutarAsync(id));
 
-        var result = await useCase.ExecutarAsync(id);
-        if (!result.Sucesso)
-        {
-            if (result.Mensagem.Contains("não encontrado", StringComparison.OrdinalIgnoreCase))
-                return NotFound(result);
-            return BadRequest(result);
-        }
-        return Ok(result);
-    }
+    [HttpPatch("{id}/restaurar")]
+    public async Task<IActionResult> Restaurar([FromServices] ProfessorRestaurarUseCase useCase, Guid id)
+    => TratarResultado(await useCase.ExecutarAsync(id));
 }

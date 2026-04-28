@@ -16,20 +16,29 @@ public class ProfessorRemoverUsecase
 
     public async Task<Result<ProfessorDtoResponse>> ExecutarAsync(Guid professorId)
     {
-        // 1. Fail Fast
+        // 1. Fail Fast (Sempre protegendo a entrada)
         if (professorId == Guid.Empty)
             return Result<ProfessorDtoResponse>.Falha("ID do professor é inválido.");
-        // 2. Busca o professor existente
+
+        // 2. Busca o professor (Aqui o Global Filter garante que só pegamos quem está Ativo)
         var professorExistente = await _repositorioProfessor.ObterPorIdAsync(professorId);
 
         if (professorExistente == null)
             return Result<ProfessorDtoResponse>.Falha("Professor não encontrado.");
-        // 3. Remove o professor
 
-        _repositorioProfessor.Remover(professorExistente);
-        // 4. Salva as alterações
+        // 3. A MÁGICA ACONTECE AQUI:
+        // Em vez de _repositorio.Remover(), chamamos o método de domínio:
+        professorExistente.Desativar();
+
+        // 4. Avisamos ao Repositório que houve uma MUDANÇA (Update) e não uma Exclusão
+        _repositorioProfessor.Atualizar(professorExistente);
+
+        // 5. Persistência
         var sucesso = await _repositorioProfessor.SalvarAlteracoesAsync();
-        // 5. Retorna o resultado
-        return sucesso ? Result<ProfessorDtoResponse>.Ok(professorExistente.ToProfessorDtoResponse()) : Result<ProfessorDtoResponse>.Falha("Erro ao remover o professor.");
+
+        // 6. Retorno (Ajustando a mensagem para refletir a realidade)
+        return sucesso
+            ? Result<ProfessorDtoResponse>.Ok(professorExistente.ToProfessorDtoResponse())
+            : Result<ProfessorDtoResponse>.Falha("Erro ao desativar o professor no banco de dados.");
     }
 }
