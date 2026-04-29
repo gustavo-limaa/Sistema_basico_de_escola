@@ -46,7 +46,7 @@ public class DisciplinaRepositorio : IDisciplinaRepositorio
         // Aqui sim usamos o Ignore! E filtramos apenas pelas que estão desativadas.
         return await _context.Disciplinas
             .IgnoreQueryFilters()
-            .FirstOrDefaultAsync(d => d.DisciplinaId == id && d.Ativo);
+            .FirstOrDefaultAsync(d => d.DisciplinaId == id);
     }
 
     public async Task<bool> SalvarAlteracoesAsync()

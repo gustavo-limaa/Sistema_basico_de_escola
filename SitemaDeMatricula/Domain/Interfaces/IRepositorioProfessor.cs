@@ -16,9 +16,11 @@ namespace SitemaDeMatricula.Domain.Interfaces
 
         public void Atualizar(Professor professor);
 
-        public void Remover(Professor professor);
+        Task<Professor?> ObterPorIdIgnorandoFiltrosAsync(Guid id);
 
         // O "SaveAsync" pode estar aqui ou em uma Unit of Work
         Task<bool> SalvarAlteracoesAsync();
+
+        Task<Professor?> ObterPorEmailAsync(string email);
     }
 }

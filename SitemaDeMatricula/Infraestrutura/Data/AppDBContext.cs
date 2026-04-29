@@ -51,6 +51,8 @@ public class AppDbContext : DbContext
         {
             p.HasKey(x => x.ProfessorId);
 
+            p.HasQueryFilter(p => p.Ativo);
+
             p.ComplexProperty(x => x.Salario, s =>
             {
                 s.Property(v => v.Valor).HasColumnName("Salario").HasPrecision(18, 2);
@@ -70,8 +72,8 @@ public class AppDbContext : DbContext
                 p.Property(v => v.Valor).HasColumnName("Telefone").HasMaxLength(11));
 
             p.Property(x => x.Categoria).HasColumnName("Categoria").IsRequired();
-        }); // <--- FECHA Professor aqui
-            // 3. DISCIPLINA
+        });
+        // 3. DISCIPLINA
         modelBuilder.Entity<Disciplina>(d =>
         {
             d.HasKey(x => x.DisciplinaId);

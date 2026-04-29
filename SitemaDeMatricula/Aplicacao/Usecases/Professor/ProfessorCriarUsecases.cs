@@ -25,11 +25,15 @@ public class ProfessorCriarUsecases
             // Se o DTO tiver lixo, o ToProfessor() estoura uma exceção de validação aqui mesmo
             var professor = dto.ToProfessor();
 
-            // 3. O Use Case foca na Regra de Negócio que exige o Banco
-            var professorExistente = await _repositorioProfessor.ObterPorCpfAsync(dto.Cpf);
-            if (professorExistente != null)
+            // Checagem de CPF
+            var professorExistenteCpf = await _repositorioProfessor.ObterPorCpfAsync(dto.Cpf);
+            if (professorExistenteCpf != null)
                 return Result<ProfessorDtoResponse>.Falha("Já existe um professor cadastrado com este CPF.");
 
+            // Checagem de E-mail (Para bater com o seu teste!)
+            var professorExistenteEmail = await _repositorioProfessor.ObterPorEmailAsync(dto.Email);
+            if (professorExistenteEmail != null)
+                return Result<ProfessorDtoResponse>.Falha("Já existe um professor cadastrado com este e-mail.");
             // 4. Persistência
             await _repositorioProfessor.AdicionarAsync(professor);
             var sucesso = await _repositorioProfessor.SalvarAlteracoesAsync();

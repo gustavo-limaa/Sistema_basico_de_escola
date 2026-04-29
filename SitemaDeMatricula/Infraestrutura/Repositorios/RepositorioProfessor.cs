@@ -32,6 +32,13 @@ public class RepositorioProfessor : IRepositorioProfessor
             .FirstOrDefaultAsync(p => p.Cpf.Valor == cpf);
     }
 
+    public async Task<Professor?> ObterPorEmailAsync(string email)
+    {
+        return await _context.Professores
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Email.Valor == email);
+    }
+
     public async Task<Professor?> ObterPorIdAsync(Guid professorId)
     {
         return await _context.Professores
@@ -46,9 +53,11 @@ public class RepositorioProfessor : IRepositorioProfessor
             .ToListAsync();
     }
 
-    public void Remover(Professor professor)
+    public async Task<Professor?> ObterPorIdIgnorandoFiltrosAsync(Guid id)
     {
-        _context.Professores.Remove(professor);
+        return await _context.Professores
+            .IgnoreQueryFilters() // 👈 A chave para ver os "fantasmas" (inativos)
+            .FirstOrDefaultAsync(p => p.ProfessorId == id);
     }
 
     public async Task<bool> SalvarAlteracoesAsync()

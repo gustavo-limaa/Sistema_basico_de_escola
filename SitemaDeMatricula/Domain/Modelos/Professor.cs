@@ -13,6 +13,7 @@ public class Professor
     public Professor(ObjectNomeCompleto nomeCompleto, ObjectCPF cpf, ObjectEmail email, ValorMonetario salario, CategoriaProfessor categoria, ObjectDataNascimento dataNascimento, ObjectTelefone telefone)
     {
         ProfessorId = Guid.NewGuid();
+        Ativo = true;
         NomeCompleto = nomeCompleto;
         Cpf = cpf;
         Email = email;
@@ -27,6 +28,8 @@ public class Professor
 
     [Key]
     public Guid ProfessorId { get; private set; }
+
+    public bool Ativo { get; private set; } = true;
 
     [Required(ErrorMessage = "O nome é obrigatório.")]
     public ObjectNomeCompleto NomeCompleto { get; private set; }
@@ -48,14 +51,21 @@ public class Professor
     [Required(ErrorMessage = "A categoria/disciplina é obrigatória.")]
     public CategoriaProfessor Categoria { get; private set; }
 
+    public void Desativar() => Ativo = false;
+
+    public void Ativar() => Ativo = true;
+
     public void AtualizarDados(
+
         ObjectNomeCompleto novoNome,
         ObjectEmail novoEmail,
         ValorMonetario novoSalario,
         CategoriaProfessor novaCategoria,
         ObjectDataNascimento novaDataNasc,
         ObjectTelefone novoTelefone)
+
     {
+        if (!Ativo) throw new ArgumentException("Não é possível atualizar um professor desativado.");
         // Aqui você pode adicionar lógica extra se precisar,
         // mas os próprios Value Objects já garantem a validação.
 

@@ -35,6 +35,7 @@ namespace SitemaDeMatricula.Infraestrutura
             services.AddScoped<AtualizarTurmaUseCase>();
             services.AddScoped<RemoverTurmaUseCase>();
             services.AddScoped<RestaurarUseCaseDisciplina>();
+            services.AddScoped<ProfessorRestaurarUseCase>();
 
             // Repositório
             services.AddScoped<IRepositorioEstudante, RepositorioEstudante>();
