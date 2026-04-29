@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SitemaDeMatricula.Aplicacao.Dtos.Professor;
 using SitemaDeMatricula.Aplicacao.Usecases.Professor;
 using SitemaDeMatricula.Domain;
-using SitemaDeMatricula.Domain.Interfaces;
-using static SitemaDeMatricula.Aplicacao.Usecases.Professor.ProfessorResturarUseCase;
 
 namespace SitemaDeMatricula.Percistencia.Controllers;
 

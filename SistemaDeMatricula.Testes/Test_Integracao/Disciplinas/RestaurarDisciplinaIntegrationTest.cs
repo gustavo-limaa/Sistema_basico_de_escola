@@ -75,18 +75,13 @@ public class RestaurarDisciplinaIntegrationTest : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Restaurar_Disciplina_Inativa_RetornaNotFound()
+    public async Task Restaurar_Disciplina_Com_Id_Inexistente_Retorna_NotFound()
     {
-        // Arrange
-        var disciplina = await CriarDisciplina();
-        await _client.DeleteAsync($"/api/disciplina/{disciplina.DisciplinaId}");
-        // Act
-        var response = await _client.PatchAsync($"/api/disciplina/{disciplina.DisciplinaId}/restaurar", new StringContent("", Encoding.UTF8, "application/json"));
+        // Act - Tentando restaurar um GUID aleatório que nunca foi criado
+        var response = await _client.PatchAsync($"/api/disciplina/{Guid.NewGuid()}/restaurar", null);
+
         // Assert
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound); // 1. Garante o sucesso da rota
-        // 2. A prova real: O sistema voltou a "enxergar" a disciplina?
-        var getResponse = await _client.GetAsync($"/api/disciplina/{disciplina.DisciplinaId}");
-        getResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
     }
 
     [Fact]
