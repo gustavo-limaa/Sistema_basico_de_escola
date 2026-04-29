@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using SitemaDeMatricula.Aplicacao.Dtos.Professor;
 using SitemaDeMatricula.Aplicacao.Usecases.Professor;
 using SitemaDeMatricula.Domain;
@@ -54,11 +55,19 @@ public class ProfessorController : ControllerBase
 
     [HttpPut]
     public async Task<IActionResult> Atualizar([FromServices] ProfessorAtualizarUsecase useCase, ProfessorDtoUpdate professorDto)
-        => TratarResultado(await useCase.ExecutarAsync(professorDto));
+    {
+        var result = await useCase.ExecutarAsync(professorDto);
+        return TratarResultado(result); // Ele resolve tudo sozinho!
+    }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Deletar([FromServices] ProfessorRemoverUsecase useCase, Guid id)
-        => TratarResultado(await useCase.ExecutarAsync(id));
+    {
+        var result = await useCase.ExecutarAsync(id);
+
+        if (result.Sucesso) return NoContent();
+        return TratarResultado(result);
+    }
 
     [HttpPatch("{id}/restaurar")]
     public async Task<IActionResult> Restaurar([FromServices] ProfessorRestaurarUseCase useCase, Guid id)

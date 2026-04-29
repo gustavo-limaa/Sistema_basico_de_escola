@@ -13,7 +13,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SistemaDeMatricula.Testes.Test_Integracao.Professor;
+namespace SistemaDeMatricula.Testes.Test_Integracao.Professors;
 
 [Collection("ApiMatrix")]
 public class CriarProfessorIntegrationTest : IAsyncLifetime
