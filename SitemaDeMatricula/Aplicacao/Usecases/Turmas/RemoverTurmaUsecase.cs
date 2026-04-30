@@ -19,13 +19,12 @@ public class RemoverTurmaUseCase
         if (turma == null)
             return Result<bool>.Falha("Turma não encontrada.");
 
-        // Em vez de apagar do banco, apenas mudamos o estado
-        // Se ela já estiver desativada, não fazemos nada ou avisamos
+        // Se já estiver inativa, apenas confirmamos o sucesso (Idempotência)
         if (!turma.Ativo)
             return Result<bool>.Ok(true);
 
-        // Chama o método que criamos no repositório que faz o toggle ou desativa
-        var sucesso = await _turmaRepo.AlternarStatusAsync(turma);
+        // Usamos o método específico de remoção/soft delete que você refinou
+        var sucesso = await _turmaRepo.RemoverAsync(turma);
 
         return sucesso
             ? Result<bool>.Ok(true)

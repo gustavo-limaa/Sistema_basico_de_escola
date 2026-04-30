@@ -18,6 +18,10 @@ namespace SitemaDeMatricula.Domain.Interfaces
 
         Task<bool> AlternarStatusAsync(Turma turma);
 
+        Task<Turma?> ObterPorIdIgnorandoFiltrosAsync(Guid id);
+
+        Task<Turma?> ObterPorCodigoIgnorandoFiltrosAsync(string codigo);
+
         Task<bool> SalvarAlteracoesAsync();
     }
 }

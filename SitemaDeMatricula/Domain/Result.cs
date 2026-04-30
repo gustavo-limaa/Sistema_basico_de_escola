@@ -3,6 +3,14 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SitemaDeMatricula.Domain;
 
+public enum TipoErro
+{
+    Validacao,
+    NaoEncontrado,
+    Conflito,
+    Inesperado
+}
+
 [DebuggerDisplay("{Sucesso ? \"✅ OK\" : \"❌ Falha\"}: {Mensagem}")]
 public class Result<T>
 {
@@ -12,13 +20,18 @@ public class Result<T>
 
     public T? Dados { get; private set; }
     public string Mensagem { get; private set; }
+    public TipoErro Tipo { get; private set; } // Nova propriedade
 
-    protected Result(bool sucesso, T? dados, string mensagem)
+    protected Result(bool sucesso, T? dados, string mensagem, TipoErro tipo = TipoErro.Validacao)
     {
         Sucesso = sucesso;
         Dados = dados;
         Mensagem = mensagem;
+        Tipo = tipo;
     }
+
+    public static Result<T> Conflito(string mensagem)
+        => new(false, default, mensagem, TipoErro.Conflito);
 
     public static Result<T> Ok(T dados, string mensagem = "Operação realizada com sucesso.")
         => new(true, dados, mensagem);

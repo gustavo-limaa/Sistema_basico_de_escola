@@ -104,6 +104,15 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Turma>(t =>
         {
             t.HasKey(x => x.TurmaId);
+            t.Property(x => x.CodigoTurma)
+            .HasConversion(
+            vo => vo.ValorFormatado, // Converte para string ao salvar no banco
+            stringDoBanco => CodigoTurma.CriarDeString(stringDoBanco) // Converte para VO ao ler do banco
+            )
+            .HasColumnName("CodigoTurma") // Nome da coluna no SQL
+            .IsRequired();
+
+            t.HasQueryFilter(t => t.Ativo);
 
             // 1. Relacionamento com Disciplina (Essencial!)
             t.HasOne(x => x.Disciplina)

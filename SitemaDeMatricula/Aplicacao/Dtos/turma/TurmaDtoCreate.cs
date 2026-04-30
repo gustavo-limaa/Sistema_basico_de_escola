@@ -3,10 +3,11 @@
 namespace SitemaDeMatricula.Aplicacao.Dtos.turma;
 
 public record TurmaDtoCreate(
-[Required(ErrorMessage = "Código da turma é obrigatório.")]
- string CodigoTurma,
-[Required(ErrorMessage = "ID da disciplina é obrigatório.")]
- Guid DisciplinaId,
-[Required(ErrorMessage = "ID do professor é obrigatório.")]
- Guid ProfessorId
-);
+    [Required(ErrorMessage = "ID da disciplina é obrigatório.")]
+    Guid DisciplinaId,
+    [Required(ErrorMessage = "ID do professor é obrigatório.")]
+    Guid ProfessorId,
+    [Required] string Sigla,
+    [Range(1, 2)] int Semestre,
+    [Required] int AnoLetivo,
+    [Required] int Numero);

@@ -26,7 +26,10 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
             var turmaExistente = await _context.Turmas.FindAsync(turma.TurmaId);
             if (turmaExistente == null) return false;
 
-            turmaExistente.AlternarStatus();
+            if (turmaExistente.Ativo)
+                turmaExistente.Desativar();
+            else
+                turmaExistente.Ativar();
 
             await SalvarAlteracoesAsync();
             return true;
@@ -37,6 +40,7 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
             return await _context.Turmas
                 .Include(t => t.Professor)
                 .Include(t => t.Disciplina)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -50,34 +54,50 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
 
         public async Task<bool> AtualizarAsync(Turma turma)
         {
-            var turmaExistente = await _context.Turmas.FindAsync(turma.TurmaId);
-
-            if (turmaExistente == null)
-                return false;
-
-            // Atualiza as propriedades da turma existente com os valores da turma fornecida
-            _context.Entry(turmaExistente).CurrentValues.SetValues(turma);
-            await SalvarAlteracoesAsync();
-            return true;
+            return await SalvarAlteracoesAsync();
         }
 
         public async Task<Turma?> ObterPorCodigoAsync(string codigo)
         {
-            return await _context.Turmas.FirstOrDefaultAsync(t => t.CodigoTurma == codigo);
+            return await _context.Turmas.FirstOrDefaultAsync(t => t.CodigoTurma.ValorFormatado == codigo);
         }
 
         public async Task<bool> RemoverAsync(Turma turma)
         {
+            // 1. Buscamos para garantir que o EF está rastreando a instância real do banco
             var turmaExistente = await _context.Turmas.FindAsync(turma.TurmaId);
+
             if (turmaExistente == null) return false;
-            _context.Turmas.Remove(turmaExistente);
+
+            // 2. Mudamos apenas o estado que nos interessa
+            turmaExistente.Desativar();
+
+            // 3. Persistimos a mudança. O EF sabe exatamente o que fazer aqui.
             await SalvarAlteracoesAsync();
+
             return true;
+        }
+
+        public async Task<Turma?> ObterPorIdIgnorandoFiltrosAsync(Guid id)
+        {
+            return await _context.Turmas.Include(t => t.Professor)
+                .Include(t => t.Disciplina)
+                .IgnoreQueryFilters().AsNoTracking()  // 👈 A chave para ver os "fantasmas" (inativos)
+                .FirstOrDefaultAsync(t => t.TurmaId == id);
         }
 
         public async Task<bool> SalvarAlteracoesAsync()
         {
             return await _context.SaveChangesAsync() > 0;
+        }
+
+        public Task<Turma?> ObterPorCodigoIgnorandoFiltrosAsync(string codigo)
+        {
+            return _context.Turmas
+                .Include(t => t.Professor)
+                .Include(t => t.Disciplina)
+                .IgnoreQueryFilters().AsNoTracking() // 👈 A chave para ver os "fantasmas" (inativos)
+                .FirstOrDefaultAsync(t => t.CodigoTurma.ValorFormatado == codigo);
         }
     }
 }

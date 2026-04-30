@@ -1,7 +1,9 @@
 ﻿using SitemaDeMatricula.Aplicacao.Dtos.turma;
 using SitemaDeMatricula.Domain;
 using SitemaDeMatricula.Domain.Interfaces;
+using SitemaDeMatricula.Domain.Mapper;
 using SitemaDeMatricula.Domain.Modelos;
+using SitemaDeMatricula.Domain.Value_Object;
 
 namespace SitemaDeMatricula.Aplicacao.Usecases.Turmas;
 
@@ -21,25 +23,36 @@ public class CriarTurmaUseCase
         _discRepo = discRepo;
     }
 
-    public async Task<Result<Guid>> ExecutarAsync(TurmaDtoCreate dto)
-    {
-        // 1. Validar se o Professor existe
+    public async Task<Result<TurmaDtoResponse>> ExecutarAsync(TurmaDtoCreate dto)
+    {// 1. Tenta criar o VO
+        var resultadoVO = CodigoTurma.Criar(dto.Sigla, dto.AnoLetivo, dto.Semestre, dto.Numero);
+
+        // 2. Verifica se falhou (Usando sua propriedade Sucesso)
+        if (!resultadoVO.Sucesso)
+        {
+            return Result<TurmaDtoResponse>.Falha(resultadoVO.Mensagem);
+        }
+
+        // 3. Se deu sucesso, acessamos o objeto real via .Dados
+        var codigoValidado = resultadoVO.Dados;
+
+        var turmaExistente = await _turmaRepo.ObterPorCodigoIgnorandoFiltrosAsync(codigoValidado.ValorFormatado);
+        if (turmaExistente != null)
+            return Result<TurmaDtoResponse>.Conflito("Já existe uma turma (ativa ou inativa) com este código.");
+
+        // 3. Validação de Dependências (Regra de Negócio)
         var professor = await _profRepo.ObterPorIdAsync(dto.ProfessorId);
         if (professor == null)
-            return Result<Guid>.Falha("Professor não encontrado.");
+            return Result<TurmaDtoResponse>.Falha("Professor não encontrado ou inativo.");
 
-        // 2. DESAFIO: Validar se a Disciplina existe
-        // Dica: Use o _discRepo e o dto.DisciplinaId
         var disciplina = await _discRepo.ObterPorIdAsync(dto.DisciplinaId);
         if (disciplina == null)
-            return Result<Guid>.Falha("Disciplina não encontrada.");
+            return Result<TurmaDtoResponse>.Falha("Disciplina não encontrada ou inativa.");
 
-        // 3. Criar a entidade (O construtor que definimos)
-        var novaTurma = new Domain.Modelos.Turma(dto.CodigoTurma, dto.ProfessorId, dto.DisciplinaId);
+        // 4. Se passou por tudo, a Entidade é criada com segurança
+        var novaTurma = new Turma(codigoValidado, dto.ProfessorId, dto.DisciplinaId);
 
-        // 4. Salvar (O seu repositório já chama o SaveChanges!)
         await _turmaRepo.AdicionarAsync(novaTurma);
-
-        return Result<Guid>.Ok(novaTurma.TurmaId);
+        return Result<TurmaDtoResponse>.Ok(novaTurma.ToTurmaDtoResponse());
     }
 }

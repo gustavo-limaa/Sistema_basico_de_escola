@@ -32,19 +32,6 @@ public static class DataFactory
             );
         });
 
-    public static Faker<Turma> TurmaFaker =>
-         new Faker<Turma>("pt_BR")
-             .CustomInstantiator(f =>
-             {
-                 var disciplinaId = Guid.NewGuid();
-
-                 return new Turma(
-                     f.Random.AlphaNumeric(5).ToUpper(),
-                     Guid.NewGuid(),
-                     disciplinaId
-                 );
-             });
-
     public static Matricula GerarMatricula(Guid? estudanteId = null, Guid? turmaId = null)
     {
         return new Matricula(
