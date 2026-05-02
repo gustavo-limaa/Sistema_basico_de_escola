@@ -36,12 +36,16 @@ public class CriarTurmaTestIntegration : IAsyncLifetime
     // 2. DEPOIS DE CADA TESTE: Aqui é onde a mágica da limpeza acontece
     public async Task DisposeAsync()
     {
-        // Criamos um "escopo" para conseguir pegar o AppDbContext lá de dentro da API
         using var scope = _factory.Services.CreateScope();
         var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        // Agora sim! O 'contexto' existe aqui e podemos limpar a tabela
+        // 1. Limpa as Turmas (Filho)
         await contexto.Turmas.ExecuteDeleteAsync();
+
+        // 2. Limpa os Professores e Disciplinas (Pais)
+        // Se você tiver Matrículas, elas devem ser limpas ANTES das Turmas.
+        await contexto.Professores.ExecuteDeleteAsync();
+        await contexto.Disciplinas.ExecuteDeleteAsync();
     }
 
     private ProfessorDtoCreate CriarDtoValido()
