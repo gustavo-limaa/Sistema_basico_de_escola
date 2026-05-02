@@ -36,7 +36,7 @@ public class CriarTurmaUseCase
         // 3. Se deu sucesso, acessamos o objeto real via .Dados
         var codigoValidado = resultadoVO.Dados;
 
-        var turmaExistente = await _turmaRepo.ObterPorCodigoIgnorandoFiltrosAsync(codigoValidado.ValorFormatado);
+        var turmaExistente = await _turmaRepo.ObterPorCodigoAsync(codigoValidado);
         if (turmaExistente != null)
             return Result<TurmaDtoResponse>.Conflito("Já existe uma turma (ativa ou inativa) com este código.");
 

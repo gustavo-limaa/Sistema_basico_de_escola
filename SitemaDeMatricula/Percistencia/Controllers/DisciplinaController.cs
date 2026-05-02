@@ -5,7 +5,7 @@ using SitemaDeMatricula.Aplicacao.Usecases.Disciplinas;
 namespace SitemaDeMatricula.Percistencia.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/disciplinas")]
 public class DisciplinaController : ControllerBase
 {
     [HttpPost]

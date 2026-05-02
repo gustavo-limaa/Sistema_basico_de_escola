@@ -7,7 +7,7 @@ using SitemaDeMatricula.Domain;
 namespace SitemaDeMatricula.Percistencia.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/professores")]
 public class ProfessorController : ControllerBase
 {
     // O "Coração" da limpeza: Centraliza a tradução do Result Pattern para HTTP

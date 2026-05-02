@@ -83,14 +83,14 @@ public class AtualizarProfessorIntegrationTest : IAsyncLifetime
     {
         // 1. Cria um DTO de post e envia
         var dtoPost = CriarDtoValido();
-        var responsePost = await _client.PostAsJsonAsync("/api/professor", dtoPost);
+        var responsePost = await _client.PostAsJsonAsync("/api/professores", dtoPost);
         var criado = await responsePost.Content.ReadFromJsonAsync<ProfessorDtoResponse>();
 
         // 2. Interligação: Gera um DTO de Update usando o ID do que acabou de ser criado
         var dtoUpdate = CriarDtoUpdate(criado.ProfessorId);
 
         // 3. Act
-        var responsePut = await _client.PutAsJsonAsync("/api/professor", dtoUpdate);
+        var responsePut = await _client.PutAsJsonAsync("/api/professores", dtoUpdate);
 
         // 4. Assert
         responsePut.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -103,7 +103,7 @@ public class AtualizarProfessorIntegrationTest : IAsyncLifetime
         var idInexistente = Guid.NewGuid();
         var dtoUpdate = CriarDtoUpdate(idInexistente);
         // Act
-        var responsePut = await _client.PutAsJsonAsync("/api/professor", dtoUpdate);
+        var responsePut = await _client.PutAsJsonAsync("/api/professores", dtoUpdate);
         // Assert
         responsePut.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -112,17 +112,17 @@ public class AtualizarProfessorIntegrationTest : IAsyncLifetime
     public async Task Atualizar_Professor_Com_Email_De_Outro_Retorna_Conflict()
     {
         // 1. Arrange: Cria dois professores VÁLIDOS e DIFERENTES
-        var response1 = await _client.PostAsJsonAsync("/api/professor", CriarDtoValido());
+        var response1 = await _client.PostAsJsonAsync("/api/professores", CriarDtoValido());
         var profA = await response1.Content.ReadFromJsonAsync<ProfessorDtoResponse>();
 
-        var response2 = await _client.PostAsJsonAsync("/api/professor", CriarDtoValido());
+        var response2 = await _client.PostAsJsonAsync("/api/professores", CriarDtoValido());
         var profB = await response2.Content.ReadFromJsonAsync<ProfessorDtoResponse>();
 
         // 2. Tenta atualizar o Professor B usando o E-mail do Professor A
         var dtoUpdate = CriarDtoUpdate(profB.ProfessorId, emailSobrescrito: profA.Email);
 
         // 3. Act
-        var responsePut = await _client.PutAsJsonAsync("/api/professor", dtoUpdate);
+        var responsePut = await _client.PutAsJsonAsync("/api/professores", dtoUpdate);
 
         // 4. Assert
         responsePut.StatusCode.Should().Be(HttpStatusCode.Conflict);
@@ -144,7 +144,7 @@ public class AtualizarProfessorIntegrationTest : IAsyncLifetime
         };
 
         // Act
-        var response = await _client.PutAsJsonAsync("/api/professor", dtoInvalido);
+        var response = await _client.PutAsJsonAsync("/api/professores", dtoInvalido);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -155,7 +155,7 @@ public class AtualizarProfessorIntegrationTest : IAsyncLifetime
     {
         // 1. Arrange: Cria um professor original no banco
         var dtoCriacao = CriarDtoValido();
-        var responsePost = await _client.PostAsJsonAsync("/api/professor", dtoCriacao);
+        var responsePost = await _client.PostAsJsonAsync("/api/professores", dtoCriacao);
         var professorCriado = await responsePost.Content.ReadFromJsonAsync<ProfessorDtoResponse>();
 
         // 2. Preparamos o Update: Mudamos TUDO, menos o E-mail
@@ -167,7 +167,7 @@ public class AtualizarProfessorIntegrationTest : IAsyncLifetime
         // O CPF nem entra aqui, como a gente já sabe!
 
         // 3. Act
-        var responsePut = await _client.PutAsJsonAsync("/api/professor", dtoUpdate);
+        var responsePut = await _client.PutAsJsonAsync("/api/professores", dtoUpdate);
         var professorAtualizado = await responsePut.Content.ReadFromJsonAsync<ProfessorDtoResponse>();
 
         // 4. Assert

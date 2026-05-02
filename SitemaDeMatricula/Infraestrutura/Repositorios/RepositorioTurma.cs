@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SitemaDeMatricula.Domain.Interfaces;
 using SitemaDeMatricula.Domain.Modelos;
+using SitemaDeMatricula.Domain.Value_Object;
 using SitemaDeMatricula.InfraEstrutura.Data;
 
 namespace SitemaDeMatricula.Infraestrutura.Repositorios
@@ -91,13 +92,14 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
             return await _context.SaveChangesAsync() > 0;
         }
 
+        public async Task<Turma?> ObterPorCodigoAsync(CodigoTurma codigo)
+        {
+            return await _context.Turmas.FirstOrDefaultAsync(t => t.CodigoTurma == codigo);
+        }
+
         public Task<Turma?> ObterPorCodigoIgnorandoFiltrosAsync(string codigo)
         {
-            return _context.Turmas
-                .Include(t => t.Professor)
-                .Include(t => t.Disciplina)
-                .IgnoreQueryFilters().AsNoTracking() // 👈 A chave para ver os "fantasmas" (inativos)
-                .FirstOrDefaultAsync(t => t.CodigoTurma.ValorFormatado == codigo);
+            return _context.Turmas.IgnoreQueryFilters().FirstOrDefaultAsync(t => t.CodigoTurma.ValorFormatado == codigo);
         }
     }
 }

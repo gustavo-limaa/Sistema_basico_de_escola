@@ -64,7 +64,7 @@ public class CriarProfessorIntegrationTest : IAsyncLifetime
         var dto = CriarDtoValido();
 
         // Act
-        var response = await _client.PostAsJsonAsync("/api/professor", dto);
+        var response = await _client.PostAsJsonAsync("/api/professores", dto);
         var resultado = await response.Content.ReadFromJsonAsync<ProfessorDtoResponse>();
 
         // Assert
@@ -78,10 +78,10 @@ public class CriarProfessorIntegrationTest : IAsyncLifetime
         // Arrange
         var dto = CriarDtoValido();
         // Primeiro criamos o professor normalmente
-        var response1 = await _client.PostAsJsonAsync("/api/professor", dto);
+        var response1 = await _client.PostAsJsonAsync("/api/professores", dto);
         response1.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
         // Agora tentamos criar outro com o mesmo CPF
-        var response2 = await _client.PostAsJsonAsync("/api/professor", dto);
+        var response2 = await _client.PostAsJsonAsync("/api/professores", dto);
         // Assert
         response2.StatusCode.Should().Be(System.Net.HttpStatusCode.Conflict);
     }
@@ -101,7 +101,7 @@ public class CriarProfessorIntegrationTest : IAsyncLifetime
             Categoria: professor.Categoria.ToString()
           );
         // Primeiro criamos o professor normalmente
-        var response1 = await _client.PostAsJsonAsync("/api/professor", dto);
+        var response1 = await _client.PostAsJsonAsync("/api/professores", dto);
         response1.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
         // Agora tentamos criar outro com o mesmo Email
         var professor2 = DataFactory.ProfessorFaker.Generate();
@@ -114,7 +114,7 @@ public class CriarProfessorIntegrationTest : IAsyncLifetime
             Salario: professor2.Salario.Valor,
             Categoria: professor2.Categoria.ToString()
           );
-        var response2 = await _client.PostAsJsonAsync("/api/professor", dto2);
+        var response2 = await _client.PostAsJsonAsync("/api/professores", dto2);
         // Assert
         response2.StatusCode.Should().Be(System.Net.HttpStatusCode.Conflict);
     }
@@ -133,7 +133,7 @@ public class CriarProfessorIntegrationTest : IAsyncLifetime
             Categoria: "CategoriaInvalida" // Categoria que não existe
           );
         // Act
-        var response = await _client.PostAsJsonAsync("/api/professor", dto);
+        var response = await _client.PostAsJsonAsync("/api/professores", dto);
         // Assert
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
     }
@@ -153,7 +153,7 @@ public class CriarProfessorIntegrationTest : IAsyncLifetime
             Categoria: professor.Categoria.ToString()
           );
         // Act
-        var response = await _client.PostAsJsonAsync("/api/professor", dto);
+        var response = await _client.PostAsJsonAsync("/api/professores", dto);
         // Assert
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
     }
@@ -173,7 +173,7 @@ public class CriarProfessorIntegrationTest : IAsyncLifetime
             Categoria: "CategoriaInvalida" // Categoria que não existe para testar validação
           );
         // Act
-        var response = await _client.PostAsJsonAsync("/api/professor", dto);
+        var response = await _client.PostAsJsonAsync("/api/professores", dto);
         // Assert
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
     }
@@ -193,7 +193,7 @@ public class CriarProfessorIntegrationTest : IAsyncLifetime
             Categoria: professor.Categoria.ToString()
           );
         // Act
-        var response = await _client.PostAsJsonAsync("/api/professor", dto);
+        var response = await _client.PostAsJsonAsync("/api/professores", dto);
         // Assert
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
     }
@@ -213,7 +213,7 @@ public class CriarProfessorIntegrationTest : IAsyncLifetime
             Categoria: professor.Categoria.ToString()
           );
         // Act
-        var response = await _client.PostAsJsonAsync("/api/professor", dto);
+        var response = await _client.PostAsJsonAsync("/api/professores", dto);
         // Assert
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
     }

@@ -57,7 +57,7 @@ public class PegarEPegarPorIdDiciplinaIntegrationTest : IAsyncLifetime
     public async Task Deve_Retornar_Lista_De_Disciplinas_Ativas()
     {
         // ACT
-        var response = await _client.GetAsync("/api/Disciplina");
+        var response = await _client.GetAsync("/api/Disciplinas");
 
         // ASSERT
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
@@ -73,7 +73,7 @@ public class PegarEPegarPorIdDiciplinaIntegrationTest : IAsyncLifetime
         // ARRANGE
         var disciplinaExistente = _disciplinasSeed.First();
         // ACT
-        var response = await _client.GetAsync($"/api/Disciplina/{disciplinaExistente.DisciplinaId}");
+        var response = await _client.GetAsync($"/api/Disciplinas/{disciplinaExistente.DisciplinaId}");
         // ASSERT
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         var disciplinaDto = await response.Content.ReadFromJsonAsync<DisciplinaDtoResponse>();
@@ -89,7 +89,7 @@ public class PegarEPegarPorIdDiciplinaIntegrationTest : IAsyncLifetime
         // ARRANGE
         var idInexistente = Guid.NewGuid();
         // ACT
-        var response = await _client.GetAsync($"/api/Disciplina/{idInexistente}");
+        var response = await _client.GetAsync($"/api/Disciplinas/{idInexistente}");
         // ASSERT
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
     }
@@ -105,7 +105,7 @@ public class PegarEPegarPorIdDiciplinaIntegrationTest : IAsyncLifetime
         disciplinaNoBanco!.Desativar();
         await contexto.SaveChangesAsync();
         // ACT
-        var response = await _client.GetAsync($"/api/Disciplina/{disciplinaExistente.DisciplinaId}");
+        var response = await _client.GetAsync($"/api/Disciplinas/{disciplinaExistente.DisciplinaId}");
         // ASSERT
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
     }
@@ -118,7 +118,7 @@ public class PegarEPegarPorIdDiciplinaIntegrationTest : IAsyncLifetime
         var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         await contexto.Disciplinas.ExecuteDeleteAsync(); // Limpa a tabela
         // ACT
-        var response = await _client.GetAsync("/api/Disciplina");
+        var response = await _client.GetAsync("/api/Disciplinas");
         // ASSERT
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
     }
@@ -134,7 +134,7 @@ public class PegarEPegarPorIdDiciplinaIntegrationTest : IAsyncLifetime
         disciplinas.ForEach(d => d.Desativar());
         await contexto.SaveChangesAsync();
         // ACT
-        var response = await _client.GetAsync("/api/Disciplina");
+        var response = await _client.GetAsync("/api/Disciplinas");
         // ASSERT
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
     }

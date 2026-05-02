@@ -4,7 +4,7 @@ using SitemaDeMatricula.Aplicacao.Usecases.Turmas;
 
 namespace SitemaDeMatricula.Percistencia.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/Turmas")]
 public class TurmasController : MainController
 {
     [HttpGet]
@@ -21,7 +21,7 @@ public class TurmasController : MainController
         var result = await useCase.ExecutarAsync(dto);
 
         if (result.Sucesso)
-            return CreatedAtAction(nameof(ObterPorId), new { id = result.Dados.Id }, result.Dados);
+            return Ok(result.Dados);
 
         return CustomResponse(result);
     }

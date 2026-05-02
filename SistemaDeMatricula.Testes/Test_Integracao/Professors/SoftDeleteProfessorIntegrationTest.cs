@@ -62,7 +62,7 @@ public class SoftDeleteProfessorIntegrationTest : IAsyncLifetime
     private async Task<Guid> CadastrarProfessorERetornarIdAsync()
     {
         var dto = CriarDtoValido();
-        var response = await _client.PostAsJsonAsync("/api/professor", dto);
+        var response = await _client.PostAsJsonAsync("/api/professores", dto);
         var criado = await response.Content.ReadFromJsonAsync<ProfessorDtoResponse>();
         return criado!.ProfessorId;
     }
@@ -89,13 +89,13 @@ public class SoftDeleteProfessorIntegrationTest : IAsyncLifetime
         var idParaDeletar = await CadastrarProfessorERetornarIdAsync();
 
         // 2. Act: Executa o Delete
-        var responseDelete = await _client.DeleteAsync($"/api/professor/{idParaDeletar}");
+        var responseDelete = await _client.DeleteAsync($"/api/professores/{idParaDeletar}");
 
         // 3. Assert
         responseDelete.StatusCode.Should().Be(HttpStatusCode.NoContent); // 204
 
         // 4. Verificação de Superfície: O GET normal não deve achar ele (404)
-        var responseGet = await _client.GetAsync($"/api/professor/{idParaDeletar}");
+        var responseGet = await _client.GetAsync($"/api/professores/{idParaDeletar}");
         responseGet.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
         // 5. Verificação de Subsolo: Usa o Raio-X para confirmar que ele virou "Inativo"
@@ -109,7 +109,7 @@ public class SoftDeleteProfessorIntegrationTest : IAsyncLifetime
         // Arrange: Geramos um ID aleatório que não existe no banco
         var idInexistente = Guid.NewGuid();
         // Act: Tentamos deletar esse ID
-        var responseDelete = await _client.DeleteAsync($"/api/professor/{idInexistente}");
+        var responseDelete = await _client.DeleteAsync($"/api/professores/{idInexistente}");
         // Assert: Esperamos um 404 Not Found
         responseDelete.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -119,9 +119,9 @@ public class SoftDeleteProfessorIntegrationTest : IAsyncLifetime
     {
         // Arrange: Criamos um professor, deletamos ele (ficando inativo) e depois tentamos deletar de novo
         var id = await CadastrarProfessorERetornarIdAsync();
-        await _client.DeleteAsync($"/api/professor/{id}"); // Primeiro delete para deixar inativo
+        await _client.DeleteAsync($"/api/professores/{id}"); // Primeiro delete para deixar inativo
         // Act: Tentamos deletar o mesmo ID novamente
-        var responseDeleteNovamente = await _client.DeleteAsync($"/api/professor/{id}");
+        var responseDeleteNovamente = await _client.DeleteAsync($"/api/professores/{id}");
         // Assert: Esperamos um 404 Not Found, pois ele já está "inativo"
         responseDeleteNovamente.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -131,9 +131,9 @@ public class SoftDeleteProfessorIntegrationTest : IAsyncLifetime
     {
         // Arrange: Criamos um professor, deletamos ele (ficando inativo) e depois tentamos deletar de novo
         var id = await CadastrarProfessorERetornarIdAsync();
-        await _client.DeleteAsync($"/api/professor/{id}"); // Primeiro delete para deixar inativo
+        await _client.DeleteAsync($"/api/professores/{id}"); // Primeiro delete para deixar inativo
         // Act: Tentamos deletar o mesmo ID novamente
-        var responseDeleteNovamente = await _client.DeleteAsync($"/api/professor/{id}");
+        var responseDeleteNovamente = await _client.DeleteAsync($"/api/professores/{id}");
         // Assert: Esperamos um 404 Not Found, pois ele já está "inativo"
         responseDeleteNovamente.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -144,7 +144,7 @@ public class SoftDeleteProfessorIntegrationTest : IAsyncLifetime
         // Arrange: Usamos um ID que não é um GUID válido
         var idInvalido = "12345";
         // Act: Tentamos deletar usando esse ID inválido
-        var responseDelete = await _client.DeleteAsync($"/api/professor/{idInvalido}");
+        var responseDelete = await _client.DeleteAsync($"/api/professores/{idInvalido}");
         // Assert: Esperamos um 400 Bad Request, pois o formato do ID é inválido
         responseDelete.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -154,9 +154,9 @@ public class SoftDeleteProfessorIntegrationTest : IAsyncLifetime
     {
         // Arrange: Criamos um professor e o deletamos
         var id = await CadastrarProfessorERetornarIdAsync();
-        await _client.DeleteAsync($"/api/professor/{id}"); // Deleta para ficar inativo
+        await _client.DeleteAsync($"/api/professores/{id}"); // Deleta para ficar inativo
         // Act: Buscamos a lista de todos os professores
-        var responseGetTodos = await _client.GetAsync("/api/professor");
+        var responseGetTodos = await _client.GetAsync("/api/professores");
         var listaProfessores = await responseGetTodos.Content.ReadFromJsonAsync<List<ProfessorDtoResponse>>();
         // Assert: O professor deletado (inativo) não deve aparecer na lista de todos
         listaProfessores.Should().NotContain(p => p.ProfessorId == id);
@@ -168,12 +168,12 @@ public class SoftDeleteProfessorIntegrationTest : IAsyncLifetime
         var id = await CadastrarProfessorERetornarIdAsync();
 
         // 2. Act: Deleta via API (ADICIONE O $ AQUI)
-        var responseDelete = await _client.DeleteAsync($"/api/professor/{id}");
+        var responseDelete = await _client.DeleteAsync($"/api/professores/{id}");
 
         // ... restante do código ...
 
         // 3. Assert (Superfície): (ADICIONE O $ AQUI TAMBÉM)
-        var responseGet = await _client.GetAsync($"/api/professor/{id}");
+        var responseGet = await _client.GetAsync($"/api/professores/{id}");
         responseGet.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
         // 4. Assert (Subsolo): Vamos ver se ele ainda existe no banco

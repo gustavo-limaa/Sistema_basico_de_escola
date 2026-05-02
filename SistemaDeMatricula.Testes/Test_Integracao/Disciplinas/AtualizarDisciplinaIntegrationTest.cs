@@ -54,11 +54,11 @@ public class AtualizarDisciplinaIntegrationTest : IAsyncLifetime
 
         );
 
-        var resultResponse = await _client.PostAsJsonAsync("/api/disciplina", dto);
+        var resultResponse = await _client.PostAsJsonAsync("/api/disciplinas", dto);
 
         var disciplinaCriada = await resultResponse.Content.ReadFromJsonAsync<DisciplinaDtoResponse>();
         // 2. Atualizar a disciplina criada
-        var atualizarResponse = await _client.PutAsJsonAsync($"/api/disciplina/{disciplinaCriada!.DisciplinaId}", new DisciplinaDtoUpdate(
+        var atualizarResponse = await _client.PutAsJsonAsync($"/api/disciplinas/{disciplinaCriada!.DisciplinaId}", new DisciplinaDtoUpdate(
             DisciplinaId: disciplinaCriada.DisciplinaId,
             Nome: "Matemática Avançada",
             CargaHoraria: 80,
@@ -80,7 +80,7 @@ public class AtualizarDisciplinaIntegrationTest : IAsyncLifetime
     [Fact]
     public async Task AtualizarDisciplina_NaoEncontrada()
     {
-        var atualizarResponse = await _client.PutAsJsonAsync($"/api/disciplina/{Guid.NewGuid()}", new DisciplinaDtoUpdate(
+        var atualizarResponse = await _client.PutAsJsonAsync($"/api/disciplinas/{Guid.NewGuid()}", new DisciplinaDtoUpdate(
             DisciplinaId: Guid.NewGuid(),
             Nome: "Matemática Avançada",
             CargaHoraria: 80,
@@ -97,7 +97,7 @@ public class AtualizarDisciplinaIntegrationTest : IAsyncLifetime
             Nome: criarResponse1.Nome,
             CargaHoraria: criarResponse1.CargaHoraria
         );
-        var resultResponse1 = await _client.PostAsJsonAsync("/api/disciplina", dto1);
+        var resultResponse1 = await _client.PostAsJsonAsync("/api/disciplinas", dto1);
         resultResponse1.EnsureSuccessStatusCode();
         var disciplinaCriada1 = await resultResponse1.Content.ReadFromJsonAsync<DisciplinaDtoResponse>();
         // Criar a segunda disciplina
@@ -106,11 +106,11 @@ public class AtualizarDisciplinaIntegrationTest : IAsyncLifetime
             Nome: criarResponse2.Nome,
             CargaHoraria: criarResponse2.CargaHoraria
         );
-        var resultResponse2 = await _client.PostAsJsonAsync("/api/disciplina", dto2);
+        var resultResponse2 = await _client.PostAsJsonAsync("/api/disciplinas", dto2);
         resultResponse2.EnsureSuccessStatusCode();
         var disciplinaCriada2 = await resultResponse2.Content.ReadFromJsonAsync<DisciplinaDtoResponse>();
         // Tentar atualizar a segunda disciplina com o nome da primeira
-        var atualizarResponse = await _client.PutAsJsonAsync($"/api/disciplina/{disciplinaCriada2!.DisciplinaId}", new DisciplinaDtoUpdate(
+        var atualizarResponse = await _client.PutAsJsonAsync($"/api/disciplinas/{disciplinaCriada2!.DisciplinaId}", new DisciplinaDtoUpdate(
             DisciplinaId: disciplinaCriada2.DisciplinaId,
             Nome: disciplinaCriada1!.Nome, // Nome duplicado
             CargaHoraria: 80,
@@ -127,11 +127,11 @@ public class AtualizarDisciplinaIntegrationTest : IAsyncLifetime
             Nome: criarResponse.Nome,
             CargaHoraria: criarResponse.CargaHoraria
         );
-        var resultResponse = await _client.PostAsJsonAsync("/api/disciplina", dto);
+        var resultResponse = await _client.PostAsJsonAsync("/api/disciplinas", dto);
         resultResponse.EnsureSuccessStatusCode();
         var disciplinaCriada = await resultResponse.Content.ReadFromJsonAsync<DisciplinaDtoResponse>();
         // Tentar atualizar com dados inválidos (nome vazio e carga horária negativa)
-        var atualizarResponse = await _client.PutAsJsonAsync($"/api/disciplina/{disciplinaCriada!.DisciplinaId}", new DisciplinaDtoUpdate(
+        var atualizarResponse = await _client.PutAsJsonAsync($"/api/disciplinas/{disciplinaCriada!.DisciplinaId}", new DisciplinaDtoUpdate(
             DisciplinaId: disciplinaCriada.DisciplinaId,
             Nome: "", // Nome inválido
             CargaHoraria: -10, // Carga horária inválida
@@ -148,11 +148,11 @@ public class AtualizarDisciplinaIntegrationTest : IAsyncLifetime
             Nome: criarResponse.Nome,
             CargaHoraria: criarResponse.CargaHoraria
         );
-        var resultResponse = await _client.PostAsJsonAsync("/api/disciplina", dto);
+        var resultResponse = await _client.PostAsJsonAsync("/api/disciplinas", dto);
         resultResponse.EnsureSuccessStatusCode();
         var disciplinaCriada = await resultResponse.Content.ReadFromJsonAsync<DisciplinaDtoResponse>();
         // Tentar atualizar sem alterar os dados (mesmo nome e carga horária)
-        var atualizarResponse = await _client.PutAsJsonAsync($"/api/disciplina/{disciplinaCriada!.DisciplinaId}", new DisciplinaDtoUpdate(
+        var atualizarResponse = await _client.PutAsJsonAsync($"/api/disciplinas/{disciplinaCriada!.DisciplinaId}", new DisciplinaDtoUpdate(
             DisciplinaId: disciplinaCriada.DisciplinaId,
             Nome: disciplinaCriada.Nome, // Mesmo nome
             CargaHoraria: disciplinaCriada.CargaHoraria, // Mesma carga horária

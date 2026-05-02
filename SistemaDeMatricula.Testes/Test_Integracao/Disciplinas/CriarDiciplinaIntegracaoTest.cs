@@ -50,7 +50,7 @@ public class CriarDiciplinaIntegracaoTest : IAsyncLifetime
         );
 
         // 2. ACT
-        var postResponse = await _client.PostAsJsonAsync("/api/Disciplina", dtoParaEnviar);
+        var postResponse = await _client.PostAsJsonAsync("/api/Disciplinas", dtoParaEnviar);
 
         // 3. ASSERT
         postResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
@@ -72,7 +72,7 @@ public class CriarDiciplinaIntegracaoTest : IAsyncLifetime
             CargaHoraria: -5 // Carga horária negativa é inválida
         );
         // 2. ACT
-        var postResponse = await _client.PostAsJsonAsync("/api/Disciplina", dtoInvalido);
+        var postResponse = await _client.PostAsJsonAsync("/api/Disciplinas", dtoInvalido);
         // 3. ASSERT
         postResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
     }
@@ -87,10 +87,10 @@ public class CriarDiciplinaIntegracaoTest : IAsyncLifetime
             disciplinaFake.CargaHoraria
         );
         // Criamos a disciplina pela API para garantir que o nome já exista no banco
-        var postResponse1 = await _client.PostAsJsonAsync("/api/Disciplina", dtoValido);
+        var postResponse1 = await _client.PostAsJsonAsync("/api/Disciplinas", dtoValido);
         postResponse1.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
         // 2. ACT - Tentamos criar outra disciplina com o mesmo nome
-        var postResponse2 = await _client.PostAsJsonAsync("/api/Disciplina", dtoValido);
+        var postResponse2 = await _client.PostAsJsonAsync("/api/Disciplinas", dtoValido);
         // 3. ASSERT - Esperamos um BadRequest por causa do nome duplicado
         postResponse2.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
     }
@@ -105,7 +105,7 @@ public class CriarDiciplinaIntegracaoTest : IAsyncLifetime
             CargaHoraria: 1000 // Carga horária excessiva é inválida
         );
         // 2. ACT
-        var postResponse = await _client.PostAsJsonAsync("/api/Disciplina", dtoInvalido);
+        var postResponse = await _client.PostAsJsonAsync("/api/Disciplinas", dtoInvalido);
         // 3. ASSERT
         postResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
     }
@@ -119,7 +119,7 @@ public class CriarDiciplinaIntegracaoTest : IAsyncLifetime
             CargaHoraria: 40
         );
         // 2. ACT
-        var postResponse = await _client.PostAsJsonAsync("/api/Disciplina", dtoInvalido);
+        var postResponse = await _client.PostAsJsonAsync("/api/Disciplinas", dtoInvalido);
         // 3. ASSERT
         postResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
     }
@@ -134,7 +134,7 @@ public class CriarDiciplinaIntegracaoTest : IAsyncLifetime
             CargaHoraria: 40
         );
         // 2. ACT
-        var postResponse = await _client.PostAsJsonAsync("/api/Disciplina", dtoInvalido);
+        var postResponse = await _client.PostAsJsonAsync("/api/Disciplinas", dtoInvalido);
         // 3. ASSERT
         postResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
     }
@@ -149,7 +149,7 @@ public class CriarDiciplinaIntegracaoTest : IAsyncLifetime
             CargaHoraria: 0 // Carga horária zero é inválida
         );
         // 2. ACT
-        var postResponse = await _client.PostAsJsonAsync("/api/Disciplina", dtoInvalido);
+        var postResponse = await _client.PostAsJsonAsync("/api/Disciplinas", dtoInvalido);
         // 3. ASSERT
         postResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
     }

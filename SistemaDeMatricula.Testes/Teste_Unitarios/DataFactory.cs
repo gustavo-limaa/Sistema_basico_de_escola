@@ -89,4 +89,22 @@ public static class DataFactory
                 f.Phone.PhoneNumber("119########") // 4. Telefone
             );
         });
-};
+
+    public static Faker<Turma> TurmaFaker(Guid? professorId = null, Guid? disciplinaId = null)
+    => new Faker<Turma>("pt_BR")
+    .CustomInstantiator(f =>
+    {
+        // Se eu passar um ID, ele usa. Se não, ele gera um novo (útil para testes unitários)
+        var profId = professorId ?? Guid.NewGuid();
+        var discId = disciplinaId ?? Guid.NewGuid();
+
+        var codigo = new CodigoTurma(
+            sigla: f.Random.AlphaNumeric(3).ToUpper(),
+            ano: f.Date.Soon().Year,
+            semestre: f.Random.Int(1, 2),
+            numero: f.Random.Int(1, 999)
+        );
+
+        return new Turma(codigo, profId, discId);
+    });
+}

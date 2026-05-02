@@ -1,4 +1,5 @@
 ﻿using SitemaDeMatricula.Domain.Modelos;
+using SitemaDeMatricula.Domain.Value_Object;
 
 namespace SitemaDeMatricula.Domain.Interfaces
 {
@@ -23,5 +24,7 @@ namespace SitemaDeMatricula.Domain.Interfaces
         Task<Turma?> ObterPorCodigoIgnorandoFiltrosAsync(string codigo);
 
         Task<bool> SalvarAlteracoesAsync();
+
+        Task<Turma?> ObterPorCodigoAsync(CodigoTurma codigo);
     }
 }
