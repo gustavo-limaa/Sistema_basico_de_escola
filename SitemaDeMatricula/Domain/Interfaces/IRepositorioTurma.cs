@@ -26,5 +26,7 @@ namespace SitemaDeMatricula.Domain.Interfaces
         Task<bool> SalvarAlteracoesAsync();
 
         Task<Turma?> ObterPorCodigoAsync(CodigoTurma codigo);
+
+        Task<bool> RestaurarAsync(Guid id);
     }
 }

@@ -47,7 +47,7 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
 
         public async Task<Turma?> ObterPorIdAsync(Guid id)
         {
-            return await _context.Turmas
+            return await _context.Turmas.IgnoreQueryFilters()
                 .Include(t => t.Professor)
                 .Include(t => t.Disciplina)
                 .FirstOrDefaultAsync(t => t.TurmaId == id);
@@ -100,6 +100,20 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
         public Task<Turma?> ObterPorCodigoIgnorandoFiltrosAsync(string codigo)
         {
             return _context.Turmas.IgnoreQueryFilters().FirstOrDefaultAsync(t => t.CodigoTurma.ValorFormatado == codigo);
+        }
+
+        public async Task<bool> RestaurarAsync(Guid id)
+        {
+            // Usamos IgnoreQueryFilters() porque, por padrão, ela está "invisível"
+            var turmaInativa = await _context.Turmas
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(t => t.TurmaId == id);
+
+            if (turmaInativa == null) return false;
+
+            turmaInativa.Ativar(); // Método que você cria na Entidade (Ativo = true)
+            await SalvarAlteracoesAsync();
+            return true;
         }
     }
 }

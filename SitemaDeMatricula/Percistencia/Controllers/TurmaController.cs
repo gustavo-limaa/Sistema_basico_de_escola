@@ -33,4 +33,8 @@ public class TurmasController : MainController
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Deletar(Guid id, [FromServices] RemoverTurmaUseCase useCase)
         => CustomResponse(await useCase.ExecutarAsync(id));
+
+    [HttpPatch("{id:guid}/restaurar")]
+    public async Task<IActionResult> Restaurar(Guid id, [FromServices] RestaurarTurmaUseCase useCase) =>
+        CustomResponse(await useCase.ExecutarAsync(id));
 }

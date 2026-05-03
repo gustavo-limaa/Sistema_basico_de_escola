@@ -14,6 +14,12 @@ namespace SitemaDeMatricula.Domain.Interfaces
 
         Task<bool> ExisteMatriculaAtivaAsync(Guid estudanteId, Guid turmaId);
 
-        Task<bool> salvarAlteracoesAsync();
+        // Essencial para a regra de Capacidade Máxima
+        Task<int> ContarMatriculasAtivasNaTurmaAsync(Guid turmaId);
+
+        // Essencial para a regra de "Não fechar turma com alunos"
+        Task<bool> ExisteQualquerMatriculaAtivaParaTurmaAsync(Guid turmaId);
+
+        Task<bool> SalvarAlteracoesAsync();
     }
 }

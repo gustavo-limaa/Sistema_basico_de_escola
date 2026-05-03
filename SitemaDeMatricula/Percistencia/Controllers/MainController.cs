@@ -22,7 +22,5 @@ public abstract class MainController : ControllerBase
             TipoErro.Conflito => Conflict(new { mensagem = result.Mensagem }), // 409 Aqui!
             _ => BadRequest(new { mensagem = result.Mensagem }) // 400 para o resto
         };
-        // Se falhou, retornamos 400 com a sua mensagem
-        return BadRequest(new { mensagem = result.Mensagem });
     }
 }
