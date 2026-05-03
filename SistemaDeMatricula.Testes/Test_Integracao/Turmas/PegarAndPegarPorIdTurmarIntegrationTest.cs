@@ -215,7 +215,7 @@ public class PegarAndPegarPorIdTurmarIntegrationTest : IAsyncLifetime
 
         // 4. Assert
         // Como o seu UseCase retorna Result.Falha, o status deve ser 400 (Bad Request)
-        resposta.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        resposta.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
         // Opcional: Validar se a mensagem de erro é a que você escreveu no UseCase
         var conteudo = await resposta.Content.ReadAsStringAsync();

@@ -217,6 +217,6 @@ public class AtualizarTurmaIntegrationTest
     public async Task deve_retorna_idinvalido_quando_passarid_inescistente()
     {
         var response = await _client.DeleteAsync($"/api/turmas/{Guid.NewGuid()}");
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }

@@ -188,10 +188,10 @@ public class SoftDeleteTurmaIntegrationTest
     }
 
     [Fact]
-    public async Task Deve_dar_BadRequest_quando_Id_Invalido()
+    public async Task Deve_dar_notFound_quando_Id_Invalido()
     {
         var response = await _client.DeleteAsync($"/api/turmas/{Guid.NewGuid()}");
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -223,6 +223,6 @@ public class SoftDeleteTurmaIntegrationTest
 
         // 4. Assert: Deve continuar retornando 204 No Content
         // Isso prova que sua API é idempotente e não "explode" em erros
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }

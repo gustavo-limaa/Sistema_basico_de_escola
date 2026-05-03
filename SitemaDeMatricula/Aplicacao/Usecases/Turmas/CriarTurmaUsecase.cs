@@ -46,13 +46,18 @@ public class CriarTurmaUseCase
             // Use o método que seta o TipoErro.Conflito
             return Result<TurmaDtoResponse>.Conflito("Já existe uma turma ativa com este código.");
 
-        if (!professor.Ativo) // Esta linha faz o seu teste de 'ProfessorInativo' passar!
+        if (!professor.Ativo)
             return Result<TurmaDtoResponse>.Falha("Não é possível vincular um professor inativo a uma nova turma.");
 
-        // 3.2 Validar se a Disciplina existe E está ativa
+        if (!professor.Ativo)
+            return Result<TurmaDtoResponse>.Falha("Não é possível vincular um professor inativo a uma nova turma."); // Retorna 400
+
         var disciplina = await _discRepo.ObterPorIdAsync(dto.DisciplinaId);
         if (disciplina == null)
-            return Result<TurmaDtoResponse>.Falha("Disciplina não encontrada.");
+            return Result<TurmaDtoResponse>.NaoEncontrado("Disciplina não encontrada."); // Agora retorna 404
+
+        if (!disciplina.Ativo)
+            return Result<TurmaDtoResponse>.Falha("Não é possível vincular uma disciplina inativa a uma nova turma."); // Retorna 400
 
         if (!disciplina.Ativo) // Esta linha faz o seu teste de 'DisciplinaInativa' passar!
             return Result<TurmaDtoResponse>.Falha("Não é possível vincular uma disciplina inativa a uma nova turma.");

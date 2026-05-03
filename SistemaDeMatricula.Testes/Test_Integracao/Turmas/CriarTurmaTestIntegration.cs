@@ -204,7 +204,7 @@ public class CriarTurmaTestIntegration : IAsyncLifetime
             001
         );
         var resposta = await _client.PostAsJsonAsync("/api/turmas", turmaInvalida);
-        resposta.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        resposta.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact]
