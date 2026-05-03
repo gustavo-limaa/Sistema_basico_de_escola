@@ -39,7 +39,7 @@ public class AtualizarTurmaUseCase
 
         // Se achou alguém E esse alguém não é a turma que estou editando agora...
         if (turmaComMesmoCodigo != null && turmaComMesmoCodigo.TurmaId != turmaId)
-            return Result<TurmaDtoResponse>.Conflito("Este código já está sendo usado por outra turma.");
+            return Result<TurmaDtoResponse>.Conflito("Este código já está sendo usado por outra turma."); // 👈 Tem que ser .Conflito!
 
         // 4. Validação de Professor e Disciplina (Igual ao Criar)
         var professor = await _profRepo.ObterPorIdAsync(dto.ProfessorId);

@@ -11,6 +11,7 @@ public static class TurmaMapper
         // Apenas usamos as propriedades dele.
         return new TurmaDtoResponse(
             turma.TurmaId,
+            turma.CodigoTurma.Sigla,
             turma.CodigoTurma.ValorFormatado, // A string inteligente "MAT-2026-1-001"
             turma.CodigoTurma.Semestre,
             turma.CodigoTurma.Ano,

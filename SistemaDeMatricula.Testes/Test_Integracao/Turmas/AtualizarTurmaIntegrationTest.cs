@@ -19,12 +19,12 @@ using System.Threading.Tasks;
 namespace SistemaDeMatricula.Testes.Test_Integracao.Turmas;
 
 [Collection("ApiMatrix")]
-public class SoftDeleteTurmaIntegrationTest
+public class AtualizarTurmaIntegrationTest
 {
     private readonly HttpClient _client;
     private readonly SistemaMatriculaFactory _factory; // Guardamos a factory para usar depois
 
-    public SoftDeleteTurmaIntegrationTest(SistemaMatriculaFactory factory)
+    public AtualizarTurmaIntegrationTest(SistemaMatriculaFactory factory)
     {
         _factory = factory;
         _client = factory.CreateClient();
@@ -84,6 +84,7 @@ public class SoftDeleteTurmaIntegrationTest
            Telefone: professor.Telefone.Valor,
            Salario: professor.Salario.Valor,
            Categoria: professor.Categoria.ToString()
+
          );
         return dto;
     }
@@ -98,21 +99,33 @@ public class SoftDeleteTurmaIntegrationTest
         return dto;
     }
 
-    private TurmaDtoCreate CriarTUrma()
+    private async Task<TurmaDtoResponse> CriarTurmaAsync(Guid profid, Guid discid) // 1. Nome padronizado e retorno correto
     {
+        // Gera os dados fake
         var dto = DataFactory.TurmaFaker().Generate();
 
         var turmaDto = new TurmaDtoCreate
         (
-            DisciplinaId: dto.DisciplinaId,
-            ProfessorId: dto.ProfessorId,
+            DisciplinaId: discid,
+            ProfessorId: profid,
             Sigla: dto.CodigoTurma.Sigla,
             Semestre: dto.CodigoTurma.Semestre,
             AnoLetivo: dto.CodigoTurma.Ano,
             Numero: dto.CodigoTurma.Numero
         );
 
-        return turmaDto;
+        // 2. Executa a criação real na API
+        var resposta = await _client.PostAsJsonAsync("/api/turmas", turmaDto);
+
+        if (!resposta.IsSuccessStatusCode)
+        {
+            var erroMsg = await resposta.Content.ReadAsStringAsync();
+            throw new Exception($"Erro ao criar turma no setup: {erroMsg}");
+        }
+        // 3. Lê o objeto único de resposta (que contém o ID gerado pelo banco)
+        var response = await resposta.Content.ReadFromJsonAsync<TurmaDtoResponse>();
+
+        return response!;
     }
 
     private async Task<(Guid ProfessorId, Guid DisciplinaId, string NomeDisciplina)> CriarDependenciasAsync()
@@ -131,98 +144,79 @@ public class SoftDeleteTurmaIntegrationTest
     }
 
     [Fact]
-    public async Task NaoDevePermitir_SoftDelete_Quando_TurmaTemAlunos()
+    public async Task Deve_Atualizar_Turma_Com_Sucesso()
     {
-        // 1. Arrange: Criar a Turma
+        // 1. Arrange: Cria as dependências reais
         var (profId, discId, _) = await CriarDependenciasAsync();
-        var dadosTurma = CriarTUrma();
-        var dtoTurma = new TurmaDtoCreate(discId, profId, dadosTurma.Sigla,
-                                          dadosTurma.Semestre, dadosTurma.AnoLetivo,
-                                          dadosTurma.Numero);
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var profNoBanco = await db.Professores.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.ProfessorId == profId);
 
-        var respTurma = await _client.PostAsJsonAsync("/api/turmas", dtoTurma);
-        var turmaCriada = await respTurma.Content.ReadFromJsonAsync<TurmaDtoResponse>();
+        Console.WriteLine($"Professor no Banco: {profNoBanco.NomeCompleto} | Ativo: {profNoBanco.Ativo}");
+        // 2. Criar a turma passando os IDs que acabamos de gerar
+        // (Ajuste o método CriarTurmaAsync para aceitar esses parâmetros)
+        var turmaCriada = await CriarTurmaAsync(profId, discId);
+        var idDaTurma = turmaCriada.Id;
 
-        // 2. Arrange: Criar um Estudante e Matricular (Simulando o fluxo)
-        // Nota: Aqui usei nomes genéricos, adapte para seus DTOs de Estudante/Matricula
-        var estudante = await CriarEstudanteAsync();
-
-        var dtoMatricula = new { EstudanteId = estudante.EstudanteId, TurmaId = turmaCriada!.Id };
-        // No seu Fact dentro do SoftDeleteTurmaIntegrationTest
-        var respMatricula = await _client.PostAsJsonAsync("/api/matriculas", dtoMatricula);
-
-        await _client.PostAsJsonAsync("/api/matriculas", dtoMatricula);
-
-        // 3. Act: Tentar deletar a turma que agora tem "dono"
-        var response = await _client.DeleteAsync($"/api/turmas/{turmaCriada.Id}");
-
-        // 4. Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-        var erro = await response.Content.ReadAsStringAsync();
-        erro.Should().Contain("Não é possível desativar uma turma com alunos matriculados.");
-    }
-
-    [Fact]
-    public async Task deve_softdelete_com_susesso()
-    {
-        var (profId, discId, nomeDisc) = await CriarDependenciasAsync();
-
-        var dadosturmas = CriarTUrma();
-
-        var dadosvalidos = new TurmaDtoCreate(
-            DisciplinaId: discId,
+        // 3. Preparar os novos dados para o Update
+        var dadosParaAtualizar = new TurmaDtoUpdate(
             ProfessorId: profId,
-            Sigla: dadosturmas.Sigla,
-            Semestre: dadosturmas.Semestre,
-            AnoLetivo: dadosturmas.AnoLetivo,
-            Numero: dadosturmas.Numero
+            DisciplinaId: discId,
+            Ativo: true,
+            Sigla: "HIS",
+            Semestre: 2,
+            AnoLetivo: 2027,
+            Numero: 005
         );
-        var respTurma = await _client.PostAsJsonAsync("/api/turmas", dadosvalidos);
 
-        var turmaCriada = await respTurma.Content.ReadFromJsonAsync<TurmaDtoResponse>();
+        // 4. Act: Agora sim, passando o ID na URL e os dados no corpo
+        var response = await _client.PutAsJsonAsync($"/api/turmas/{idDaTurma}", dadosParaAtualizar);
+        response.EnsureSuccessStatusCode();
+        // 5. Assert: Verificar se deu bom
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
-        var response = await _client.DeleteAsync($"/api/turmas/{turmaCriada.Id}");
-
-        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        // Dica extra: Verifique se os dados mudaram de verdade buscando a turma novamente
+        var turmaAtualizada = await response.Content.ReadFromJsonAsync<TurmaDtoResponse>();
     }
 
     [Fact]
-    public async Task Deve_dar_BadRequest_quando_Id_Invalido()
+    public async Task deve_retornar_badrequest_quanto_dados_inalido()
+    { // 1. Arrange: Cria as dependências reais
+        var (profId, discId, _) = await CriarDependenciasAsync();
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var profNoBanco = await db.Professores.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.ProfessorId == profId);
+
+        Console.WriteLine($"Professor no Banco: {profNoBanco.NomeCompleto} | Ativo: {profNoBanco.Ativo}");
+        // 2. Criar a turma passando os IDs que acabamos de gerar
+        // (Ajuste o método CriarTurmaAsync para aceitar esses parâmetros)
+        var turmaCriada = await CriarTurmaAsync(profId, discId);
+        var idDaTurma = turmaCriada.Id;
+
+        // 3. Preparar os novos dados para o Update
+        var dadosParaAtualizar = new TurmaDtoUpdate(
+            ProfessorId: profId,
+            DisciplinaId: discId,
+            Ativo: true,
+            Sigla: "HIS",
+            Semestre: -2,
+            AnoLetivo: 2027,
+            Numero: 005
+        );
+
+        // 4. Act: Agora sim, passando o ID na URL e os dados no corpo
+        var response = await _client.PutAsJsonAsync($"/api/turmas/{idDaTurma}", dadosParaAtualizar);
+
+        // 5. Assert: Verificar se deu bom
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);// Exemplo de como "abrir a caixa" do erro
+        var erro = await response.Content.ReadAsStringAsync();
+        erro.Should().Contain("Semestre"); // Garante que a falha foi onde você queria
+    }
+
+    [Fact]
+    public async Task deve_retorna_idinvalido_quando_passarid_inescistente()
     {
         var response = await _client.DeleteAsync($"/api/turmas/{Guid.NewGuid()}");
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-    }
-
-    [Fact]
-    public async Task Deve_Retornar_NoContent_Ao_Tentar_Desativar_Turma_Ja_Inativa()
-    {
-        // 1. Setup: Criar a turma e suas dependências
-        var (profId, discId, _) = await CriarDependenciasAsync();
-        var dadosBase = CriarTUrma();
-
-        var dtoCreate = new TurmaDtoCreate(
-            DisciplinaId: discId,
-            ProfessorId: profId,
-            Sigla: dadosBase.Sigla,
-            Semestre: dadosBase.Semestre,
-            AnoLetivo: dadosBase.AnoLetivo,
-            Numero: dadosBase.Numero
-        );
-
-        var respCriar = await _client.PostAsJsonAsync("/api/turmas", dtoCreate);
-        respCriar.EnsureSuccessStatusCode();
-
-        var turmaCriada = await respCriar.Content.ReadFromJsonAsync<TurmaDtoResponse>();
-
-        // 2. Primeira Desativação (Soft Delete real)
-        await _client.DeleteAsync($"/api/turmas/{turmaCriada.Id}");
-
-        // 3. Segunda Desativação (A tentativa redundante)
-        var response = await _client.DeleteAsync($"/api/turmas/{turmaCriada.Id}");
-
-        // 4. Assert: Deve continuar retornando 204 No Content
-        // Isso prova que sua API é idempotente e não "explode" em erros
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 }

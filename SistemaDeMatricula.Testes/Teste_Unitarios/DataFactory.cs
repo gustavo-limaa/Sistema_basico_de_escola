@@ -53,28 +53,22 @@ public static class DataFactory
         });
 
     public static Faker<Professor> ProfessorFaker => new Faker<Professor>("pt_BR")
-    .CustomInstantiator(f =>
-    {
-        var dataNascimentoOnly = DateOnly.FromDateTime(f.Date.Past(40, DateTime.Now.AddYears(-25)));
+     .CustomInstantiator(f =>
+     {
+         var dataNascimentoOnly = DateOnly.FromDateTime(f.Date.Past(40, DateTime.Now.AddYears(-25)));
 
-        return new Professor(
-            new ObjectNomeCompleto(f.Person.FullName),
-
-            // 1. O SEGREDO DO CPF: O 'false' gera sem os pontos e traços,
-            // passando perfeitamente pela sua validação matemática!
-            new ObjectCPF(f.Person.Cpf(false)),
-
-            new ObjectEmail(f.Internet.Email()),
-
-            // 2. SALÁRIO LIMPO: Usando o construtor explosivo direto e arredondando
-            // para 2 casas para o Assert.Equal não chorar.
-            new ValorMonetario(Math.Round(f.Random.Decimal(3000, 15000), 2)),
-
-            f.PickRandom<CategoriaProfessor>(),
-            new ObjectDataNascimento(dataNascimentoOnly),
-            new ObjectTelefone(f.Phone.PhoneNumber("119########"))
-        );
-    });
+         return new Professor(
+             new ObjectNomeCompleto(f.Person.FullName),
+             new ObjectCPF(f.Person.Cpf(false)),
+             new ObjectEmail(f.Internet.Email()),
+             new ValorMonetario(Math.Round(f.Random.Decimal(3000, 15000), 2)),
+             f.PickRandom<CategoriaProfessor>(),
+             new ObjectDataNascimento(dataNascimentoOnly),
+             new ObjectTelefone(f.Phone.PhoneNumber("119########"))
+         );
+     })
+     // O PULO DO GATO: Força o estado ativo após a instância ser criada
+     .RuleFor(p => p.Ativo, true);
 
     public static Faker<EstudanteDtoUpdate> EstudanteDtoUpdateFaker => new Faker<EstudanteDtoUpdate>("pt_BR")
         .CustomInstantiator(f =>

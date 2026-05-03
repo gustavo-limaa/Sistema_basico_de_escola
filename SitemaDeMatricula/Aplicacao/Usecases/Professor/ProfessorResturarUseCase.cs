@@ -28,8 +28,7 @@ public class ProfessorRestaurarUseCase
                 return Result<ProfessorDtoResponse>.Falha("Professor não encontrado.");
 
             if (professor.Ativo)
-                // Ajustado para conter "já existe" e disparar o 409 na Controller
-                return Result<ProfessorDtoResponse>.Falha("Este professor já existe em estado ativo e não precisa ser restaurado.");
+                return Result<ProfessorDtoResponse>.Conflito("Este professor já está ativo e não precisa ser restaurado.");
 
             professor.Ativar();
             _repositorioProfessor.Atualizar(professor);

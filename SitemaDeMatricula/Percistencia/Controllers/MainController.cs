@@ -15,12 +15,11 @@ public abstract class MainController : ControllerBase
 
             return Ok(result.Dados);
         }
-        // Switch para decidir o status code baseado no tipo do erro
         return result.Tipo switch
         {
-            TipoErro.NaoEncontrado => NotFound(new { mensagem = result.Mensagem }),
-            TipoErro.Conflito => Conflict(new { mensagem = result.Mensagem }), // 409 Aqui!
-            _ => BadRequest(new { mensagem = result.Mensagem }) // 400 para o resto
+            TipoErro.Conflito => Conflict(new { mensagem = result.Mensagem }), // Retorna 409
+            TipoErro.NaoEncontrado => NotFound(new { mensagem = result.Mensagem }), // Retorna 404
+            _ => BadRequest(new { mensagem = result.Mensagem }) // Retorna 400 por padrão
         };
     }
 }

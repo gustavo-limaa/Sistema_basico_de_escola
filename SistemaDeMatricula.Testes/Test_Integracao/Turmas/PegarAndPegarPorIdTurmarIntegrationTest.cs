@@ -185,7 +185,7 @@ public class PegarAndPegarPorIdTurmarIntegrationTest : IAsyncLifetime
 
         // Opcional: Validar se a mensagem de erro é a que você escreveu no UseCase
         var conteudo = await resposta.Content.ReadAsStringAsync();
-        conteudo.Should().Contain("Professor não encontrado ou inativo.");
+        conteudo.Should().Contain("Professor não encontrado.");
     }
 
     [Fact]
@@ -219,7 +219,7 @@ public class PegarAndPegarPorIdTurmarIntegrationTest : IAsyncLifetime
 
         // Opcional: Validar se a mensagem de erro é a que você escreveu no UseCase
         var conteudo = await resposta.Content.ReadAsStringAsync();
-        conteudo.Should().Contain("Disciplina não encontrada ou inativa.");
+        conteudo.Should().Contain("Disciplina não encontrada.");
     }
 
     [Fact]

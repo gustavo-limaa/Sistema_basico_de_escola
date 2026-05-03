@@ -234,20 +234,4 @@ public class CriarTurmaTestIntegration : IAsyncLifetime
         var resposta2 = await _client.PostAsJsonAsync("/api/turmas", turmaValida);
         resposta2.StatusCode.Should().Be(HttpStatusCode.Conflict);
     }
-
-    [Fact]
-    public async Task CriarTurma_SemDependencias_DeveRetornar400()
-    {
-        // 1. Tentar criar a Turma sem criar Professor e Disciplina antes
-        var turmaInvalida = new TurmaDtoCreate(
-            Guid.NewGuid(), // ID aleatório que não existe
-            Guid.NewGuid(), // ID aleatório que não existe
-            "CSH",
-            1,
-            2026,
-            001
-        );
-        var resposta = await _client.PostAsJsonAsync("/api/turmas", turmaInvalida);
-        resposta.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-    }
 }

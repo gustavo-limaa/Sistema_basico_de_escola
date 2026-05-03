@@ -30,6 +30,14 @@ public class Result<T>
         Tipo = tipo;
     }
 
+    // Para resolver o problema do 404
+    public static Result<T> NaoEncontrado(string mensagem)
+        => new(false, default, mensagem, TipoErro.NaoEncontrado);
+
+    // Para erros de infraestrutura ou catch (Exceções)
+    public static Result<T> Inesperado(string mensagem)
+        => new(false, default, mensagem, TipoErro.Inesperado);
+
     public static Result<T> Conflito(string mensagem)
         => new(false, default, mensagem, TipoErro.Conflito);
 

@@ -4,6 +4,8 @@ using SitemaDeMatricula.Domain.Interfaces;
 using SitemaDeMatricula.Domain.Mapper;
 using SitemaDeMatricula.Domain.Modelos;
 using SitemaDeMatricula.Domain.Value_Object;
+using System.Runtime.CompilerServices;
+using Xunit;
 
 namespace SitemaDeMatricula.Aplicacao.Usecases.Turmas;
 
@@ -24,34 +26,39 @@ public class CriarTurmaUseCase
     }
 
     public async Task<Result<TurmaDtoResponse>> ExecutarAsync(TurmaDtoCreate dto)
-    {// 1. Tenta criar o VO
+    {
+        // 1. Tenta criar o VO
         var resultadoVO = CodigoTurma.Criar(dto.Sigla, dto.AnoLetivo, dto.Semestre, dto.Numero);
 
-        // 2. Verifica se falhou (Usando sua propriedade Sucesso)
         if (!resultadoVO.Sucesso)
         {
             return Result<TurmaDtoResponse>.Falha(resultadoVO.Mensagem);
         }
 
-        // 3. Se deu sucesso, acessamos o objeto real via .Dados
-        var codigoValidado = resultadoVO.Dados;
-
-        var turmaExistente = await _turmaRepo.ObterPorCodigoAsync(codigoValidado);
-        if (turmaExistente != null)
-            return Result<TurmaDtoResponse>.Conflito("Já existe uma turma (ativa ou inativa) com este código.");
-
-        // 3. Validação de Dependências (Regra de Negócio)
+        // 2. DESEMPACOTANDO: Pegamos o objeto de valor
+        var codigoVO = resultadoVO.Dados;
         var professor = await _profRepo.ObterPorIdAsync(dto.ProfessorId);
         if (professor == null)
-            return Result<TurmaDtoResponse>.Falha("Professor não encontrado ou inativo.");
+            return Result<TurmaDtoResponse>.Falha("Professor não encontrado.");
+        var turmaExistente = await _turmaRepo.ObterPorCodigoAsync(codigoVO.ValorFormatado);
 
+        if (turmaExistente != null)
+            // Use o método que seta o TipoErro.Conflito
+            return Result<TurmaDtoResponse>.Conflito("Já existe uma turma ativa com este código.");
+
+        if (!professor.Ativo) // Esta linha faz o seu teste de 'ProfessorInativo' passar!
+            return Result<TurmaDtoResponse>.Falha("Não é possível vincular um professor inativo a uma nova turma.");
+
+        // 3.2 Validar se a Disciplina existe E está ativa
         var disciplina = await _discRepo.ObterPorIdAsync(dto.DisciplinaId);
         if (disciplina == null)
-            return Result<TurmaDtoResponse>.Falha("Disciplina não encontrada ou inativa.");
+            return Result<TurmaDtoResponse>.Falha("Disciplina não encontrada.");
 
-        // 4. Se passou por tudo, a Entidade é criada com segurança
-        var novaTurma = new Turma(codigoValidado, dto.ProfessorId, dto.DisciplinaId);
+        if (!disciplina.Ativo) // Esta linha faz o seu teste de 'DisciplinaInativa' passar!
+            return Result<TurmaDtoResponse>.Falha("Não é possível vincular uma disciplina inativa a uma nova turma.");
 
+        // 4. Na hora de criar a Entidade...
+        var novaTurma = new Turma(codigoVO, dto.ProfessorId, dto.DisciplinaId);
         await _turmaRepo.AdicionarAsync(novaTurma);
         return Result<TurmaDtoResponse>.Ok(novaTurma.ToTurmaDtoResponse());
     }

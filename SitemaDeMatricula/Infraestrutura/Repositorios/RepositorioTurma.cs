@@ -47,7 +47,7 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
 
         public async Task<Turma?> ObterPorIdAsync(Guid id)
         {
-            return await _context.Turmas.IgnoreQueryFilters()
+            return await _context.Turmas
                 .Include(t => t.Professor)
                 .Include(t => t.Disciplina)
                 .FirstOrDefaultAsync(t => t.TurmaId == id);
@@ -56,11 +56,6 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
         public async Task<bool> AtualizarAsync(Turma turma)
         {
             return await SalvarAlteracoesAsync();
-        }
-
-        public async Task<Turma?> ObterPorCodigoAsync(string codigo)
-        {
-            return await _context.Turmas.FirstOrDefaultAsync(t => t.CodigoTurma.ValorFormatado == codigo);
         }
 
         public async Task<bool> RemoverAsync(Turma turma)
@@ -92,14 +87,21 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<Turma?> ObterPorCodigoAsync(CodigoTurma codigo)
+        public async Task<Turma?> ObterPorCodigoAsync(string codigo)
         {
-            return await _context.Turmas.FirstOrDefaultAsync(t => t.CodigoTurma == codigo);
+            var codigoVO = CodigoTurma.CriarDeString(codigo);
+
+            return await _context.Turmas
+                .FirstOrDefaultAsync(t => t.CodigoTurma == codigoVO);
         }
 
-        public Task<Turma?> ObterPorCodigoIgnorandoFiltrosAsync(string codigo)
+        public async Task<Turma?> ObterPorCodigoIgnorandoFiltrosAsync(string codigo)
         {
-            return _context.Turmas.IgnoreQueryFilters().FirstOrDefaultAsync(t => t.CodigoTurma.ValorFormatado == codigo);
+            var codigoVO = CodigoTurma.CriarDeString(codigo);
+
+            return await _context.Turmas
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(t => t.CodigoTurma == codigoVO);
         }
 
         public async Task<bool> RestaurarAsync(Guid id)
