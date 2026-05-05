@@ -101,4 +101,9 @@ public static class DataFactory
 
         return new Turma(codigo, profId, discId);
     });
+
+    public static List<Turma> GerarListaDeTurmas(int quantidade = 50)
+    {
+        return TurmaFaker().Generate(quantidade);
+    }
 }

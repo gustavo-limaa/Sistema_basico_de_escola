@@ -12,14 +12,14 @@ using System.Threading.Tasks;
 
 namespace SistemaDeMatricula.Testes.Teste_Unitarios.EstudanteTestUnitario;
 
-public class UsecasesPegarListarEstudante
+public class PegarEPegarPorIdTesT
 {
     private readonly Mock<IRepositorioEstudante> _repositorioMock;
     private readonly UsesCasesListarTodosEstudante _useCase;
     private readonly UsesCasesPegarPorIdEstudante _useCasePegarPorId;
 
     // REMOVI OS PARÂMETROS DAQUI:
-    public UsecasesPegarListarEstudante()
+    public PegarEPegarPorIdTesT()
     {
         // Agora o xUnit consegue entrar aqui e rodar essas linhas
         _repositorioMock = new Mock<IRepositorioEstudante>();

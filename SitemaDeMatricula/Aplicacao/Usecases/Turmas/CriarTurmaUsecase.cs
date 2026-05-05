@@ -37,30 +37,26 @@ public class CriarTurmaUseCase
 
         // 2. DESEMPACOTANDO: Pegamos o objeto de valor
         var codigoVO = resultadoVO.Dados;
+        // verificaçao prof
         var professor = await _profRepo.ObterPorIdAsync(dto.ProfessorId);
         if (professor == null)
             return Result<TurmaDtoResponse>.Falha("Professor não encontrado.");
+        if (!professor.Ativo)
+            return Result<TurmaDtoResponse>.Conflito("Não é possível vincular um Professor inativo a uma nova turma.");
+
+        //verificaçao turma
         var turmaExistente = await _turmaRepo.ObterPorCodigoAsync(codigoVO.ValorFormatado);
 
         if (turmaExistente != null)
             // Use o método que seta o TipoErro.Conflito
             return Result<TurmaDtoResponse>.Conflito("Já existe uma turma ativa com este código.");
 
-        if (!professor.Ativo)
-            return Result<TurmaDtoResponse>.Falha("Não é possível vincular um professor inativo a uma nova turma.");
-
-        if (!professor.Ativo)
-            return Result<TurmaDtoResponse>.Falha("Não é possível vincular um professor inativo a uma nova turma."); // Retorna 400
-
         var disciplina = await _discRepo.ObterPorIdAsync(dto.DisciplinaId);
         if (disciplina == null)
             return Result<TurmaDtoResponse>.NaoEncontrado("Disciplina não encontrada."); // Agora retorna 404
 
         if (!disciplina.Ativo)
-            return Result<TurmaDtoResponse>.Falha("Não é possível vincular uma disciplina inativa a uma nova turma."); // Retorna 400
-
-        if (!disciplina.Ativo) // Esta linha faz o seu teste de 'DisciplinaInativa' passar!
-            return Result<TurmaDtoResponse>.Falha("Não é possível vincular uma disciplina inativa a uma nova turma.");
+            return Result<TurmaDtoResponse>.Conflito("Não é possível vincular uma disciplina inativa a uma nova turma."); // Retorna 400
 
         // 4. Na hora de criar a Entidade...
         var novaTurma = new Turma(codigoVO, dto.ProfessorId, dto.DisciplinaId);

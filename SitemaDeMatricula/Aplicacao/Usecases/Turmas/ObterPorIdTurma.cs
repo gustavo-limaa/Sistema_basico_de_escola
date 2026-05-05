@@ -23,7 +23,7 @@ namespace SitemaDeMatricula.Aplicacao.Usecases.Turmas
             var turma = await _turmaRepo.ObterPorIdIgnorandoFiltrosAsync(id);
 
             // 2. Se for null aqui, é porque o ID não existe mesmo (404 Real)
-            if (turma == null)
+            if (turma is null)
                 return Result<TurmaDtoResponse>.Falha("Turma não encontrada no sistema.");
 
             // 3. Se achou, mas está inativa, damos a mensagem específica que você sugeriu
