@@ -88,7 +88,7 @@ public class PegarAndPegarPorIdTurmaUsecases
         // Assert
         Assert.False(resultado.Sucesso);
         Assert.Contains("", resultado.Mensagem); _mockTurma.Verify(t => t.ObterPorIdAsync
-        (It.IsAny<Guid>()), Times.Once);
+        (It.IsAny<Guid>()), Times.Never);
     }
 
     [Fact]

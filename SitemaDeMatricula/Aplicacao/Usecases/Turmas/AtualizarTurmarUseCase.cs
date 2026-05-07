@@ -45,15 +45,19 @@ public class AtualizarTurmaUseCase
         var professor = await _profRepo.ObterPorIdAsync(dto.ProfessorId);
         if (professor == null)
             return Result<TurmaDtoResponse>.Falha("Professor não encontrado ou inativo.");
+        if (!professor.Ativo)
+            return Result<TurmaDtoResponse>.Conflito("Professor nao encontrado por está inativo.");
 
         var disciplina = await _disciplinaRepo.ObterPorIdAsync(dto.DisciplinaId);
         if (disciplina == null)
             return Result<TurmaDtoResponse>.Falha("Disciplina não encontrada ou inativa.");
+        if (!disciplina.Ativo)
+            return Result<TurmaDtoResponse>.Falha("Disciplina não encontrada por está inativa.");
 
         // 5. Atualiza e Persiste
         turmaParaEditar.AtualizarDados(codigoValidado, dto.ProfessorId, dto.DisciplinaId);
 
-        // Se o DTO de Update trouxe o Ativo, podemos atualizar o estado aqui também
+        // Se o DTO de Update trouxe o Ativo, podemos atualizar o estado aqui tambémA
         if (dto.Ativo) turmaParaEditar.Ativar(); else turmaParaEditar.Desativar();
 
         await _turmaRepo.AtualizarAsync(turmaParaEditar);
