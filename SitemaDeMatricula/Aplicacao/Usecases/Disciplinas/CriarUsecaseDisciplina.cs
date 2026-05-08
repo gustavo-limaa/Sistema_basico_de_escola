@@ -10,6 +10,7 @@ public class CriarUsecaseDisciplina
     private readonly IDisciplinaRepositorio _disciplinaRepositorio;
 
     public CriarUsecaseDisciplina(IDisciplinaRepositorio disciplinaRepositorio)
+
     {
         _disciplinaRepositorio = disciplinaRepositorio;
     }
@@ -17,12 +18,12 @@ public class CriarUsecaseDisciplina
     // 1. Mude o retorno para Result<DisciplinaDtoResponse>
     public async Task<Result<DisciplinaDtoResponse>> Executar(DisciplinaDtoCreate dto)
     {
-        if (dto == null)
+        if (dto is null)
             return Result<DisciplinaDtoResponse>.Falha("Dados da disciplina são obrigatórios.");
 
         // Verificar se já existe uma disciplina com o mesmo nome
         if (await _disciplinaRepositorio.ExisteDisciplinaComMesmoNomeAsync(dto.Nome))
-            return Result<DisciplinaDtoResponse>.Falha("Já existe uma disciplina com esse nome.");
+            return Result<DisciplinaDtoResponse>.Conflito("Já existe uma disciplina com esse nome.");
 
         var novaDisciplina = new Domain.Modelos.Disciplina(dto.Nome, dto.CargaHoraria);
 

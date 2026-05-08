@@ -46,7 +46,7 @@ public class SoftDeleteDisciplinaIntegrationTest : IAsyncLifetime
             Nome: criarResponse.Nome,
             CargaHoraria: criarResponse.CargaHoraria
         );
-        var resultResponse = await _client.PostAsJsonAsync("/api/disciplina", dto);
+        var resultResponse = await _client.PostAsJsonAsync("/api/disciplinas", dto);
         return await resultResponse.Content.ReadFromJsonAsync<DisciplinaDtoResponse>();
     }
 
@@ -57,7 +57,7 @@ public class SoftDeleteDisciplinaIntegrationTest : IAsyncLifetime
         var disciplinaCriada = await CriarDisciplina();
 
         // 2. Act
-        var deleteResponse = await _client.DeleteAsync($"/api/disciplina/{disciplinaCriada.DisciplinaId}");
+        var deleteResponse = await _client.DeleteAsync($"/api/disciplinas/{disciplinaCriada.DisciplinaId}");
 
         // 3. Assert - Parte 1: Status Code
         deleteResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
@@ -75,7 +75,7 @@ public class SoftDeleteDisciplinaIntegrationTest : IAsyncLifetime
         disciplinaNoBanco!.Ativo.Should().BeFalse(); // PROVA que foi Soft Delete
 
         // 5. Assert - Parte 3: Verificar se a API "escondeu" ela no GET
-        var getResponse = await _client.GetAsync($"/api/disciplina/{disciplinaCriada.DisciplinaId}");
+        var getResponse = await _client.GetAsync($"/api/disciplinas/{disciplinaCriada.DisciplinaId}");
         getResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
     }
 
@@ -85,7 +85,7 @@ public class SoftDeleteDisciplinaIntegrationTest : IAsyncLifetime
         // 1. Arrange
         var idInexistente = Guid.NewGuid();
         // 2. Act
-        var deleteResponse = await _client.DeleteAsync($"/api/disciplina/{idInexistente}");
+        var deleteResponse = await _client.DeleteAsync($"/api/disciplinas/{idInexistente}");
         // 3. Assert
         deleteResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
     }
@@ -96,10 +96,10 @@ public class SoftDeleteDisciplinaIntegrationTest : IAsyncLifetime
         // 1. Arrange
         var disciplinaCriada = await CriarDisciplina();
         // Deletar pela primeira vez (Soft Delete)
-        var firstDeleteResponse = await _client.DeleteAsync($"/api/disciplina/{disciplinaCriada.DisciplinaId}");
+        var firstDeleteResponse = await _client.DeleteAsync($"/api/disciplinas/{disciplinaCriada.DisciplinaId}");
         firstDeleteResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
         // 2. Act - Tentar deletar novamente a mesma disciplina
-        var secondDeleteResponse = await _client.DeleteAsync($"/api/disciplina/{disciplinaCriada.DisciplinaId}");
+        var secondDeleteResponse = await _client.DeleteAsync($"/api/disciplinas/{disciplinaCriada.DisciplinaId}");
         // 3. Assert - A API deve responder que não encontrou a disciplina, pois ela já está inativa
         secondDeleteResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
     }
@@ -110,10 +110,10 @@ public class SoftDeleteDisciplinaIntegrationTest : IAsyncLifetime
         // 1. Arrange
         var disciplinaCriada = await CriarDisciplina();
         // Deletar a disciplina criada
-        var deleteResponse = await _client.DeleteAsync($"/api/disciplina/{disciplinaCriada.DisciplinaId}");
+        var deleteResponse = await _client.DeleteAsync($"/api/disciplinas/{disciplinaCriada.DisciplinaId}");
         deleteResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
         // 2. Act - Tentar obter todas as disciplinas
-        var getResponse = await _client.GetAsync("/api/disciplina");
+        var getResponse = await _client.GetAsync("/api/disciplinas");
         // 3. Assert - A API deve responder com NoContent, pois a única disciplina criada foi inativada
         getResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
     }

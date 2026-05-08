@@ -42,7 +42,7 @@ public class RepositorioProfessor : IRepositorioProfessor
     public async Task<Professor?> ObterPorIdAsync(Guid professorId)
     {
         return await _context.Professores
-             .AsNoTracking()
+
              .FirstOrDefaultAsync(p => p.ProfessorId == professorId);
     }
 
@@ -56,7 +56,7 @@ public class RepositorioProfessor : IRepositorioProfessor
     public async Task<Professor?> ObterPorIdIgnorandoFiltrosAsync(Guid id)
     {
         return await _context.Professores
-            .IgnoreQueryFilters() // 👈 A chave para ver os "fantasmas" (inativos)
+            .IgnoreQueryFilters()// 👈 A chave para ver os "fantasmas" (inativos)
             .FirstOrDefaultAsync(p => p.ProfessorId == id);
     }
 

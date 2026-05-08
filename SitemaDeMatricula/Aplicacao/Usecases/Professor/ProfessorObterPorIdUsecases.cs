@@ -25,8 +25,7 @@ public class ProfessorObterPorIdUsecases
 
         // 3. Validação do resultado
         if (professor == null)
-            return Result<ProfessorDtoResponse>.Falha("Professor não encontrado.");
-
+            return Result<ProfessorDtoResponse>.NaoEncontrado("Professor não encontrado."); // 👈 Isso gera o 404
         // 4. Transformação e Retorno
         return Result<ProfessorDtoResponse>.Ok(professor.ToProfessorDtoResponse());
     }

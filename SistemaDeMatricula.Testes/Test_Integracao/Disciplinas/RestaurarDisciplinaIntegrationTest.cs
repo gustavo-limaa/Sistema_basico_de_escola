@@ -46,7 +46,7 @@ public class RestaurarDisciplinaIntegrationTest : IAsyncLifetime
             Nome: criarResponse.Nome,
             CargaHoraria: criarResponse.CargaHoraria
         );
-        var resultResponse = await _client.PostAsJsonAsync("/api/disciplina", dto);
+        var resultResponse = await _client.PostAsJsonAsync("/api/disciplinas", dto);
         return await resultResponse.Content.ReadFromJsonAsync<DisciplinaDtoResponse>();
     }
 
@@ -55,10 +55,10 @@ public class RestaurarDisciplinaIntegrationTest : IAsyncLifetime
     {
         // Arrange
         var disciplina = await CriarDisciplina();
-        await _client.DeleteAsync($"/api/disciplina/{disciplina.DisciplinaId}");
+        await _client.DeleteAsync($"/api/disciplinas/{disciplina.DisciplinaId}");
 
         // Act
-        var response = await _client.PatchAsync($"/api/disciplina/{disciplina.DisciplinaId}/restaurar", new StringContent("", Encoding.UTF8, "application/json"));
+        var response = await _client.PatchAsync($"/api/disciplinas/{disciplina.DisciplinaId}/restaurar", new StringContent("", Encoding.UTF8, "application/json"));
         var resultado = await response.Content.ReadFromJsonAsync<DisciplinaDtoResponse>();
         // Assert
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK); // 1. Garante o sucesso da rota
@@ -67,7 +67,7 @@ public class RestaurarDisciplinaIntegrationTest : IAsyncLifetime
         resultado.Ativo.Should().BeTrue(); // 2. Prova que o estado mudou
 
         // 3. A prova real: O sistema voltou a "enxergar" a disciplina?
-        var getResponse = await _client.GetAsync($"/api/disciplina/{disciplina.DisciplinaId}");
+        var getResponse = await _client.GetAsync($"/api/disciplinas/{disciplina.DisciplinaId}");
         getResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
         var disciplinaFinal = await getResponse.Content.ReadFromJsonAsync<DisciplinaDtoResponse>();
@@ -78,7 +78,7 @@ public class RestaurarDisciplinaIntegrationTest : IAsyncLifetime
     public async Task Restaurar_Disciplina_Com_Id_Inexistente_Retorna_NotFound()
     {
         // Act - Tentando restaurar um GUID aleatório que nunca foi criado
-        var response = await _client.PatchAsync($"/api/disciplina/{Guid.NewGuid()}/restaurar", null);
+        var response = await _client.PatchAsync($"/api/disciplinas/{Guid.NewGuid()}/restaurar", null);
 
         // Assert
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
@@ -90,7 +90,7 @@ public class RestaurarDisciplinaIntegrationTest : IAsyncLifetime
         // Arrange
         var id = Guid.NewGuid();
         // Act
-        var response = await _client.PatchAsync($"/api/disciplina/{id}/restaurar", new StringContent("", Encoding.UTF8, "application/json"));
+        var response = await _client.PatchAsync($"/api/disciplinas/{id}/restaurar", new StringContent("", Encoding.UTF8, "application/json"));
         // Assert
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
     }
@@ -101,7 +101,7 @@ public class RestaurarDisciplinaIntegrationTest : IAsyncLifetime
         // Arrange
         var disciplina = await CriarDisciplina();
         // Act
-        var response = await _client.PatchAsJsonAsync($"/api/disciplina/{disciplina.DisciplinaId}/restaurar", new StringContent("", Encoding.UTF8, "application/json"));
+        var response = await _client.PatchAsJsonAsync($"/api/disciplinas/{disciplina.DisciplinaId}/restaurar", new StringContent("", Encoding.UTF8, "application/json"));
         // Assert
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Conflict);
     }

@@ -17,13 +17,19 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
         public async Task AdicionarAsync(Matricula matricula)
         {
             await _appDbContext.Matriculas.AddAsync(matricula);
-            await salvarAlteracoesAsync();
+            await SalvarAlteracoesAsync(); // Ajustado aqui também
         }
 
         public async Task AtualizarAsync(Matricula matricula)
         {
             _appDbContext.Matriculas.Update(matricula);
-            await salvarAlteracoesAsync();
+            await SalvarAlteracoesAsync();
+        }
+
+        public async Task<int> ContarMatriculasAtivasNaTurmaAsync(Guid turmaId)
+        {
+            return await _appDbContext.Matriculas
+        .CountAsync(m => m.TurmaId == turmaId && m.Ativo);
         }
 
         public async Task<bool> ExisteMatriculaAtivaAsync(Guid estudanteId, Guid turmaId)
@@ -32,6 +38,12 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
                 return false;
 
             return await _appDbContext.Matriculas.AnyAsync(m => m.EstudanteId == estudanteId && m.TurmaId == turmaId && m.Ativo);
+        }
+
+        public async Task<bool> ExisteQualquerMatriculaAtivaParaTurmaAsync(Guid turmaId)
+        {
+            return await _appDbContext.Matriculas
+        .AnyAsync(m => m.TurmaId == turmaId && m.Ativo);
         }
 
         public async Task<IEnumerable<Matricula>> ListarTodasAsync()
@@ -44,7 +56,7 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
             return await _appDbContext.Matriculas.AsNoTracking().Include(m => m.Estudante).Include(m => m.Turma).FirstOrDefaultAsync(m => m.MatriculaId == id);
         }
 
-        public async Task<bool> salvarAlteracoesAsync()
+        public async Task<bool> SalvarAlteracoesAsync()
         {
             return await _appDbContext.SaveChangesAsync() > 0;
         }

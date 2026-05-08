@@ -3,8 +3,11 @@
 // Note que aqui já podemos pensar em devolver nomes, para facilitar a vida do Front-end
 public record TurmaDtoResponse(
     Guid Id,
-    string Codigo,
+    string CodigoFormatado,
+    string sigla,// Ex: "MAT-2026-1-001"
+    int Semestre,
+    int AnoLetivo,
+    int Numero,
     string NomeDisciplina,
     string NomeProfessor,
-    bool Ativo
-);
+    bool Ativo);

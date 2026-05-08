@@ -1,4 +1,5 @@
 ﻿using SitemaDeMatricula.Domain.Modelos;
+using SitemaDeMatricula.Domain.Value_Object;
 
 namespace SitemaDeMatricula.Domain.Interfaces
 {
@@ -18,6 +19,12 @@ namespace SitemaDeMatricula.Domain.Interfaces
 
         Task<bool> AlternarStatusAsync(Turma turma);
 
+        Task<Turma?> ObterPorIdIgnorandoFiltrosAsync(Guid id);
+
+        Task<Turma?> ObterPorCodigoIgnorandoFiltrosAsync(string codigo);
+
         Task<bool> SalvarAlteracoesAsync();
+
+        Task<bool> RestaurarAsync(Guid id);
     }
 }

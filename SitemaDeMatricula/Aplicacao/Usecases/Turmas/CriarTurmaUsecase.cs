@@ -1,7 +1,11 @@
 ﻿using SitemaDeMatricula.Aplicacao.Dtos.turma;
 using SitemaDeMatricula.Domain;
 using SitemaDeMatricula.Domain.Interfaces;
+using SitemaDeMatricula.Domain.Mapper;
 using SitemaDeMatricula.Domain.Modelos;
+using SitemaDeMatricula.Domain.Value_Object;
+using System.Runtime.CompilerServices;
+using Xunit;
 
 namespace SitemaDeMatricula.Aplicacao.Usecases.Turmas;
 
@@ -21,25 +25,42 @@ public class CriarTurmaUseCase
         _discRepo = discRepo;
     }
 
-    public async Task<Result<Guid>> ExecutarAsync(TurmaDtoCreate dto)
+    public async Task<Result<TurmaDtoResponse>> ExecutarAsync(TurmaDtoCreate dto)
     {
-        // 1. Validar se o Professor existe
+        // 1. Tenta criar o VO
+        var resultadoVO = CodigoTurma.Criar(dto.Sigla, dto.AnoLetivo, dto.Semestre, dto.Numero);
+
+        if (!resultadoVO.Sucesso)
+        {
+            return Result<TurmaDtoResponse>.Falha(resultadoVO.Mensagem);
+        }
+
+        // 2. DESEMPACOTANDO: Pegamos o objeto de valor
+        var codigoVO = resultadoVO.Dados;
+        // verificaçao prof
         var professor = await _profRepo.ObterPorIdAsync(dto.ProfessorId);
         if (professor == null)
-            return Result<Guid>.Falha("Professor não encontrado.");
+            return Result<TurmaDtoResponse>.Falha("Professor não encontrado.");
+        if (!professor.Ativo)
+            return Result<TurmaDtoResponse>.Conflito("Não é possível vincular um Professor inativo a uma nova turma.");
 
-        // 2. DESAFIO: Validar se a Disciplina existe
-        // Dica: Use o _discRepo e o dto.DisciplinaId
+        //verificaçao turma
+        var turmaExistente = await _turmaRepo.ObterPorCodigoAsync(codigoVO.ValorFormatado);
+
+        if (turmaExistente != null)
+            // Use o método que seta o TipoErro.Conflito
+            return Result<TurmaDtoResponse>.Conflito("Já existe uma turma ativa com este código.");
+
         var disciplina = await _discRepo.ObterPorIdAsync(dto.DisciplinaId);
         if (disciplina == null)
-            return Result<Guid>.Falha("Disciplina não encontrada.");
+            return Result<TurmaDtoResponse>.NaoEncontrado("Disciplina não encontrada."); // Agora retorna 404
 
-        // 3. Criar a entidade (O construtor que definimos)
-        var novaTurma = new Domain.Modelos.Turma(dto.CodigoTurma, dto.ProfessorId, dto.DisciplinaId);
+        if (!disciplina.Ativo)
+            return Result<TurmaDtoResponse>.Conflito("Não é possível vincular uma disciplina inativa a uma nova turma."); // Retorna 400
 
-        // 4. Salvar (O seu repositório já chama o SaveChanges!)
+        // 4. Na hora de criar a Entidade...
+        var novaTurma = new Turma(codigoVO, dto.ProfessorId, dto.DisciplinaId);
         await _turmaRepo.AdicionarAsync(novaTurma);
-
-        return Result<Guid>.Ok(novaTurma.TurmaId);
+        return Result<TurmaDtoResponse>.Ok(novaTurma.ToTurmaDtoResponse());
     }
 }

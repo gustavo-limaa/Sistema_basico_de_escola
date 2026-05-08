@@ -28,12 +28,12 @@ public class ProfessorCriarUsecases
             // Checagem de CPF
             var professorExistenteCpf = await _repositorioProfessor.ObterPorCpfAsync(dto.Cpf);
             if (professorExistenteCpf != null)
-                return Result<ProfessorDtoResponse>.Falha("Já existe um professor cadastrado com este CPF.");
+                return Result<ProfessorDtoResponse>.Conflito("Já existe um professor cadastrado com este CPF.");
 
             // Checagem de E-mail (Para bater com o seu teste!)
             var professorExistenteEmail = await _repositorioProfessor.ObterPorEmailAsync(dto.Email);
             if (professorExistenteEmail != null)
-                return Result<ProfessorDtoResponse>.Falha("Já existe um professor cadastrado com este e-mail.");
+                return Result<ProfessorDtoResponse>.Conflito("Já existe um professor cadastrado com este e-mail.");
             // 4. Persistência
             await _repositorioProfessor.AdicionarAsync(professor);
             var sucesso = await _repositorioProfessor.SalvarAlteracoesAsync();

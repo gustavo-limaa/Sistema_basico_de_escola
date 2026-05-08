@@ -74,42 +74,52 @@ public class AppDbContext : DbContext
             p.Property(x => x.Categoria).HasColumnName("Categoria").IsRequired();
         });
         // 3. DISCIPLINA
+        // 3. DISCIPLINA (Versão Limpa)
         modelBuilder.Entity<Disciplina>(d =>
         {
             d.HasKey(x => x.DisciplinaId);
-
             d.HasQueryFilter(x => x.Ativo);
 
-            // Configurando o Value Object para o Banco de Dados
             d.Property(x => x.Nome)
              .HasConversion(
-                 v => v.Valor,               // Converte de NomeDisciplina para string ao salvar
-                 v => new NomeDisciplina(v)   // Converte de string para NomeDisciplina ao ler
+                 v => v.Valor,
+                 v => new NomeDisciplina(v)
              )
-             .HasMaxLength(100)              // Define como VARCHAR(100) no banco
+             .HasMaxLength(100)
              .IsRequired();
 
             d.Property(x => x.CargaHoraria)
                 .HasConversion(
-                v => v.Valor,           // Salva como int no banco
-                v => new CargaHoraria(v) // Volta como VO para o C#
+                    v => v.Valor,
+                    v => new CargaHoraria(v)
                 )
                 .IsRequired();
 
-            d.HasMany(t => t.Turmas)
-             .WithOne(t => t.Disciplina)
-             .HasForeignKey(t => t.DisciplinaId);
+            // Note que aqui NÃO colocamos o HasMany(t => t.Turmas).
+            // Deixamos a configuração lá no bloco da Turma (item 4),
+            // que já faz o link com d.Turmas corretamente.
         });
+
         // 4. TURMA
         modelBuilder.Entity<Turma>(t =>
         {
             t.HasKey(x => x.TurmaId);
+            t.Property(x => x.CodigoTurma)
+            .HasConversion(
+            vo => vo.ValorFormatado, // Converte para string ao salvar no banco
+            stringDoBanco => CodigoTurma.CriarDeString(stringDoBanco) // Converte para VO ao ler do banco
+            )
+            .HasColumnName("CodigoTurma") // Nome da coluna no SQL
+            .IsRequired();
+
+            t.HasQueryFilter(t => t.Ativo);
 
             // 1. Relacionamento com Disciplina (Essencial!)
+            // Dentro do mapeamento da Turma no AppDbContext
             t.HasOne(x => x.Disciplina)
-             .WithMany() // Se a Disciplina não tiver List<Turma>, deixe vazio
+             .WithMany(d => d.Turmas) // Conecta com a lista que já existe na Disciplina
              .HasForeignKey(x => x.DisciplinaId)
-             .OnDelete(DeleteBehavior.Restrict); // Evita apagar disciplina com turma ativa
+             .OnDelete(DeleteBehavior.Restrict);
 
             // 2. Relacionamento com Professor
             t.HasOne(p => p.Professor)

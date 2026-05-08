@@ -49,12 +49,14 @@ public class PegarTodosEPegarPorIdProfessorIntegrationTest : IAsyncLifetime
     // 2. DEPOIS DE CADA TESTE: Aqui é onde a mágica da limpeza acontece
     public async Task DisposeAsync()
     {
-        // Criamos um "escopo" para conseguir pegar o AppDbContext lá de dentro da API
         using var scope = _factory.Services.CreateScope();
         var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        // Agora sim! O 'contexto' existe aqui e podemos limpar a tabela
-        await contexto.Professores.ExecuteDeleteAsync();
+        // Guarde o total de deletados para ver no log
+        int deletados = await contexto.Professores.ExecuteDeleteAsync();
+
+        // Se deletados for 0 e você sabe que tinha dados, o contexto está apontando
+        // para um banco diferente do que a API está usando.
     }
 
     private ProfessorDtoCreate CriarDtoValido()
@@ -77,7 +79,12 @@ public class PegarTodosEPegarPorIdProfessorIntegrationTest : IAsyncLifetime
     public async Task Pegar_Todos_Professores_Retorna_Lista_Com_Professores_Ativos()
     {
         // Arrange
-        var response = await _client.GetAsync("/api/professor");
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            // Se tiver um helper de limpeza
+        }
+        var response = await _client.GetAsync("/api/professores ");
         var professores = await response.Content.ReadFromJsonAsync<List<ProfessorDtoResponse>>();
 
         // Assert
@@ -92,11 +99,11 @@ public class PegarTodosEPegarPorIdProfessorIntegrationTest : IAsyncLifetime
         // Arrange
         var professor = DataFactory.ProfessorFaker.Generate();
         var dto = CriarDtoValido();
-        var response1 = await _client.PostAsJsonAsync("/api/professor", dto);
+        var response1 = await _client.PostAsJsonAsync("/api/professores", dto);
         var resultado = await response1.Content.ReadFromJsonAsync<ProfessorDtoResponse>();
 
         // Act
-        var response2 = await _client.GetAsync($"/api/professor/{resultado.ProfessorId}");
+        var response2 = await _client.GetAsync($"/api/professores/{resultado.ProfessorId}");
         var professorEncontrado = await response2.Content.ReadFromJsonAsync<ProfessorDtoResponse>();
 
         // Assert
@@ -105,32 +112,12 @@ public class PegarTodosEPegarPorIdProfessorIntegrationTest : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Pegar_Professor_Por_Id_Retorna_NotFound_Se_Professor_Estiver_Desativado()
-    {
-        // Arrange
-        var dto = CriarDtoValido();
-        var response1 = await _client.PostAsJsonAsync("/api/professor", dto);
-        var resultado = await response1.Content.ReadFromJsonAsync<ProfessorDtoResponse>();
-
-        // 🚀 CORREÇÃO AQUI: Use o DELETE com o ID na URL
-        var desativarResponse = await _client.DeleteAsync($"/api/professor/{resultado.ProfessorId}");
-        desativarResponse.EnsureSuccessStatusCode(); // Dica: isso garante que a desativação funcionou!
-
-        // Act
-        var response2 = await _client.GetAsync($"/api/professor/{resultado.ProfessorId}");
-
-        // Assert
-        // Agora sim: como ele foi desativado, o Global Filter do EF vai esconder ele -> 404!
-        response2.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
-    }
-
-    [Fact]
     public async Task Pegar_Professor_Por_Id_Retorna_NotFound_Se_Professor_Nao_Existir()
     {
         // Arrange
         var idInexistente = Guid.NewGuid();
         // Act
-        var response = await _client.GetAsync($"/api/professor/{idInexistente}");
+        var response = await _client.GetAsync($"/api/professores/{idInexistente}");
         // Assert
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
     }
@@ -141,7 +128,7 @@ public class PegarTodosEPegarPorIdProfessorIntegrationTest : IAsyncLifetime
         // Arrange
         var idInvalido = "123"; // Não é um GUID válido
         // Act
-        var response = await _client.GetAsync($"/api/professor/{idInvalido}");
+        var response = await _client.GetAsync($"/api/professores/{idInvalido}");
         // Assert
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
     }
@@ -151,17 +138,18 @@ public class PegarTodosEPegarPorIdProfessorIntegrationTest : IAsyncLifetime
     {
         // 1. Arrange: Criamos e desativamos um professor
         var dto = CriarDtoValido();
-        var responsePost = await _client.PostAsJsonAsync("/api/professor", dto);
+        var responsePost = await _client.PostAsJsonAsync("/api/professores", dto);
         var criado = await responsePost.Content.ReadFromJsonAsync<ProfessorDtoResponse>();
 
-        await _client.DeleteAsync($"/api/professor/{criado.ProfessorId}");
+        await _client.DeleteAsync($"/api/professores/{criado.ProfessorId}");
 
         // Garantimos que ele está "invisível" (404)
-        var responseGetInativo = await _client.GetAsync($"/api/professor/{criado.ProfessorId}");
+        var responseGetInativo = await _client.GetAsync($"/api/professores/{criado.ProfessorId}");
         responseGetInativo.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
 
         // 2. Act: Chamamos a restauração (PATCH)
-        var responseRestore = await _client.PatchAsync($"/api/professor/{criado.ProfessorId}/restaurar", null);
+        var responseRestore = await _client.PatchAsync($"/api/professores/{criado.ProfessorId}/restaurar", null);
+        // No seu teste:
 
         if (responseRestore.StatusCode == System.Net.HttpStatusCode.InternalServerError)
         {
@@ -171,7 +159,7 @@ public class PegarTodosEPegarPorIdProfessorIntegrationTest : IAsyncLifetime
         }
 
         // 3. Assert: A prova real - O GET agora tem que retornar 200 OK
-        var responseGetAtivo = await _client.GetAsync($"/api/professor/{criado.ProfessorId}");
+        var responseGetAtivo = await _client.GetAsync($"/api/professores/{criado.ProfessorId}");
         responseGetAtivo.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
         var restaurado = await responseGetAtivo.Content.ReadFromJsonAsync<ProfessorDtoResponse>();

@@ -1,5 +1,6 @@
 ﻿using SitemaDeMatricula.Aplicacao.Usecases.Disciplinas;
 using SitemaDeMatricula.Aplicacao.Usecases.Estudante;
+using SitemaDeMatricula.Aplicacao.Usecases.Matriculas;
 using SitemaDeMatricula.Aplicacao.Usecases.Professor;
 using SitemaDeMatricula.Aplicacao.Usecases.Turmas;
 using SitemaDeMatricula.Domain.Interfaces;
@@ -36,12 +37,18 @@ namespace SitemaDeMatricula.Infraestrutura
             services.AddScoped<RemoverTurmaUseCase>();
             services.AddScoped<RestaurarUseCaseDisciplina>();
             services.AddScoped<ProfessorRestaurarUseCase>();
+            services.AddScoped<DesativarMatriculaUsecase>();
+            services.AddScoped<MatricularEstudanteUsecase>();
+            services.AddScoped<ListarTodasMatriculasUsecase>();
+            services.AddScoped<ObterMatriculaPorIdUsecase>();
+            services.AddScoped<TransferirEstudanteUsecase>();
 
             // Repositório
             services.AddScoped<IRepositorioEstudante, RepositorioEstudante>();
             services.AddScoped<IRepositorioProfessor, RepositorioProfessor>();
             services.AddScoped<IDisciplinaRepositorio, DisciplinaRepositorio>();
             services.AddScoped<IRepositorioTurma, RepositorioTurma>();
+            services.AddScoped<IRepositorioMatricula, RepositorioMatricula>();
             // Repositório
 
             return services;
