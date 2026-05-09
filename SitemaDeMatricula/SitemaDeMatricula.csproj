@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="docs\**" />
+    <Content Remove="docs\**" />
+    <EmbeddedResource Remove="docs\**" />
+    <None Remove="docs\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Aplicacao\ProfessorListarTodosUsecases.cs" />
     <Compile Remove="WeatherForecast.cs" />
   </ItemGroup>
@@ -38,10 +45,6 @@
 
   <ItemGroup>
     <None Update="..\.dockerignore" Link="Percistencia\Docker\.dockerignore" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="docs\" />
   </ItemGroup>
 
 </Project>
