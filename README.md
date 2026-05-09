@@ -1,62 +1,54 @@
-🎓 Sistema Básico de Escola
-Este é um projeto de API para gerenciamento escolar, desenvolvido com o objetivo de aplicar conceitos avançados de Clean Architecture, Domain-Driven Design (DDD) e C#. O sistema foca em um fluxo robusto, utilizando o Result Pattern para garantir a estabilidade e previsibilidade das respostas.
+assim ne 🎓 Sistema Básico de Escola
+Este é um projeto de back-end robusto desenvolvido em C# e .NET, focado na gestão escolar. O sistema foi construído aplicando os princípios mais modernos de engenharia de software para garantir escalabilidade e manutenibilidade através de um desenvolvimento orientado a testes (TDD).
 
-🚀 Tecnologias Utilizadas
-Linguagem: C# (.NET 8/9)
+🚀 Status do Projeto: Fase de Refinamento
+O núcleo de gestão de Turmas, Professores, Estudantes e Disciplinas está 100% implementado e validado.
 
-Arquitetura: Clean Architecture (Domínio, Aplicação, Infraestrutura e Apresentação)
+Foco Atual: Implementação do módulo de Matrícula (lógica de associação e regras de negócio complexas).
 
-Banco de Dados: Entity Framework Core (SQL Server)
+Próxima etapa: Expansão da cobertura para testes de integração de ponta a ponta.
 
-Padronização: Result Pattern para controle de fluxo e erros.
+🛠️ Tecnologias e Práticas Utilizadas
+Linguagem & Framework: C# e .NET (Ecossistema fundamental).
 
-Auxiliares: Bogus (Dados Fakes) e Injeção de Dependência nativa.
+Arquitetura: Clean Architecture / Domain-Driven Design (DDD).
 
-🏗️ Estrutura do Projeto
-Domain: Entidades ricas (Estudante, Professor, Turma), Value Objects e interfaces.
+Qualidade de Código (TDD):
 
-Application: Casos de Uso (Use Cases) que isolam a lógica da aplicação.
+xUnit: Framework de testes principal.
 
-Infrastructure: Persistência de dados, Repositórios e Configurações de Banco.
+Moq: Isolamento de dependências através de Mocks.
 
-Presentation (API): Controllers desacoplados e focados em contratos HTTP.
+Bogus: Geração de dados de massa realistas para testes consistentes.
 
-🛠️ Módulos do Sistema
-👤 Gestão de Estudantes
-CRUD completo utilizando DTOs de entrada e saída.
+FluentAssertions: Asserções legíveis e expressivas.
 
-Validações de domínio para garantir dados íntegros desde a criação.
+Persistência: Entity Framework Core com suporte a Soft Delete e IgnoreQueryFilters para restauração de dados.
 
-👨‍🏫 Gestão de Professores (Próxima Fase)
-Cadastro de docentes e suas especialidades.
+✅ Evidência de Qualidade
+Abaixo, a execução da suíte de testes validando 153 cenários, incluindo fluxos de sucesso, exceções de negócio, validações de Value Objects (VOs) e integridade referencial.
 
-📚 Disciplinas e Turmas (Em Desenvolvimento)
-Vinculação de professores às suas respectivas disciplinas.
+Nota: A cobertura inclui testes unitários e de integração, garantindo que as regras de negócio e a persistência em banco de dados estejam em harmonia.
 
-Organização de turmas, unindo alunos e conteúdos por ano letivo.
+(Aqui você cola o seu print no GitHub)
 
-📖 Como Rodar o Projeto
-Clone o repositório:
+🏗️ Destaques da Implementação
+Validação de Conflitos: Lógica integrada nos Use Cases para impedir duplicidade de códigos de turma ou CPFs duplicados.
 
-Bash
-git clone https://github.com/gustavo-limaa/Sistema_basico_de_escola.git
-Restaure as dependências:
+Segurança de Estado: Travas de segurança que impedem a desativação de entidades (como turmas ou professores) que possuam vínculos ativos no sistema.
 
-Bash
-dotnet restore
-Execute a aplicação:
+Terminologia Profissional: Priorização de termos em Inglês para commits e documentação técnica, seguindo padrões internacionais.
 
-Bash
-dotnet run --project SitemaDeMatricula.Percistencia
-💡 Roadmap / Backlog
-[x] CRUD de Estudante com Clean Architecture.
+📈 Road Map
+[x] CRUDs e Domínio de Professores, Disciplinas e Estudantes.
 
-[x] Implementação de Result Pattern.
+[x] Implementação de Use Cases e VOs para o módulo de Turma.
 
-[ ] Módulo de Professores: Cadastro e especialidades.
+[x] Cobertura de 150+ Testes (Unitários e Integração).
 
-[ ] Módulo de Disciplinas: Vinculação com professores e carga horária.
+[ ] Finalização do Módulo de Matrícula (Em progresso).
 
-[ ] Módulo de Turmas: Gestão de alunos e anos letivos.
+[ ] Configuração de CI/CD via GitHub Actions.
 
-[ ] Registro de Logs com Serilog.
+Desenvolvido por Zander Gustavo (gustavo-limaa) 
+![Suíte de Testes](docs/testes-sucesso.png)
