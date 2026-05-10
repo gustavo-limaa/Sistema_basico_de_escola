@@ -1,13 +1,13 @@
-﻿using SitemaDeMatricula.Aplicacao.Dtos.estudante;
-using SitemaDeMatricula.Domain;
-using SitemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Mapper;
+﻿using SistemaDeMatricula.Aplicacao.Dtos.estudante;
+using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Mapper;
 using SitemaDeMatricula.Domain.Modelos;
 using Xunit;
 
-namespace SitemaDeMatricula.Aplicacao.Usecases.Estudante;
+namespace SistemaDeMatricula.Aplicacao.Usecases.Estudante;
 
-public class UsesCasesCriarEstudante
+public sealed class UsesCasesCriarEstudante
 {
     private readonly IRepositorioEstudante _repositorioEstudante;
 

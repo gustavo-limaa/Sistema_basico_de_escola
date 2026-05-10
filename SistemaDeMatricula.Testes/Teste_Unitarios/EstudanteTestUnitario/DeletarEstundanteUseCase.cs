@@ -1,7 +1,7 @@
 ﻿using Moq;
-using SitemaDeMatricula.Aplicacao.Usecases.Estudante;
-using SitemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Modelos;
+using SistemaDeMatricula.Aplicacao.Usecases.Estudante;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Modelos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,14 +26,14 @@ public class DeletarEstundanteUseCase
     {
         // Arrange
         var estudante = DataFactory.EstudanteFaker.Generate();
-        _estudanteRepository.Setup(repo => repo.ObterPorIdAsync(estudante.EstudanteId)).ReturnsAsync(estudante);
+        _estudanteRepository.Setup(repo => repo.ObterPorIdAsync(estudante.Id)).ReturnsAsync(estudante);
         _estudanteRepository.Setup(repo => repo.Remover(estudante));
 
         // Act
-        await _useCaseDeletar.ExecuteAsync(estudante.EstudanteId);
+        await _useCaseDeletar.ExecuteAsync(estudante.Id);
 
         // Assert
-        _estudanteRepository.Verify(repo => repo.ObterPorIdAsync(estudante.EstudanteId), Times.Once);
+        _estudanteRepository.Verify(repo => repo.ObterPorIdAsync(estudante.Id), Times.Once);
         _estudanteRepository.Verify(repo => repo.Remover(estudante), Times.Once);
     }
 
@@ -60,14 +60,14 @@ public class DeletarEstundanteUseCase
     {
         // Arrange
         var estudante = DataFactory.EstudanteFaker.Generate();
-        _estudanteRepository.Setup(repo => repo.ObterPorIdAsync(estudante.EstudanteId)).ReturnsAsync(estudante);
+        _estudanteRepository.Setup(repo => repo.ObterPorIdAsync(estudante.Id)).ReturnsAsync(estudante);
         _estudanteRepository.Setup(repo => repo.Remover(estudante)).Throws(new Exception("Erro de banco"));
         // Act
-        var resultado = await _useCaseDeletar.ExecuteAsync(estudante.EstudanteId);
+        var resultado = await _useCaseDeletar.ExecuteAsync(estudante.Id);
         // Assert
         Assert.False(resultado.Sucesso); // ✅ O Result deve ser Falha
         Assert.Contains("Erro ao deletar estudante", resultado.Mensagem); // ✅ Mensagem de erro
-        _estudanteRepository.Verify(repo => repo.ObterPorIdAsync(estudante.EstudanteId), Times.Once);
+        _estudanteRepository.Verify(repo => repo.ObterPorIdAsync(estudante.Id), Times.Once);
         _estudanteRepository.Verify(repo => repo.Remover(estudante), Times.Once);
     }
 
@@ -76,15 +76,15 @@ public class DeletarEstundanteUseCase
     {
         // Arrange
         var estudante = DataFactory.EstudanteFaker.Generate();
-        _estudanteRepository.Setup(repo => repo.ObterPorIdAsync(estudante.EstudanteId)).ReturnsAsync(estudante);
+        _estudanteRepository.Setup(repo => repo.ObterPorIdAsync(estudante.Id)).ReturnsAsync(estudante);
         _estudanteRepository.Setup(repo => repo.Remover(estudante));
         _estudanteRepository.Setup(repo => repo.SalvarAlteracoesAsync()).ReturnsAsync(false); // Simula falha ao salvar
         // Act
-        var resultado = await _useCaseDeletar.ExecuteAsync(estudante.EstudanteId);
+        var resultado = await _useCaseDeletar.ExecuteAsync(estudante.Id);
         // Assert
         Assert.False(resultado.Sucesso); // ✅ O Result deve ser Falha
         Assert.Equal("Falha ao deletar o estudante.", resultado.Mensagem); // ✅ Mensagem correta
-        _estudanteRepository.Verify(repo => repo.ObterPorIdAsync(estudante.EstudanteId), Times.Once);
+        _estudanteRepository.Verify(repo => repo.ObterPorIdAsync(estudante.Id), Times.Once);
         _estudanteRepository.Verify(repo => repo.Remover(estudante), Times.Once);
         _estudanteRepository.Verify(repo => repo.SalvarAlteracoesAsync(), Times.Once);
     }

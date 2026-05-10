@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SitemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain;
 
-namespace SitemaDeMatricula.Percistencia.Controllers;
+namespace SistemaDeMatricula.Percistencia.Controllers;
 
 [ApiController]
 public abstract class MainController : ControllerBase

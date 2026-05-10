@@ -1,12 +1,12 @@
-﻿using SitemaDeMatricula.Aplicacao.Usecases.Disciplinas;
-using SitemaDeMatricula.Aplicacao.Usecases.Estudante;
-using SitemaDeMatricula.Aplicacao.Usecases.Matriculas;
-using SitemaDeMatricula.Aplicacao.Usecases.Professor;
-using SitemaDeMatricula.Aplicacao.Usecases.Turmas;
-using SitemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Infraestrutura.Repositorios;
+﻿using SistemaDeMatricula.Aplicacao.Usecases.Disciplinas;
+using SistemaDeMatricula.Aplicacao.Usecases.Estudante;
+using SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
+using SistemaDeMatricula.Aplicacao.Usecases.Professor;
+using SistemaDeMatricula.Aplicacao.Usecases.Turmas;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Infraestrutura.Repositorios;
 
-namespace SitemaDeMatricula.Infraestrutura
+namespace SistemaDeMatricula.Infraestrutura
 {
     public static class DependencyInjection
     {

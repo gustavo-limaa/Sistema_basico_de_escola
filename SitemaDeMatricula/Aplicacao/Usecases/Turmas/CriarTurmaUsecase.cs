@@ -1,15 +1,14 @@
-﻿using SitemaDeMatricula.Aplicacao.Dtos.turma;
-using SitemaDeMatricula.Domain;
-using SitemaDeMatricula.Domain.Interfaces;
+﻿using SistemaDeMatricula.Aplicacao.Dtos.turma;
+using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Value_Object;
 using SitemaDeMatricula.Domain.Mapper;
 using SitemaDeMatricula.Domain.Modelos;
-using SitemaDeMatricula.Domain.Value_Object;
 using System.Runtime.CompilerServices;
-using Xunit;
 
-namespace SitemaDeMatricula.Aplicacao.Usecases.Turmas;
+namespace SistemaDeMatricula.Aplicacao.Usecases.Turmas;
 
-public class CriarTurmaUseCase
+public sealed class CriarTurmaUseCase
 {
     private readonly IRepositorioTurma _turmaRepo;
     private readonly IRepositorioProfessor _profRepo;

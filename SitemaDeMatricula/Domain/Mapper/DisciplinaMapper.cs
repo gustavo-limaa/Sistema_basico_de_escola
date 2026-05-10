@@ -1,8 +1,8 @@
-﻿using SitemaDeMatricula.Aplicacao.Dtos.Disciplina;
-using SitemaDeMatricula.Domain.Modelos;
+﻿using SistemaDeMatricula.Aplicacao.Dtos.Disciplina;
+using SistemaDeMatricula.Domain.Modelos;
 using SitemaDeMatricula.Domain.Value_Object;
 
-namespace SitemaDeMatricula.Domain.Mapper;
+namespace SistemaDeMatricula.Domain.Mapper;
 
 public static class DisciplinaMapper
 {
@@ -11,7 +11,7 @@ public static class DisciplinaMapper
 
     public static DisciplinaDtoResponse ToResponse(this Disciplina disciplina)
         => new DisciplinaDtoResponse(
-            disciplina.DisciplinaId,
+            disciplina.Id,
             disciplina.Nome.Valor,
             disciplina.CargaHoraria.Valor,
             disciplina.Ativo

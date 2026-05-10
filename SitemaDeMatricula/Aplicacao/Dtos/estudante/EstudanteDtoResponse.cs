@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SitemaDeMatricula.Aplicacao.Dtos.estudante;
+namespace SistemaDeMatricula.Aplicacao.Dtos.estudante;
 
-public record EstudanteDtoResponse
+public sealed record EstudanteDtoResponse
 (
    [Required(ErrorMessage = "O ID do estudante é obrigatório.")]
     Guid EstudanteId,

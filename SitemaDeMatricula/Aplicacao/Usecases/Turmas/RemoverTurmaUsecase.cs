@@ -1,10 +1,10 @@
-﻿using SitemaDeMatricula.Domain;
-using SitemaDeMatricula.Domain.Interfaces;
+﻿using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Interfaces;
 using SitemaDeMatricula.Domain.Modelos;
 
-namespace SitemaDeMatricula.Aplicacao.Usecases.Turmas;
+namespace SistemaDeMatricula.Aplicacao.Usecases.Turmas;
 
-public class RemoverTurmaUseCase
+public sealed class RemoverTurmaUseCase
 {
     private readonly IRepositorioTurma _turmaRepo;
     private readonly IRepositorioMatricula _turmaMatriculaRepo;

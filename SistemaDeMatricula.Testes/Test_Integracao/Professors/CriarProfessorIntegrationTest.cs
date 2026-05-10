@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using SistemaDeMatricula.Aplicacao.Dtos.Professor;
+using SistemaDeMatricula.Infraestrutura.Data;
 using SistemaDeMatricula.Testes.Test_Integracao.Setup;
 using SistemaDeMatricula.Testes.Teste_Unitarios;
-using SitemaDeMatricula.Aplicacao.Dtos.Professor;
 using SitemaDeMatricula.Domain.Modelos;
-using SitemaDeMatricula.InfraEstrutura.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;

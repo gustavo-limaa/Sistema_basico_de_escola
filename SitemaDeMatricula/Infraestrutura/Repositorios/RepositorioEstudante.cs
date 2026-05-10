@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SitemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Modelos;
-using SitemaDeMatricula.InfraEstrutura.Data;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Modelos;
+using SistemaDeMatricula.Infraestrutura.Data;
 
-namespace SitemaDeMatricula.Infraestrutura.Repositorios;
+namespace SistemaDeMatricula.Infraestrutura.Repositorios;
 
 public class RepositorioEstudante : IRepositorioEstudante
 {
@@ -24,7 +24,7 @@ public class RepositorioEstudante : IRepositorioEstudante
     public async Task<Estudante?> ObterPorIdAsync(Guid estudanteId)
     {
         return await _context.Estudantes
-            .FirstOrDefaultAsync(e => e.EstudanteId == estudanteId);
+            .FirstOrDefaultAsync(e => e.Id == estudanteId);
     }
 
     public async Task AdicionarAsync(Estudante estudante)
@@ -54,11 +54,11 @@ public class RepositorioEstudante : IRepositorioEstudante
 
     public async Task<bool> ExisteMatriculaAsync(Guid estudanteId)
     {
-        return await _context.Estudantes.AnyAsync(m => m.EstudanteId == estudanteId);
+        return await _context.Estudantes.AnyAsync(m => m.Id == estudanteId);
     }
 
     public Task<bool> ExisteEmailAsync(string email, Guid id)
     {
-        return _context.Estudantes.AnyAsync(e => e.Email.Valor == email && e.EstudanteId != id);
+        return _context.Estudantes.AnyAsync(e => e.Email.Valor == email && e.Id != id);
     }
 }

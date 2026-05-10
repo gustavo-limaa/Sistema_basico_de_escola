@@ -1,4 +1,6 @@
-﻿namespace SitemaDeMatricula.Domain.Value_Object;
+﻿using SistemaDeMatricula.Domain;
+
+namespace SistemaDeMatricula.Domain.Value_Object;
 
 public sealed class CodigoTurma
 {

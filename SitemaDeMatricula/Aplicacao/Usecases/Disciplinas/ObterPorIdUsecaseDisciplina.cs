@@ -1,11 +1,11 @@
-﻿using SitemaDeMatricula.Aplicacao.Dtos.Disciplina;
-using SitemaDeMatricula.Domain;
-using SitemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Mapper;
+﻿using SistemaDeMatricula.Aplicacao.Dtos.Disciplina;
+using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Mapper;
 
-namespace SitemaDeMatricula.Aplicacao.Usecases.Disciplinas
+namespace SistemaDeMatricula.Aplicacao.Usecases.Disciplinas
 {
-    public class ObterPorIdUsecaseDisciplina
+    public sealed class ObterPorIdUsecaseDisciplina
     {
         private readonly IDisciplinaRepositorio _disciplinaRepositorio;
 

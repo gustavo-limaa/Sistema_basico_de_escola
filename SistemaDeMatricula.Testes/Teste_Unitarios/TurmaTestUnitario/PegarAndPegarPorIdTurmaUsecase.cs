@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using Moq;
-using SitemaDeMatricula.Aplicacao.Dtos.turma;
-using SitemaDeMatricula.Aplicacao.Usecases.Turmas;
-using SitemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Aplicacao.Dtos.turma;
+using SistemaDeMatricula.Aplicacao.Usecases.Turmas;
+using SistemaDeMatricula.Domain.Interfaces;
 using SitemaDeMatricula.Domain.Modelos;
 using System;
 using System.Collections.Generic;
@@ -99,15 +99,15 @@ public class PegarAndPegarPorIdTurmaUsecases
         turmaFake.Ativar(); // Garante que a regra !turma.Ativo não barre o teste
 
         // AJUSTE AQUI: Use o nome exato do método que está no Use Case
-        _mockTurma.Setup(t => t.ObterPorIdIgnorandoFiltrosAsync(turmaFake.TurmaId))
+        _mockTurma.Setup(t => t.ObterPorIdIgnorandoFiltrosAsync(turmaFake.Id))
                   .ReturnsAsync(turmaFake);
 
         // Act
-        var resultado = await _usecaseID.ExecutarAsync(turmaFake.TurmaId);
+        var resultado = await _usecaseID.ExecutarAsync(turmaFake.Id);
 
         // Assert
         resultado.Sucesso.Should().BeTrue(because: resultado.Mensagem);
-        resultado.Dados.Id.Should().Be(turmaFake.TurmaId); _mockTurma.Verify(t => t.ObterPorIdIgnorandoFiltrosAsync(It.IsAny<Guid>()), Times.Once);
+        resultado.Dados.Id.Should().Be(turmaFake.Id); _mockTurma.Verify(t => t.ObterPorIdIgnorandoFiltrosAsync(It.IsAny<Guid>()), Times.Once);
     }
 
     [Fact]

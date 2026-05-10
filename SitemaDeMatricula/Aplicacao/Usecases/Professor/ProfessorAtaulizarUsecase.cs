@@ -1,11 +1,11 @@
-﻿using SitemaDeMatricula.Aplicacao.Dtos.Professor;
-using SitemaDeMatricula.Domain;
-using SitemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Mapper;
+﻿using SistemaDeMatricula.Aplicacao.Dtos.Professor;
+using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Mapper;
 
-namespace SitemaDeMatricula.Aplicacao.Usecases.Professor;
+namespace SistemaDeMatricula.Aplicacao.Usecases.Professor;
 
-public class ProfessorAtualizarUsecase
+public sealed class ProfessorAtualizarUsecase
 {
     private readonly IRepositorioProfessor _repositorioProfessor;
 
@@ -24,7 +24,7 @@ public class ProfessorAtualizarUsecase
 
         var professorComMesmoEmail = await _repositorioProfessor.ObterPorEmailAsync(professorDto.Email);
 
-        if (professorComMesmoEmail != null && professorComMesmoEmail.ProfessorId != professorDto.ProfessorId)
+        if (professorComMesmoEmail != null && professorComMesmoEmail.Id != professorDto.ProfessorId)
         {
             return Result<ProfessorDtoResponse>.Falha("Já existe outro professor cadastrado com este e-mail.");
         }

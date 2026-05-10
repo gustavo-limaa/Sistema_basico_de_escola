@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SitemaDeMatricula.Aplicacao.Dtos.estudante;
+namespace SistemaDeMatricula.Aplicacao.Dtos.estudante;
 
-public record EstudanteDtoCreate
+public sealed record EstudanteDtoCreate
 (
   [Required(ErrorMessage = "O nome completo é obrigatório.")][MinLength(3, ErrorMessage = "O nome completo deve ter no mínimo 3 caracteres.")][MaxLength(80, ErrorMessage = "O nome completo deve ter no máximo 80 caracteres.")]
     string NomeCompleto,

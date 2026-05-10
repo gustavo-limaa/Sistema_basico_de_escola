@@ -1,16 +1,12 @@
-﻿using SitemaDeMatricula.Domain.Value_Object;
+﻿using SistemaDeMatricula.Domain.Value_Object;
 using SitemaDeMatricula.Domain.Value_Objetc;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SitemaDeMatricula.Domain.Modelos;
+namespace SistemaDeMatricula.Domain.Modelos;
 
-public class Disciplina
+public sealed class Disciplina : ModeloMain
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid DisciplinaId { get; private set; } = Guid.NewGuid();
-
     [Required(ErrorMessage = "O nome da disciplina é obrigatório.")]
     [MinLength(3, ErrorMessage = "O nome da disciplina deve ter pelo menos 3 caracteres.")]
     [MaxLength(100, ErrorMessage = "O nome da disciplina deve ter no máximo 100 caracteres.")]
@@ -19,9 +15,6 @@ public class Disciplina
     [Required(ErrorMessage = "A carga horária é obrigatória.")]
     [Range(1, 200, ErrorMessage = "A carga horária deve ser um valor positivo.")]
     public CargaHoraria CargaHoraria { get; private set; }
-
-    [Required(ErrorMessage = "O status da disciplina é obrigatório.")]
-    public bool Ativo { get; private set; } = true;
 
     public void Desativar() => Ativo = false;
 

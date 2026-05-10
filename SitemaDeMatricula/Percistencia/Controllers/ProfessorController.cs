@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using SitemaDeMatricula.Aplicacao.Dtos.Professor;
-using SitemaDeMatricula.Aplicacao.Usecases.Professor;
-using SitemaDeMatricula.Domain;
+using SistemaDeMatricula.Aplicacao.Dtos.Professor;
+using SistemaDeMatricula.Aplicacao.Usecases.Professor;
+using SistemaDeMatricula.Domain;
 
-namespace SitemaDeMatricula.Percistencia.Controllers;
+namespace SistemaDeMatricula.Percistencia.Controllers;
 
 [ApiController]
 [Route("api/professores")]
-public class ProfessorController : ControllerBase
+public sealed class ProfessorController : ControllerBase
 {
     private IActionResult TratarResultado<T>(Result<T> result)
     {

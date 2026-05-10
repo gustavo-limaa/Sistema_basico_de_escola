@@ -28,7 +28,7 @@ namespace SitemaDeMatricula.Migrations
 
             modelBuilder.Entity("SitemaDeMatricula.Domain.Modelos.Disciplina", b =>
                 {
-                    b.Property<Guid>("DisciplinaId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
@@ -43,14 +43,14 @@ namespace SitemaDeMatricula.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
-                    b.HasKey("DisciplinaId");
+                    b.HasKey("Id");
 
                     b.ToTable("Disciplinas");
                 });
 
             modelBuilder.Entity("SitemaDeMatricula.Domain.Modelos.Estudante", b =>
                 {
-                    b.Property<Guid>("EstudanteId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
@@ -107,14 +107,14 @@ namespace SitemaDeMatricula.Migrations
                                 .HasColumnName("Telefone");
                         });
 
-                    b.HasKey("EstudanteId");
+                    b.HasKey("Id");
 
                     b.ToTable("Estudantes");
                 });
 
             modelBuilder.Entity("SitemaDeMatricula.Domain.Modelos.Matricula", b =>
                 {
-                    b.Property<Guid>("MatriculaId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
@@ -124,17 +124,17 @@ namespace SitemaDeMatricula.Migrations
                     b.Property<DateTime>("DataMatricula")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("EstudanteId")
+                    b.Property<Guid>("Id")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("TurmaId")
+                    b.Property<Guid>("Id")
                         .HasColumnType("char(36)");
 
-                    b.HasKey("MatriculaId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("TurmaId");
+                    b.HasIndex("Id");
 
-                    b.HasIndex("EstudanteId", "TurmaId")
+                    b.HasIndex("Id", "Id")
                         .IsUnique();
 
                     b.ToTable("Matriculas");
@@ -142,7 +142,7 @@ namespace SitemaDeMatricula.Migrations
 
             modelBuilder.Entity("SitemaDeMatricula.Domain.Modelos.Professor", b =>
                 {
-                    b.Property<Guid>("ProfessorId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
@@ -221,14 +221,14 @@ namespace SitemaDeMatricula.Migrations
                                 .HasColumnName("Telefone");
                         });
 
-                    b.HasKey("ProfessorId");
+                    b.HasKey("Id");
 
                     b.ToTable("Professores");
                 });
 
             modelBuilder.Entity("SitemaDeMatricula.Domain.Modelos.Turma", b =>
                 {
-                    b.Property<Guid>("TurmaId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
@@ -239,22 +239,22 @@ namespace SitemaDeMatricula.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<Guid>("DisciplinaId")
+                    b.Property<Guid>("Id")
                         .HasColumnType("char(36)");
 
                     b.Property<Guid?>("DisciplinaId1")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("ProfessorId")
+                    b.Property<Guid>("Id")
                         .HasColumnType("char(36)");
 
-                    b.HasKey("TurmaId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("DisciplinaId");
+                    b.HasIndex("Id");
 
                     b.HasIndex("DisciplinaId1");
 
-                    b.HasIndex("ProfessorId");
+                    b.HasIndex("Id");
 
                     b.ToTable("Turmas");
                 });
@@ -263,13 +263,13 @@ namespace SitemaDeMatricula.Migrations
                 {
                     b.HasOne("SitemaDeMatricula.Domain.Modelos.Estudante", "Estudante")
                         .WithMany("Matriculas")
-                        .HasForeignKey("EstudanteId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("SitemaDeMatricula.Domain.Modelos.Turma", "Turma")
                         .WithMany("Matriculas")
-                        .HasForeignKey("TurmaId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -282,7 +282,7 @@ namespace SitemaDeMatricula.Migrations
                 {
                     b.HasOne("SitemaDeMatricula.Domain.Modelos.Disciplina", "Disciplina")
                         .WithMany()
-                        .HasForeignKey("DisciplinaId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -292,7 +292,7 @@ namespace SitemaDeMatricula.Migrations
 
                     b.HasOne("SitemaDeMatricula.Domain.Modelos.Professor", "Professor")
                         .WithMany()
-                        .HasForeignKey("ProfessorId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

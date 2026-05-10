@@ -1,10 +1,10 @@
 ﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using SistemaDeMatricula.Aplicacao.Dtos.Professor;
+using SistemaDeMatricula.Infraestrutura.Data;
 using SistemaDeMatricula.Testes.Test_Integracao.Setup;
 using SistemaDeMatricula.Testes.Teste_Unitarios;
-using SitemaDeMatricula.Aplicacao.Dtos.Professor;
-using SitemaDeMatricula.InfraEstrutura.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,7 +76,7 @@ public class SoftDeleteProfessorIntegrationTest : IAsyncLifetime
         // IgnoreQueryFilters é a chave para ver os "fantasmas"
         var professor = await contexto.Professores
             .IgnoreQueryFilters()
-            .FirstOrDefaultAsync(p => p.ProfessorId == id);
+            .FirstOrDefaultAsync(p => p.Id == id);
 
         // Retorna true apenas se ele existir E o campo Ativo for false
         return professor != null && !professor.Ativo;
@@ -184,7 +184,7 @@ public class SoftDeleteProfessorIntegrationTest : IAsyncLifetime
         // A MÁGICA: IgnoreQueryFilters() permite ver o que está Ativo = false
         var professorNoBanco = await contexto.Professores
             .IgnoreQueryFilters()
-            .FirstOrDefaultAsync(p => p.ProfessorId == id);
+            .FirstOrDefaultAsync(p => p.Id == id);
 
         // Validações finais
         professorNoBanco.Should().NotBeNull(); // Ele NÃO foi excluído do HD

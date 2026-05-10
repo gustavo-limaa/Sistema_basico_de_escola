@@ -1,11 +1,11 @@
-﻿using SitemaDeMatricula.Aplicacao.Dtos.turma;
-using SitemaDeMatricula.Domain;
-using SitemaDeMatricula.Domain.Interfaces;
+﻿using SistemaDeMatricula.Aplicacao.Dtos.turma;
+using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Interfaces;
 using SitemaDeMatricula.Domain.Mapper;
 
-namespace SitemaDeMatricula.Aplicacao.Usecases.Turmas;
+namespace SistemaDeMatricula.Aplicacao.Usecases.Turmas;
 
-public class ListarTurmaUsecase
+public sealed class ListarTurmaUsecase
 {
     private readonly IRepositorioTurma _turmaRepo;
     private readonly IRepositorioProfessor _professorRepo;

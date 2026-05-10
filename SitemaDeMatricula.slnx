@@ -4,5 +4,5 @@
     <File Path="README.md" />
   </Folder>
   <Project Path="SistemaDeMatricula.Testes/SistemaDeMatricula.Testes.csproj" Id="b855c5e9-43ae-4c33-a127-9209f4d2962d" />
-  <Project Path="SitemaDeMatricula/SitemaDeMatricula.csproj" />
+  <Project Path="SitemaDeMatricula/SistemaDeMatricula.csproj" />
 </Solution>

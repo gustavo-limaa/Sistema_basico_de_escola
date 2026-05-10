@@ -1,19 +1,17 @@
-﻿using SitemaDeMatricula.Domain.Value_Object;
+﻿using SistemaDeMatricula.Domain.Value_Object;
 
-namespace SitemaDeMatricula.Domain.Modelos;
+namespace SistemaDeMatricula.Domain.Modelos;
 
-public class Turma
+public sealed class Turma : ModeloMain
 {
-    public Guid TurmaId { get; private set; }
     public CodigoTurma CodigoTurma { get; private set; }
-    public bool Ativo { get; private set; }
 
     public Guid ProfessorId { get; private set; }
 
-    public virtual Professor Professor { get; private set; }
+    public Professor Professor { get; private set; }
 
     public Guid DisciplinaId { get; private set; }
-    public virtual Disciplina Disciplina { get; private set; }
+    public Disciplina Disciplina { get; private set; }
 
     public List<Matricula> Matriculas { get; private set; } = new();
 
@@ -21,7 +19,7 @@ public class Turma
     {
         if (string.IsNullOrWhiteSpace(codigo.ValorFormatado)) throw new ArgumentException("Código da turma é obrigatório.");
 
-        TurmaId = Guid.NewGuid();
+        Id = Guid.NewGuid();
         CodigoTurma = codigo;
         ProfessorId = professorId;
         DisciplinaId = disciplinaId;

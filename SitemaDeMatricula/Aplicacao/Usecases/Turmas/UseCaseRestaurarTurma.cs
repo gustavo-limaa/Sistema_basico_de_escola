@@ -1,9 +1,11 @@
-﻿using global::SitemaDeMatricula.Domain;
-using global::SitemaDeMatricula.Domain.Interfaces;
+﻿using SitemaDeMatricula.Domain;
+using SitemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Interfaces;
 
-namespace SitemaDeMatricula.Aplicacao.Usecases.Turmas;
+namespace SistemaDeMatricula.Aplicacao.Usecases.Turmas;
 
-public class RestaurarTurmaUseCase
+public sealed class RestaurarTurmaUseCase
 {
     private readonly IRepositorioTurma _turmaRepo;
 

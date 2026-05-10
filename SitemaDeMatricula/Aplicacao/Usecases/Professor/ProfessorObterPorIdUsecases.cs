@@ -1,11 +1,11 @@
-﻿using SitemaDeMatricula.Aplicacao.Dtos.Professor;
-using SitemaDeMatricula.Domain;
-using SitemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Mapper;
+﻿using SistemaDeMatricula.Aplicacao.Dtos.Professor;
+using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Mapper;
 
-namespace SitemaDeMatricula.Aplicacao.Usecases.Professor;
+namespace SistemaDeMatricula.Aplicacao.Usecases.Professor;
 
-public class ProfessorObterPorIdUsecases
+public sealed class ProfessorObterPorIdUsecases
 {
     private readonly IRepositorioProfessor _repositorioProfessor;
 

@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using SistemaDeMatricula.Aplicacao.Dtos.Disciplina;
+using SistemaDeMatricula.Domain.Modelos;
+using SistemaDeMatricula.Infraestrutura.Data;
 using SistemaDeMatricula.Testes.Test_Integracao.Setup;
 using SistemaDeMatricula.Testes.Teste_Unitarios;
-using SitemaDeMatricula.Aplicacao.Dtos.Disciplina;
-using SitemaDeMatricula.Domain.Modelos;
-using SitemaDeMatricula.InfraEstrutura.Data;
 using System.Net.Http.Json;
 
 namespace SistemaDeMatricula.Testes.Test_Integracao.Disciplinas;
@@ -68,12 +68,12 @@ public class PegarEPegarPorIdDiciplinaIntegrationTest : IAsyncLifetime
         // ARRANGE
         var disciplinaExistente = _disciplinasSeed.First();
         // ACT
-        var response = await _client.GetAsync($"/api/Disciplinas/{disciplinaExistente.DisciplinaId}");
+        var response = await _client.GetAsync($"/api/Disciplinas/{disciplinaExistente.Id}");
         // ASSERT
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         var disciplinaDto = await response.Content.ReadFromJsonAsync<DisciplinaDtoResponse>();
         disciplinaDto.Should().NotBeNull();
-        disciplinaDto!.DisciplinaId.Should().Be(disciplinaExistente.DisciplinaId);
+        disciplinaDto!.DisciplinaId.Should().Be(disciplinaExistente.Id);
         disciplinaDto.Nome.Should().Be(disciplinaExistente.Nome.Valor);
         disciplinaDto.CargaHoraria.Should().Be(disciplinaExistente.CargaHoraria.Valor);
     }
@@ -96,11 +96,11 @@ public class PegarEPegarPorIdDiciplinaIntegrationTest : IAsyncLifetime
         var disciplinaExistente = _disciplinasSeed.First();
         using var scope = _factory.Services.CreateScope();
         var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        var disciplinaNoBanco = await contexto.Disciplinas.FindAsync(disciplinaExistente.DisciplinaId);
+        var disciplinaNoBanco = await contexto.Disciplinas.FindAsync(disciplinaExistente.Id);
         disciplinaNoBanco!.Desativar();
         await contexto.SaveChangesAsync();
         // ACT
-        var response = await _client.GetAsync($"/api/Disciplinas/{disciplinaExistente.DisciplinaId}");
+        var response = await _client.GetAsync($"/api/Disciplinas/{disciplinaExistente.Id}");
         // ASSERT
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
     }

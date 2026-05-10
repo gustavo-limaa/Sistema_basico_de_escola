@@ -1,8 +1,8 @@
 ﻿using Moq;
+using SistemaDeMatricula.Aplicacao.Usecases.Estudante;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Modelos;
 using SitemaDeMatricula.Aplicacao.Dtos.estudante;
-using SitemaDeMatricula.Aplicacao.Usecases.Estudante;
-using SitemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Modelos;
 using SitemaDeMatricula.Domain.Value_Objetc;
 using System;
 using System.Collections.Generic;
@@ -49,7 +49,7 @@ public class PegarEPegarPorIdTesT
         // Arrange
         var estudanteFake = DataFactory.EstudanteFaker.Generate();
         // Se a sua Factory já gera um ID, você pode usar o que já vem nela:
-        var idBusca = estudanteFake.EstudanteId;
+        var idBusca = estudanteFake.Id;
 
         _repositorioMock.Setup(r => r.ObterPorIdAsync(idBusca))
                         .ReturnsAsync(estudanteFake);

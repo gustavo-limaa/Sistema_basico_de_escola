@@ -1,11 +1,13 @@
-﻿using global::SitemaDeMatricula.Aplicacao.Dtos.Disciplina;
-using global::SitemaDeMatricula.Domain;
-using global::SitemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Mapper;
+﻿using SitemaDeMatricula.Domain;
+using SitemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Mapper;
+using SistemaDeMatricula.Aplicacao.Dtos.Disciplina;
 
-namespace SitemaDeMatricula.Aplicacao.Usecases.Disciplinas;
+namespace SistemaDeMatricula.Aplicacao.Usecases.Disciplinas;
 
-public class RestaurarUseCaseDisciplina
+public sealed class RestaurarUseCaseDisciplina
 {
     private readonly IDisciplinaRepositorio _disciplinaRepositorio;
 

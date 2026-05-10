@@ -1,14 +1,14 @@
-﻿using SitemaDeMatricula.Aplicacao.Dtos.estudante;
-using SitemaDeMatricula.Domain;
-using SitemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Mapper;
+﻿using SistemaDeMatricula.Aplicacao.Dtos.estudante;
+using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Mapper;
 using SitemaDeMatricula.Domain.Modelos;
 using SitemaDeMatricula.Domain.Value_Object;
 using SitemaDeMatricula.Domain.Value_Objetc;
 
-namespace SitemaDeMatricula.Aplicacao.Usecases.Estudante;
+namespace SistemaDeMatricula.Aplicacao.Usecases.Estudante;
 
-public class UsesCasesAtualizarEstudante
+public sealed class UsesCasesAtualizarEstudante
 {
     private readonly IRepositorioEstudante _repositorioEstudante;
 

@@ -1,4 +1,4 @@
-﻿namespace SitemaDeMatricula.Domain.Value_Object;
+﻿namespace SistemaDeMatricula.Domain.Value_Object;
 
 public record CargaHoraria
 {

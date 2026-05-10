@@ -1,9 +1,9 @@
 ﻿using Moq;
+using SistemaDeMatricula.Aplicacao.Usecases.Professor;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Modelos;
 using SitemaDeMatricula.Aplicacao.Dtos.Professor;
-using SitemaDeMatricula.Aplicacao.Usecases.Professor;
-using SitemaDeMatricula.Domain.Interfaces;
 using SitemaDeMatricula.Domain.Mapper;
-using SitemaDeMatricula.Domain.Modelos;
 using System;
 using System.Collections.Generic;
 using System.Linq;

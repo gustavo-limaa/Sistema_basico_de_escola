@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SitemaDeMatricula.Aplicacao.Dtos.estudante;
-using SitemaDeMatricula.Aplicacao.Usecases.Estudante;
-using SitemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Aplicacao.Dtos.estudante;
+using SistemaDeMatricula.Aplicacao.Usecases.Estudante;
+using SistemaDeMatricula.Domain.Interfaces;
 
-namespace SitemaDeMatricula.Percistencia.Controllers;
+namespace SistemaDeMatricula.Percistencia.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class EstudanteController : ControllerBase
+public sealed class EstudanteController : ControllerBase
 {
     private readonly IRepositorioEstudante _repositorioEstudante;
 

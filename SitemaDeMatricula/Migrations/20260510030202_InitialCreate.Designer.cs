@@ -6,15 +6,16 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SitemaDeMatricula.InfraEstrutura.Data;
+using SistemaDeMatricula.Infraestrutura.Data;
+
 
 #nullable disable
 
 namespace SitemaDeMatricula.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260411232957_PrimeiraMigracao")]
-    partial class PrimeiraMigracao
+    [Migration("20260510030202_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,12 +33,16 @@ namespace SitemaDeMatricula.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<int>("CargaHoraria")
                         .HasColumnType("int");
 
                     b.Property<string>("Nome")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("Id");
 
@@ -50,8 +55,8 @@ namespace SitemaDeMatricula.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("Id")
-                        .HasColumnType("char(36)");
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("tinyint(1)");
 
                     b.ComplexProperty<Dictionary<string, object>>("Cpf", "SitemaDeMatricula.Domain.Modelos.Estudante.Cpf#ObjectCPF", b1 =>
                         {
@@ -108,8 +113,6 @@ namespace SitemaDeMatricula.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id");
-
                     b.ToTable("Estudantes");
                 });
 
@@ -119,20 +122,23 @@ namespace SitemaDeMatricula.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<DateTime>("DataMatricula")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("EstudanteId")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("TurmaId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id");
+                    b.HasIndex("TurmaId");
 
-                    b.HasIndex("Id", "Id")
+                    b.HasIndex("EstudanteId", "TurmaId")
                         .IsUnique();
 
                     b.ToTable("Matriculas");
@@ -143,6 +149,9 @@ namespace SitemaDeMatricula.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("Categoria")
                         .HasColumnType("int")
@@ -159,6 +168,14 @@ namespace SitemaDeMatricula.Migrations
                                 .HasColumnName("Cpf");
                         });
 
+                    b.ComplexProperty<Dictionary<string, object>>("DataNascimento", "SitemaDeMatricula.Domain.Modelos.Professor.DataNascimento#ObjectDataNascimento", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<DateOnly>("Valor")
+                                .HasColumnType("date");
+                        });
+
                     b.ComplexProperty<Dictionary<string, object>>("Email", "SitemaDeMatricula.Domain.Modelos.Professor.Email#ObjectEmail", b1 =>
                         {
                             b1.IsRequired();
@@ -170,7 +187,7 @@ namespace SitemaDeMatricula.Migrations
                                 .HasColumnName("Email");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("Nome", "SitemaDeMatricula.Domain.Modelos.Professor.Nome#ObjectNomeCompleto", b1 =>
+                    b.ComplexProperty<Dictionary<string, object>>("NomeCompleto", "SitemaDeMatricula.Domain.Modelos.Professor.NomeCompleto#ObjectNomeCompleto", b1 =>
                         {
                             b1.IsRequired();
 
@@ -219,43 +236,40 @@ namespace SitemaDeMatricula.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("CodigoTurma")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("CodigoTurma");
 
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("DisciplinaId")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("ProfessorId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id");
+                    b.HasIndex("DisciplinaId");
 
-                    b.HasIndex("Id");
+                    b.HasIndex("ProfessorId");
 
                     b.ToTable("Turmas");
-                });
-
-            modelBuilder.Entity("SitemaDeMatricula.Domain.Modelos.Estudante", b =>
-                {
-                    b.HasOne("SitemaDeMatricula.Domain.Modelos.Turma", null)
-                        .WithMany("Estudantes")
-                        .HasForeignKey("Id");
                 });
 
             modelBuilder.Entity("SitemaDeMatricula.Domain.Modelos.Matricula", b =>
                 {
                     b.HasOne("SitemaDeMatricula.Domain.Modelos.Estudante", "Estudante")
                         .WithMany("Matriculas")
-                        .HasForeignKey("Id")
+                        .HasForeignKey("EstudanteId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("SitemaDeMatricula.Domain.Modelos.Turma", "Turma")
                         .WithMany("Matriculas")
-                        .HasForeignKey("Id")
+                        .HasForeignKey("TurmaId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -268,14 +282,14 @@ namespace SitemaDeMatricula.Migrations
                 {
                     b.HasOne("SitemaDeMatricula.Domain.Modelos.Disciplina", "Disciplina")
                         .WithMany("Turmas")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("DisciplinaId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("SitemaDeMatricula.Domain.Modelos.Professor", "Professor")
                         .WithMany()
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("ProfessorId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Disciplina");
@@ -295,8 +309,6 @@ namespace SitemaDeMatricula.Migrations
 
             modelBuilder.Entity("SitemaDeMatricula.Domain.Modelos.Turma", b =>
                 {
-                    b.Navigation("Estudantes");
-
                     b.Navigation("Matriculas");
                 });
 #pragma warning restore 612, 618

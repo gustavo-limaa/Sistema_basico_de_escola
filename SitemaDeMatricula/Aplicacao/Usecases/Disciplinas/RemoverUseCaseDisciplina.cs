@@ -1,10 +1,10 @@
-﻿using SitemaDeMatricula.Aplicacao.Dtos.Disciplina;
-using SitemaDeMatricula.Domain;
-using SitemaDeMatricula.Domain.Interfaces;
+﻿using SistemaDeMatricula.Aplicacao.Dtos.Disciplina;
+using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Interfaces;
 
-namespace SitemaDeMatricula.Aplicacao.Usecases.Disciplinas
+namespace SistemaDeMatricula.Aplicacao.Usecases.Disciplinas
 {
-    public class RemoverUseCaseDisciplina
+    public sealed class RemoverUseCaseDisciplina
     {
         private readonly IDisciplinaRepositorio _disciplinaRepositorio;
 

@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SitemaDeMatricula.Aplicacao.Dtos.Disciplina;
-using SitemaDeMatricula.Aplicacao.Usecases.Disciplinas;
+using SistemaDeMatricula.Aplicacao.Dtos.Disciplina;
+using SistemaDeMatricula.Aplicacao.Usecases.Disciplinas;
 
-namespace SitemaDeMatricula.Percistencia.Controllers;
+namespace SistemaDeMatricula.Percistencia.Controllers;
 
 [ApiController]
 [Route("api/disciplinas")]
-public class DisciplinaController : ControllerBase
+public sealed class DisciplinaController : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> Criar([FromBody] DisciplinaDtoCreate dto, [FromServices] CriarUsecaseDisciplina useCase)

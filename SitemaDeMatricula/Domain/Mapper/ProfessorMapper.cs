@@ -1,17 +1,17 @@
-﻿using SitemaDeMatricula.Aplicacao.Dtos.Professor;
-using SitemaDeMatricula.Domain.Modelos;
-using SitemaDeMatricula.Domain.Uteis;
+﻿using SistemaDeMatricula.Aplicacao.Dtos.Professor;
+using SistemaDeMatricula.Domain.Modelos;
+using SistemaDeMatricula.Domain.Uteis;
 using SitemaDeMatricula.Domain.Value_Object;
 using SitemaDeMatricula.Domain.Value_Objetc;
 
-namespace SitemaDeMatricula.Domain.Mapper
+namespace SistemaDeMatricula.Domain.Mapper
 {
     public static class ProfessorMapper
     {
         public static ProfessorDtoResponse ToProfessorDtoResponse(this Professor professor)
         {
             return new ProfessorDtoResponse(
-                professor.ProfessorId,
+                professor.Id,
                 professor.NomeCompleto.Valor,
                 professor.Cpf.Valor,
                 professor.DataNascimento.Valor,

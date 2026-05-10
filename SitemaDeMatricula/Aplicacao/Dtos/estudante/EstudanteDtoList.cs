@@ -1,6 +1,6 @@
-﻿namespace SitemaDeMatricula.Aplicacao.Dtos.estudante;
+﻿namespace SistemaDeMatricula.Aplicacao.Dtos.estudante;
 
-public record EstudanteDtoList(
+public sealed record EstudanteDtoList(
    Guid EstudanteId,
    string NomeCompleto,
    string Email);

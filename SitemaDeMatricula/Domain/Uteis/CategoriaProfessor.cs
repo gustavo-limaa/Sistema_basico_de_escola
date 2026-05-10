@@ -1,4 +1,4 @@
-﻿namespace SitemaDeMatricula.Domain.Uteis;
+﻿namespace SistemaDeMatricula.Domain.Uteis;
 
 public enum CategoriaProfessor
 {

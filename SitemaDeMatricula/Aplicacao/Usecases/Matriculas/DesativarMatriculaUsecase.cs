@@ -1,9 +1,9 @@
-﻿using SitemaDeMatricula.Domain;
-using SitemaDeMatricula.Domain.Interfaces;
+﻿using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Interfaces;
 
-namespace SitemaDeMatricula.Aplicacao.Usecases.Matriculas;
+namespace SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
 
-public class DesativarMatriculaUsecase
+public sealed class DesativarMatriculaUsecase
 {
     private readonly IRepositorioMatricula _matriculaRepo;
 

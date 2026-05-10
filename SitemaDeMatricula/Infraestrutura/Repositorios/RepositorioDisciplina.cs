@@ -1,9 +1,9 @@
-﻿namespace SitemaDeMatricula.Infraestrutura.Repositorios;
+﻿namespace SistemaDeMatricula.Infraestrutura.Repositorios;
 
 using Microsoft.EntityFrameworkCore;
-using SitemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Modelos;
-using SitemaDeMatricula.InfraEstrutura.Data;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Modelos;
+using SistemaDeMatricula.Infraestrutura.Data;
 
 public class DisciplinaRepositorio : IDisciplinaRepositorio
 {
@@ -17,7 +17,7 @@ public class DisciplinaRepositorio : IDisciplinaRepositorio
     public async Task<Disciplina?> ObterPorIdAsync(Guid id)
     {
         return await _context.Disciplinas.Include(d => d.Turmas)
-            .FirstOrDefaultAsync(d => d.DisciplinaId == id);
+            .FirstOrDefaultAsync(d => d.Id == id);
     }
 
     public async Task<IEnumerable<Disciplina>> ObterTodasAsync()
@@ -45,7 +45,7 @@ public class DisciplinaRepositorio : IDisciplinaRepositorio
     {
         return await _context.Disciplinas
             .IgnoreQueryFilters()
-            .FirstOrDefaultAsync(d => d.DisciplinaId == id);
+            .FirstOrDefaultAsync(d => d.Id == id);
     }
 
     public async Task<bool> SalvarAlteracoesAsync()

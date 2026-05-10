@@ -1,7 +1,7 @@
-﻿using SitemaDeMatricula.Aplicacao.Dtos.Matricola;
-using SitemaDeMatricula.Domain.Modelos;
+﻿using SistemaDeMatricula.Aplicacao.Dtos.Matricola;
+using SistemaDeMatricula.Domain.Modelos;
 
-namespace SitemaDeMatricula.Domain.Mapper
+namespace SistemaDeMatricula.Domain.Mapper
 {
     public static class MatriculaMapper
     {
@@ -9,7 +9,7 @@ namespace SitemaDeMatricula.Domain.Mapper
         {
             if (matricula == null) return null;
             return new MatriculaDtoResponse(
-                MatriculaId: matricula.MatriculaId,
+                MatriculaId: matricula.Id,
                 DataMatricula: matricula.DataMatricula,
                 EstudanteId: matricula.EstudanteId,
                 TurmaId: matricula.TurmaId,

@@ -2,8 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using SistemaDeMatricula.Testes.Test_Integracao.Setup;
 using SistemaDeMatricula.Testes.Teste_Unitarios;
-using SitemaDeMatricula.Aplicacao.Dtos.Disciplina;
-using SitemaDeMatricula.InfraEstrutura.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +9,8 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using SistemaDeMatricula.Infraestrutura.Data;
+using SistemaDeMatricula.Aplicacao.Dtos.Disciplina;
 
 namespace SistemaDeMatricula.Testes.Test_Integracao.Disciplinas;
 

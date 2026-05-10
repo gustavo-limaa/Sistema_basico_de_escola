@@ -1,7 +1,7 @@
-﻿using SitemaDeMatricula.Domain.Modelos;
+﻿using SistemaDeMatricula.Domain.Modelos;
 using SitemaDeMatricula.Domain.Value_Object;
 
-namespace SitemaDeMatricula.Domain.Interfaces
+namespace SistemaDeMatricula.Domain.Interfaces
 {
     public interface IRepositorioTurma
     {

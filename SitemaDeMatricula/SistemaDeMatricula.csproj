@@ -10,9 +10,13 @@
 
   <ItemGroup>
     <Compile Remove="docs\**" />
+    <Compile Remove="Infraestrutura\Data\Migrations\**" />
     <Content Remove="docs\**" />
+    <Content Remove="Infraestrutura\Data\Migrations\**" />
     <EmbeddedResource Remove="docs\**" />
+    <EmbeddedResource Remove="Infraestrutura\Data\Migrations\**" />
     <None Remove="docs\**" />
+    <None Remove="Infraestrutura\Data\Migrations\**" />
   </ItemGroup>
 
   <ItemGroup>

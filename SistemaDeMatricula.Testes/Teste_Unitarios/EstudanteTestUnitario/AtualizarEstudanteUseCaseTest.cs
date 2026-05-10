@@ -1,8 +1,8 @@
 ﻿using Moq;
+using SistemaDeMatricula.Aplicacao.Usecases.Estudante;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Modelos;
 using SitemaDeMatricula.Aplicacao.Dtos.estudante;
-using SitemaDeMatricula.Aplicacao.Usecases.Estudante;
-using SitemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Modelos;
 using SitemaDeMatricula.Domain.Value_Objetc;
 using System;
 using System.Collections.Generic;
@@ -29,7 +29,7 @@ public class AtualizarEstudanteUseCaseTest
     {
         // Arrange
         var estudanteFake = DataFactory.EstudanteFaker.Generate();
-        var idBusca = estudanteFake.EstudanteId;
+        var idBusca = estudanteFake.Id;
         var dtoAtualizacao = DataFactory.EstudanteDtoUpdateFaker.Generate();
 
         // 1. Simula que achou o estudante
@@ -71,7 +71,7 @@ public class AtualizarEstudanteUseCaseTest
     {
         // Arrange
         var estudanteFake = DataFactory.EstudanteFaker.Generate();
-        var idBusca = estudanteFake.EstudanteId;
+        var idBusca = estudanteFake.Id;
         var dtoAtualizacao = DataFactory.EstudanteDtoUpdateFaker.Generate();
         _repositorioMock.Setup(r => r.ObterPorIdAsync(idBusca))
                         .ReturnsAsync(estudanteFake);

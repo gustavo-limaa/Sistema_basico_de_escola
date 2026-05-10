@@ -1,12 +1,12 @@
 ﻿using FluentAssertions;
 using Moq;
+using SistemaDeMatricula.Aplicacao.Dtos.turma;
+using SistemaDeMatricula.Aplicacao.Usecases.Turmas;
+using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Modelos;
 using SitemaDeMatricula.Aplicacao.Dtos.Disciplina;
 using SitemaDeMatricula.Aplicacao.Dtos.Professor;
-using SitemaDeMatricula.Aplicacao.Dtos.turma;
-using SitemaDeMatricula.Aplicacao.Usecases.Turmas;
-using SitemaDeMatricula.Domain;
-using SitemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Modelos;
 using System;
 using System.Collections.Generic;
 using System.Linq;

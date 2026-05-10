@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SitemaDeMatricula.Aplicacao.Dtos.Professor;
+namespace SistemaDeMatricula.Aplicacao.Dtos.Professor;
 
-public record ProfessorDtoResponse
+public sealed record ProfessorDtoResponse
  (
     [Required]
     Guid ProfessorId,

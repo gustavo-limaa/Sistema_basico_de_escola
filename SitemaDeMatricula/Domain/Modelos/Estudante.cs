@@ -1,15 +1,15 @@
-﻿using SitemaDeMatricula.Domain.Value_Object;
+﻿using SistemaDeMatricula.Domain.Value_Object;
 using SitemaDeMatricula.Domain.Value_Objetc;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SitemaDeMatricula.Domain.Modelos;
+namespace SistemaDeMatricula.Domain.Modelos;
 
-public class Estudante
+public sealed class Estudante : ModeloMain
 {
     public Estudante(Guid estudanteId, ObjectNomeCompleto nomeCompleto, ObjectDataNascimento dataNascimento, ObjectCPF cpf, ObjectEmail email, ObjectTelefone telefone)
     {
-        EstudanteId = Guid.NewGuid();
+        Id = Guid.NewGuid();
         NomeCompleto = nomeCompleto;
         DataNascimento = dataNascimento;
         Cpf = cpf;
@@ -19,9 +19,6 @@ public class Estudante
 
     public Estudante()
     { }
-
-    [Key]
-    public Guid EstudanteId { get; set; } = Guid.NewGuid();
 
     [Required(ErrorMessage = "O nome completo é obrigatório.")]
     public ObjectNomeCompleto NomeCompleto { get; set; }

@@ -1,8 +1,8 @@
 ﻿using Moq;
+using SistemaDeMatricula.Aplicacao.Usecases.Estudante;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Modelos;
 using SitemaDeMatricula.Aplicacao.Dtos.estudante;
-using SitemaDeMatricula.Aplicacao.Usecases.Estudante;
-using SitemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Modelos;
 
 namespace SistemaDeMatricula.Testes.Teste_Unitarios.EstudanteTestUnitario;
 

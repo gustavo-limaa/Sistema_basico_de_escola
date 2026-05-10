@@ -1,12 +1,12 @@
 ﻿using Bogus.Extensions.UnitedKingdom;
 using FluentAssertions;
 using Moq;
-using SitemaDeMatricula.Aplicacao.Dtos.turma;
+using SistemaDeMatricula.Aplicacao.Dtos.turma;
+using SistemaDeMatricula.Aplicacao.Usecases.Turmas;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Modelos;
 using SitemaDeMatricula.Aplicacao.Usecases.Professor;
-using SitemaDeMatricula.Aplicacao.Usecases.Turmas;
 using SitemaDeMatricula.Domain;
-using SitemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Modelos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,14 +51,14 @@ public class ResturarTurmaUsecaseTestUNI
         var turmaInativa = DataFactory.TurmaFaker().Generate();
         turmaInativa.Desativar(); // Ela começa "morta"
 
-        _mock.Setup(t => t.ObterPorIdIgnorandoFiltrosAsync(turmaInativa.TurmaId))
+        _mock.Setup(t => t.ObterPorIdIgnorandoFiltrosAsync(turmaInativa.Id))
              .ReturnsAsync(turmaInativa);
 
         _mock.Setup(t => t.AtualizarAsync(turmaInativa))
              .ReturnsAsync(true);
 
         // Act
-        var resultado = await _usecase.ExecutarAsync(turmaInativa.TurmaId);
+        var resultado = await _usecase.ExecutarAsync(turmaInativa.Id);
 
         // Assert
         resultado.Sucesso.Should().BeTrue();
@@ -87,11 +87,11 @@ public class ResturarTurmaUsecaseTestUNI
         var turmaJaAtiva = DataFactory.TurmaFaker().Generate();
         turmaJaAtiva.Ativar(); // Ela já nasce ativa no teste
 
-        _mock.Setup(t => t.ObterPorIdIgnorandoFiltrosAsync(turmaJaAtiva.TurmaId))
+        _mock.Setup(t => t.ObterPorIdIgnorandoFiltrosAsync(turmaJaAtiva.Id))
              .ReturnsAsync(turmaJaAtiva);
 
         // Act
-        var resultado = await _usecase.ExecutarAsync(turmaJaAtiva.TurmaId);
+        var resultado = await _usecase.ExecutarAsync(turmaJaAtiva.Id);
 
         // Assert
         resultado.Sucesso.Should().BeTrue();

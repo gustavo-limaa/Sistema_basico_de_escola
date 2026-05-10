@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Modelos;
+using SistemaDeMatricula.Infraestrutura.Data;
 using SitemaDeMatricula.Domain;
-using SitemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Modelos;
-using SitemaDeMatricula.InfraEstrutura.Data;
 
-namespace SitemaDeMatricula.Infraestrutura.Repositorios;
+namespace SistemaDeMatricula.Infraestrutura.Repositorios;
 
 public class RepositorioProfessor : IRepositorioProfessor
 {
@@ -43,7 +43,7 @@ public class RepositorioProfessor : IRepositorioProfessor
     {
         return await _context.Professores
 
-             .FirstOrDefaultAsync(p => p.ProfessorId == professorId);
+             .FirstOrDefaultAsync(p => p.Id == professorId);
     }
 
     public async Task<IEnumerable<Professor>> ObterTodosAsync()
@@ -57,7 +57,7 @@ public class RepositorioProfessor : IRepositorioProfessor
     {
         return await _context.Professores
             .IgnoreQueryFilters()
-            .FirstOrDefaultAsync(p => p.ProfessorId == id);
+            .FirstOrDefaultAsync(p => p.Id == id);
     }
 
     public async Task<bool> SalvarAlteracoesAsync()

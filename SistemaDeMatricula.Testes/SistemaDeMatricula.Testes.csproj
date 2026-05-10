@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SitemaDeMatricula\SitemaDeMatricula.csproj" />
+    <ProjectReference Include="..\SitemaDeMatricula\SistemaDeMatricula.csproj" />
   </ItemGroup>
 
   <ItemGroup>

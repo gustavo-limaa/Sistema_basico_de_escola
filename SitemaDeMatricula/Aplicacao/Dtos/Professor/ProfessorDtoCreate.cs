@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
-namespace SitemaDeMatricula.Aplicacao.Dtos.Professor;
+namespace SistemaDeMatricula.Aplicacao.Dtos.Professor;
 
-public record ProfessorDtoCreate
+public sealed record ProfessorDtoCreate
 (
     [Required][MaxLength(80)][MinLength(3)]
     string NomeCompleto,

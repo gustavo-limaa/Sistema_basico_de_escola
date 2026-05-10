@@ -1,12 +1,12 @@
-﻿using SitemaDeMatricula.Aplicacao.Dtos.turma;
-using SitemaDeMatricula.Domain;
-using SitemaDeMatricula.Domain.Interfaces;
+﻿using SistemaDeMatricula.Aplicacao.Dtos.turma;
+using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Value_Object;
 using SitemaDeMatricula.Domain.Mapper;
-using SitemaDeMatricula.Domain.Value_Object; // Certifique-se de importar seu Mapper
 
-namespace SitemaDeMatricula.Aplicacao.Usecases.Turmas;
+namespace SistemaDeMatricula.Aplicacao.Usecases.Turmas;
 
-public class AtualizarTurmaUseCase
+public sealed class AtualizarTurmaUseCase
 {
     private readonly IRepositorioTurma _turmaRepo;
     private readonly IRepositorioProfessor _profRepo;
@@ -34,7 +34,7 @@ public class AtualizarTurmaUseCase
 
         var turmaComMesmoCodigo = await _turmaRepo.ObterPorCodigoIgnorandoFiltrosAsync(codigoValidado.ValorFormatado);
 
-        if (turmaComMesmoCodigo != null && turmaComMesmoCodigo.TurmaId != turmaId)
+        if (turmaComMesmoCodigo != null && turmaComMesmoCodigo.Id != turmaId)
             return Result<TurmaDtoResponse>.Conflito("Este código já está sendo usado por outra turma."); // 👈 Tem que ser .Conflito!
 
         var professor = await _profRepo.ObterPorIdAsync(dto.ProfessorId);

@@ -1,13 +1,14 @@
 ﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using SistemaDeMatricula.Aplicacao.Dtos.Disciplina;
+using SistemaDeMatricula.Aplicacao.Dtos.estudante;
+using SistemaDeMatricula.Aplicacao.Dtos.Professor;
+using SistemaDeMatricula.Aplicacao.Dtos.turma;
+using SistemaDeMatricula.Infraestrutura.Data;
 using SistemaDeMatricula.Testes.Test_Integracao.Setup;
 using SistemaDeMatricula.Testes.Teste_Unitarios;
-using SitemaDeMatricula.Aplicacao.Dtos.Disciplina;
-using SitemaDeMatricula.Aplicacao.Dtos.estudante;
-using SitemaDeMatricula.Aplicacao.Dtos.Professor;
 using SitemaDeMatricula.Aplicacao.Dtos.turma;
-using SitemaDeMatricula.InfraEstrutura.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -150,7 +151,7 @@ public class AtualizarTurmaIntegrationTest
         var (profId, discId, _) = await CriarDependenciasAsync();
         using var scope = _factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        var profNoBanco = await db.Professores.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.ProfessorId == profId);
+        var profNoBanco = await db.Professores.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.Id == profId);
 
         Console.WriteLine($"Professor no Banco: {profNoBanco.NomeCompleto} | Ativo: {profNoBanco.Ativo}");
         // 2. Criar a turma passando os IDs que acabamos de gerar
@@ -185,7 +186,7 @@ public class AtualizarTurmaIntegrationTest
         var (profId, discId, _) = await CriarDependenciasAsync();
         using var scope = _factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        var profNoBanco = await db.Professores.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.ProfessorId == profId);
+        var profNoBanco = await db.Professores.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.Id == profId);
 
         Console.WriteLine($"Professor no Banco: {profNoBanco.NomeCompleto} | Ativo: {profNoBanco.Ativo}");
         // 2. Criar a turma passando os IDs que acabamos de gerar

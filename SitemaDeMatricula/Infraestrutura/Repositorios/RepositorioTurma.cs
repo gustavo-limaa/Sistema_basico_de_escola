@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SitemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Modelos;
-using SitemaDeMatricula.Domain.Value_Object;
-using SitemaDeMatricula.InfraEstrutura.Data;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Modelos;
+using SistemaDeMatricula.Domain.Value_Object;
+using SistemaDeMatricula.Infraestrutura.Data;
 
-namespace SitemaDeMatricula.Infraestrutura.Repositorios
+namespace SistemaDeMatricula.Infraestrutura.Repositorios
 {
     public class RepositorioTurma : IRepositorioTurma
     {
@@ -23,7 +23,7 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
 
         public async Task<bool> AlternarStatusAsync(Turma turma)
         {
-            var turmaExistente = await _context.Turmas.FindAsync(turma.TurmaId);
+            var turmaExistente = await _context.Turmas.FindAsync(turma.Id);
             if (turmaExistente == null) return false;
 
             if (turmaExistente.Ativo)
@@ -49,7 +49,7 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
             return await _context.Turmas
                 .Include(t => t.Professor)
                 .Include(t => t.Disciplina)
-                .FirstOrDefaultAsync(t => t.TurmaId == id);
+                .FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public async Task<bool> AtualizarAsync(Turma turma)
@@ -59,7 +59,7 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
 
         public async Task<bool> RemoverAsync(Turma turma)
         {
-            var turmaExistente = await _context.Turmas.FindAsync(turma.TurmaId);
+            var turmaExistente = await _context.Turmas.FindAsync(turma.Id);
 
             if (turmaExistente == null) return false;
 
@@ -75,7 +75,7 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
             return await _context.Turmas.Include(t => t.Professor)
                 .Include(t => t.Disciplina)
                 .IgnoreQueryFilters().AsNoTracking()
-                .FirstOrDefaultAsync(t => t.TurmaId == id);
+                .FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public async Task<bool> SalvarAlteracoesAsync()
@@ -104,7 +104,7 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
         {
             var turmaInativa = await _context.Turmas
                 .IgnoreQueryFilters()
-                .FirstOrDefaultAsync(t => t.TurmaId == id);
+                .FirstOrDefaultAsync(t => t.Id == id);
 
             if (turmaInativa == null) return false;
 

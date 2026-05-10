@@ -1,14 +1,14 @@
-﻿using SitemaDeMatricula.Domain;
-using SitemaDeMatricula.Domain.Interfaces;
+﻿using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SitemaDeMatricula.Aplicacao.Usecases.Estudante;
+namespace SistemaDeMatricula.Aplicacao.Usecases.Estudante;
 
-public class UsecaseVerificarCpfEstudante
+public sealed class UsecaseVerificarCpfEstudante
 {
     private readonly IRepositorioEstudante _repositorio;
 

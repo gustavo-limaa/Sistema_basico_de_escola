@@ -1,13 +1,13 @@
 ﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using SistemaDeMatricula.Aplicacao.Dtos.Disciplina;
+using SistemaDeMatricula.Aplicacao.Dtos.Professor;
+using SistemaDeMatricula.Aplicacao.Dtos.turma;
+using SistemaDeMatricula.Infraestrutura.Data;
 using SistemaDeMatricula.Testes.Test_Integracao.Setup;
 using SistemaDeMatricula.Testes.Teste_Unitarios;
-using SitemaDeMatricula.Aplicacao.Dtos.Disciplina;
-using SitemaDeMatricula.Aplicacao.Dtos.Professor;
-using SitemaDeMatricula.Aplicacao.Dtos.turma;
 using SitemaDeMatricula.Domain.Mapper;
-using SitemaDeMatricula.InfraEstrutura.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -275,7 +275,7 @@ public class PegarAndPegarPorIdTurmarIntegrationTest : IAsyncLifetime
         // Usamos o .IgnoreQueryFilters() para conseguir ver o registro "Inativo"
         var turmaNoBanco = await contexto.Turmas
             .IgnoreQueryFilters()
-            .FirstOrDefaultAsync(t => t.TurmaId == turmaCriada.Id);
+            .FirstOrDefaultAsync(t => t.Id == turmaCriada.Id);
 
         turmaNoBanco.Should().NotBeNull();
         turmaNoBanco!.Ativo.Should().BeFalse(); // Prova que ela foi desativada, não apagada

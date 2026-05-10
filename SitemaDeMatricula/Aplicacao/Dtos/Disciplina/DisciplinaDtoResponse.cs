@@ -1,8 +1,6 @@
-﻿using SitemaDeMatricula.Aplicacao.Dtos;
+﻿namespace SistemaDeMatricula.Aplicacao.Dtos.Disciplina;
 
-namespace SitemaDeMatricula.Aplicacao.Dtos.Disciplina;
-
-public record DisciplinaDtoResponse(
+public sealed record DisciplinaDtoResponse(
     Guid DisciplinaId,
     string Nome,
     int CargaHoraria,

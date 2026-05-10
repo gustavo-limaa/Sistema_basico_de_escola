@@ -1,13 +1,13 @@
 ﻿//SistemaDeMatricula.Testes\Teste_Unitarios\DataFactory.cs
 using Bogus;
 using Bogus.Extensions.Brazil;
-using SitemaDeMatricula.Domain.Modelos;
-using SitemaDeMatricula.Domain.Uteis;
 using SitemaDeMatricula.Domain.Value_Object;
 using SitemaDeMatricula.Domain.Value_Objetc;
 using Xunit.Sdk;
 using System.Globalization;
-using SitemaDeMatricula.Aplicacao.Dtos.estudante;
+using SistemaDeMatricula.Domain.Modelos;
+using SistemaDeMatricula.Aplicacao.Dtos.estudante;
+using SistemaDeMatricula.Domain.Uteis;
 
 namespace SistemaDeMatricula.Testes.Teste_Unitarios;
 

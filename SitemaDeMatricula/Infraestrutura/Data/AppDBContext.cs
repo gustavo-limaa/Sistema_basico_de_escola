@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SitemaDeMatricula.Domain.Modelos;
+using SistemaDeMatricula.Domain.Modelos;
+using SistemaDeMatricula.Domain.Value_Object;
 using SitemaDeMatricula.Domain.Value_Object;
 
-namespace SitemaDeMatricula.InfraEstrutura.Data;
+namespace SistemaDeMatricula.Infraestrutura.Data;
 
 public class AppDbContext : DbContext
 {
@@ -24,7 +25,7 @@ public class AppDbContext : DbContext
         // 1. ESTUDANTE
         modelBuilder.Entity<Estudante>(e =>
         {
-            e.HasKey(x => x.EstudanteId);
+            e.HasKey(x => x.Id);
 
             e.ComplexProperty(x => x.DataNascimento, p =>
             {
@@ -49,7 +50,7 @@ public class AppDbContext : DbContext
         // 2. PROFESSOR
         modelBuilder.Entity<Professor>(p =>
         {
-            p.HasKey(x => x.ProfessorId);
+            p.HasKey(x => x.Id);
 
             p.HasQueryFilter(p => p.Ativo);
 
@@ -77,7 +78,7 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Disciplina>(d =>
         {
-            d.HasKey(x => x.DisciplinaId);
+            d.HasKey(x => x.Id);
             d.HasQueryFilter(x => x.Ativo);
 
             d.Property(x => x.Nome)
@@ -99,7 +100,7 @@ public class AppDbContext : DbContext
         // 4. TURMA
         modelBuilder.Entity<Turma>(t =>
         {
-            t.HasKey(x => x.TurmaId);
+            t.HasKey(x => x.Id);
             t.Property(x => x.CodigoTurma)
             .HasConversion(
             vo => vo.ValorFormatado,
@@ -127,7 +128,7 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Matricula>(m =>
         {
-            m.HasKey(x => x.MatriculaId);
+            m.HasKey(x => x.Id);
 
             m.HasOne(x => x.Estudante)
              .WithMany(e => e.Matriculas)

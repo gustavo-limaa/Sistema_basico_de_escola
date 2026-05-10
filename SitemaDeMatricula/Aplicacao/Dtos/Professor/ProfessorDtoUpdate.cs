@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SitemaDeMatricula.Aplicacao.Dtos.Professor;
+namespace SistemaDeMatricula.Aplicacao.Dtos.Professor;
 
-public record ProfessorDtoUpdate
+public sealed record ProfessorDtoUpdate
 (
     [Required]
     Guid ProfessorId,

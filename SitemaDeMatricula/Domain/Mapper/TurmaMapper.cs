@@ -1,13 +1,13 @@
-﻿using SitemaDeMatricula.Aplicacao.Dtos.turma;
-using SitemaDeMatricula.Domain.Modelos;
-using SitemaDeMatricula.Domain.Value_Object;
+﻿using SistemaDeMatricula.Aplicacao.Dtos.turma;
+using SistemaDeMatricula.Domain.Modelos;
+using SistemaDeMatricula.Domain.Value_Object;
 
 public static class TurmaMapper
 {
     public static TurmaDtoResponse ToTurmaDtoResponse(this Turma turma)
     {
         return new TurmaDtoResponse(
-            turma.TurmaId,
+            turma.Id,
              turma.CodigoTurma.ValorFormatado,
             turma.CodigoTurma.Sigla,
             turma.CodigoTurma.Semestre,

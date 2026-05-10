@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SitemaDeMatricula.Aplicacao.Dtos.turma;
+namespace SistemaDeMatricula.Aplicacao.Dtos.turma;
 
-public record TurmaDtoCreate(
+public sealed record TurmaDtoCreate(
     [Required(ErrorMessage = "ID da disciplina é obrigatório.")]
     Guid DisciplinaId,
     [Required(ErrorMessage = "ID do professor é obrigatório.")]

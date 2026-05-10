@@ -1,6 +1,6 @@
 ﻿using Moq;
-using SitemaDeMatricula.Aplicacao.Usecases.Estudante;
-using SitemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Aplicacao.Usecases.Estudante;
+using SistemaDeMatricula.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;

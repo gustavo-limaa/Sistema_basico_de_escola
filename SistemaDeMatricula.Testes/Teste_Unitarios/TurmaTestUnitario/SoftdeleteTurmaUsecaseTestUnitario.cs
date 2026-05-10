@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
 using Moq;
-using SitemaDeMatricula.Aplicacao.Dtos.turma;
-using SitemaDeMatricula.Aplicacao.Usecases.Turmas;
-using SitemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Modelos;
+using SistemaDeMatricula.Aplicacao.Dtos.turma;
+using SistemaDeMatricula.Aplicacao.Usecases.Turmas;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Modelos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,14 +55,14 @@ namespace SistemaDeMatricula.Testes.Teste_Unitarios.TurmaTestUnitario
             var turmaA = DataFactory.TurmaFaker().Generate();
             turmaA.Ativar();
 
-            _mockTurma.Setup(t => t.ObterPorIdAsync(turmaA.TurmaId)).ReturnsAsync(turmaA);
+            _mockTurma.Setup(t => t.ObterPorIdAsync(turmaA.Id)).ReturnsAsync(turmaA);
 
             // O PULO DO GATO: Simula que o repositório achou alunos
-            _mockMatri.Setup(m => m.ExisteQualquerMatriculaAtivaParaTurmaAsync(turmaA.TurmaId))
+            _mockMatri.Setup(m => m.ExisteQualquerMatriculaAtivaParaTurmaAsync(turmaA.Id))
                           .ReturnsAsync(true);
 
             // Act
-            var resultado = await _usecase.ExecutarAsync(turmaA.TurmaId);
+            var resultado = await _usecase.ExecutarAsync(turmaA.Id);
 
             // Assert
             resultado.Sucesso.Should().BeFalse();
@@ -79,12 +79,12 @@ namespace SistemaDeMatricula.Testes.Teste_Unitarios.TurmaTestUnitario
             var turmaA = DataFactory.TurmaFaker().Generate();
             turmaA.Ativar();
 
-            _mockTurma.Setup(t => t.ObterPorIdAsync(turmaA.TurmaId)).ReturnsAsync(turmaA);
-            _mockMatri.Setup(m => m.ExisteQualquerMatriculaAtivaParaTurmaAsync(turmaA.TurmaId))
+            _mockTurma.Setup(t => t.ObterPorIdAsync(turmaA.Id)).ReturnsAsync(turmaA);
+            _mockMatri.Setup(m => m.ExisteQualquerMatriculaAtivaParaTurmaAsync(turmaA.Id))
                           .ReturnsAsync(false); // Liberado!
 
             // Act
-            var resultado = await _usecase.ExecutarAsync(turmaA.TurmaId);
+            var resultado = await _usecase.ExecutarAsync(turmaA.Id);
 
             // Assert
             resultado.Sucesso.Should().BeTrue();

@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SitemaDeMatricula.Aplicacao.Dtos.turma;
-using SitemaDeMatricula.Aplicacao.Usecases.Turmas;
+using SistemaDeMatricula.Aplicacao.Dtos.turma;
+using SistemaDeMatricula.Aplicacao.Usecases.Turmas;
 
-namespace SitemaDeMatricula.Percistencia.Controllers;
+namespace SistemaDeMatricula.Percistencia.Controllers;
 
 [Route("api/Turmas")]
-public class TurmasController : MainController
+public sealed class TurmasController : MainController
 {
     [HttpGet]
     public async Task<IActionResult> Listar([FromServices] ListarTurmaUsecase useCase)

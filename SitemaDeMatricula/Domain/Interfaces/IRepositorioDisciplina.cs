@@ -1,6 +1,6 @@
-﻿namespace SitemaDeMatricula.Domain.Interfaces;
+﻿namespace SistemaDeMatricula.Domain.Interfaces;
 
-using SitemaDeMatricula.Domain.Modelos;
+using SistemaDeMatricula.Domain.Modelos;
 
 public interface IDisciplinaRepositorio
 {

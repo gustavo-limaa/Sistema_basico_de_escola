@@ -1,17 +1,17 @@
-﻿using SitemaDeMatricula.Domain.Uteis;
-using SitemaDeMatricula.Domain.Value_Object;
+﻿using SistemaDeMatricula.Domain.Uteis;
+using SistemaDeMatricula.Domain.Value_Object;
 using SitemaDeMatricula.Domain.Value_Objetc;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Intrinsics.X86;
 
-namespace SitemaDeMatricula.Domain.Modelos;
+namespace SistemaDeMatricula.Domain.Modelos;
 
-public class Professor
+public sealed class Professor : ModeloMain
 {
     public Professor(ObjectNomeCompleto nomeCompleto, ObjectCPF cpf, ObjectEmail email, ValorMonetario salario, CategoriaProfessor categoria, ObjectDataNascimento dataNascimento, ObjectTelefone telefone)
     {
-        ProfessorId = Guid.NewGuid();
+        Id = Guid.NewGuid();
         Ativo = true;
         NomeCompleto = nomeCompleto;
         Cpf = cpf;
@@ -24,11 +24,6 @@ public class Professor
 
     protected Professor()
     { } // EF Core
-
-    [Key]
-    public Guid ProfessorId { get; private set; }
-
-    public bool Ativo { get; private set; } = true;
 
     [Required(ErrorMessage = "O nome é obrigatório.")]
     public ObjectNomeCompleto NomeCompleto { get; private set; }

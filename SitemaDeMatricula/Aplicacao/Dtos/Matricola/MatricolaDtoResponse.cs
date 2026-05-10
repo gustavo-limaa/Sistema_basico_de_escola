@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SitemaDeMatricula.Aplicacao.Dtos.Matricola;
+namespace SistemaDeMatricula.Aplicacao.Dtos.Matricola;
 
-public record MatriculaDtoResponse
+public sealed record MatriculaDtoResponse
 (
     [Required(ErrorMessage = "O ID da matrícula é obrigatório.")]
     Guid MatriculaId,

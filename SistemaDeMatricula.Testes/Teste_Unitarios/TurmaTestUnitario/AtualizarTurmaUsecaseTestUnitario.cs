@@ -1,10 +1,10 @@
 ﻿using FluentAssertions;
 using Moq;
-using SitemaDeMatricula.Aplicacao.Dtos.turma;
-using SitemaDeMatricula.Aplicacao.Usecases.Turmas;
-using SitemaDeMatricula.Domain;
-using SitemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Modelos;
+using SistemaDeMatricula.Aplicacao.Dtos.turma;
+using SistemaDeMatricula.Aplicacao.Usecases.Turmas;
+using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Modelos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -158,7 +158,7 @@ public class AtualizarTurmaUsecaseTestUnitario
         var turmaA = DataFactory.TurmaFaker().Generate();
 
         // 1. VOCÊ PRECISA DISSO: Simular que a turma que será editada existe!
-        _mockTurma.Setup(t => t.ObterPorIdIgnorandoFiltrosAsync(turmaA.TurmaId))
+        _mockTurma.Setup(t => t.ObterPorIdIgnorandoFiltrosAsync(turmaA.Id))
                   .ReturnsAsync(turmaA);
 
         // 2. Simular que não há conflito de código (para passar pelo passo 3 do Use Case)
@@ -184,7 +184,7 @@ public class AtualizarTurmaUsecaseTestUnitario
         );
 
         // Act
-        var resultado = await _usecase.ExecutarAsync(turmaA.TurmaId, DTOATULIZAR);
+        var resultado = await _usecase.ExecutarAsync(turmaA.Id, DTOATULIZAR);
 
         // Assert
         resultado.Sucesso.Should().BeFalse();
@@ -197,7 +197,7 @@ public class AtualizarTurmaUsecaseTestUnitario
         // arrange
         var turmaA = DataFactory.TurmaFaker().Generate();
 
-        _mockTurma.Setup(t => t.ObterPorIdIgnorandoFiltrosAsync(turmaA.TurmaId))
+        _mockTurma.Setup(t => t.ObterPorIdIgnorandoFiltrosAsync(turmaA.Id))
                  .ReturnsAsync(turmaA);
 
         // 2. Simular que não há conflito de código (para passar pelo passo 3 do Use Case)
@@ -221,7 +221,7 @@ public class AtualizarTurmaUsecaseTestUnitario
 
         );
         //act
-        var resultado = await _usecase.ExecutarAsync(turmaA.TurmaId, DTOATULIZAR);
+        var resultado = await _usecase.ExecutarAsync(turmaA.Id, DTOATULIZAR);
         //assert
         resultado.Sucesso.Should().BeFalse();
         resultado.Mensagem.Should().Contain("Professor não encontrado ou inativo.");
@@ -232,7 +232,7 @@ public class AtualizarTurmaUsecaseTestUnitario
     {
         //arrange
         var turmaA = DataFactory.TurmaFaker().Generate();
-        _mockTurma.Setup(t => t.ObterPorIdIgnorandoFiltrosAsync(turmaA.TurmaId))
+        _mockTurma.Setup(t => t.ObterPorIdIgnorandoFiltrosAsync(turmaA.Id))
                  .ReturnsAsync(turmaA);
 
         // 2. Simular que não há conflito de código (para passar pelo passo 3 do Use Case)
@@ -258,7 +258,7 @@ public class AtualizarTurmaUsecaseTestUnitario
 
         );
         //act
-        var resultado = await _usecase.ExecutarAsync(turmaA.TurmaId, DTOATULIZAR);
+        var resultado = await _usecase.ExecutarAsync(turmaA.Id, DTOATULIZAR);
         //asssert
         resultado.Sucesso.Should().BeFalse();
         resultado.Mensagem.Should().Contain("Disciplina não encontrada por está inativa.");
@@ -270,7 +270,7 @@ public class AtualizarTurmaUsecaseTestUnitario
         //arrange
 
         var turmaA = DataFactory.TurmaFaker().Generate();
-        _mockTurma.Setup(t => t.ObterPorIdIgnorandoFiltrosAsync(turmaA.TurmaId))
+        _mockTurma.Setup(t => t.ObterPorIdIgnorandoFiltrosAsync(turmaA.Id))
                  .ReturnsAsync(turmaA);
 
         // 2. Simular que não há conflito de código (para passar pelo passo 3 do Use Case)
@@ -293,7 +293,7 @@ public class AtualizarTurmaUsecaseTestUnitario
 
         );
         //act
-        var resultado = await _usecase.ExecutarAsync(turmaA.TurmaId, DTOATULIZAR);
+        var resultado = await _usecase.ExecutarAsync(turmaA.Id, DTOATULIZAR);
         //asssert
         resultado.Sucesso.Should().BeFalse();
         resultado.Mensagem.Should().Contain("Professor nao encontrado por está inativo.");

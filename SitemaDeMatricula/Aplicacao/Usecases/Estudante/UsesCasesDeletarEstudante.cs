@@ -1,12 +1,12 @@
-﻿using SitemaDeMatricula.Aplicacao.Dtos.estudante;
-using SitemaDeMatricula.Domain;
-using SitemaDeMatricula.Domain.Interfaces;
+﻿using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Interfaces;
+using SitemaDeMatricula.Aplicacao.Dtos.estudante;
 using SitemaDeMatricula.Domain.Mapper;
 using SitemaDeMatricula.Domain.Modelos;
 
-namespace SitemaDeMatricula.Aplicacao.Usecases.Estudante;
+namespace SistemaDeMatricula.Aplicacao.Usecases.Estudante;
 
-public class UsesCasesDeletarEstudante
+public sealed class UsesCasesDeletarEstudante
 {
     private readonly IRepositorioEstudante _repositorioEstudante;
 

@@ -1,6 +1,6 @@
-﻿using SitemaDeMatricula.Domain.Modelos;
+﻿using SistemaDeMatricula.Domain.Modelos;
 
-namespace SitemaDeMatricula.Domain.Interfaces;
+namespace SistemaDeMatricula.Domain.Interfaces;
 
 public interface IRepositorioEstudante
 {

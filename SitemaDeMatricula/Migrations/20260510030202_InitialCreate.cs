@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SitemaDeMatricula.Migrations
 {
     /// <inheritdoc />
-    public partial class PrimeiraMigracao : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,61 +18,15 @@ namespace SitemaDeMatricula.Migrations
                 name: "Disciplinas",
                 columns: table => new
                 {
-                    DisciplinaId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Nome = table.Column<string>(type: "longtext", nullable: false)
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Nome = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CargaHoraria = table.Column<int>(type: "int", nullable: false)
+                    CargaHoraria = table.Column<int>(type: "int", nullable: false),
+                    Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Disciplinas", x => x.DisciplinaId);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Professores",
-                columns: table => new
-                {
-                    ProfessorId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Categoria = table.Column<int>(type: "int", nullable: false),
-                    Cpf = table.Column<string>(type: "varchar(11)", maxLength: 11, nullable: false),
-                    Email = table.Column<string>(type: "varchar(150)", maxLength: 150, nullable: false),
-                    Nome = table.Column<string>(type: "varchar(80)", maxLength: 80, nullable: false),
-                    Moeda = table.Column<string>(type: "varchar(3)", maxLength: 3, nullable: false),
-                    Salario = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    Telefone = table.Column<string>(type: "varchar(11)", maxLength: 11, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Professores", x => x.ProfessorId);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Turmas",
-                columns: table => new
-                {
-                    TurmaId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    CodigoTurma = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    ProfessorId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    DisciplinaId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Turmas", x => x.TurmaId);
-                    table.ForeignKey(
-                        name: "FK_Turmas_Disciplinas_DisciplinaId",
-                        column: x => x.DisciplinaId,
-                        principalTable: "Disciplinas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Turmas_Professores_ProfessorId",
-                        column: x => x.ProfessorId,
-                        principalTable: "Professores",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_Disciplinas", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -80,22 +34,67 @@ namespace SitemaDeMatricula.Migrations
                 name: "Estudantes",
                 columns: table => new
                 {
-                    EstudanteId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    TurmaId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     Cpf = table.Column<string>(type: "varchar(11)", maxLength: 11, nullable: false),
                     DataNascimento = table.Column<DateOnly>(type: "date", nullable: false),
                     Email = table.Column<string>(type: "varchar(150)", maxLength: 150, nullable: false),
                     NomeCompleto = table.Column<string>(type: "varchar(80)", maxLength: 80, nullable: false),
-                    Telefone = table.Column<string>(type: "varchar(11)", maxLength: 11, nullable: false)
+                    Telefone = table.Column<string>(type: "varchar(11)", maxLength: 11, nullable: false),
+                    Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Estudantes", x => x.EstudanteId);
+                    table.PrimaryKey("PK_Estudantes", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Professores",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Categoria = table.Column<int>(type: "int", nullable: false),
+                    Cpf = table.Column<string>(type: "varchar(11)", maxLength: 11, nullable: false),
+                    DataNascimento_Valor = table.Column<DateOnly>(type: "date", nullable: false),
+                    Email = table.Column<string>(type: "varchar(150)", maxLength: 150, nullable: false),
+                    Nome = table.Column<string>(type: "varchar(80)", maxLength: 80, nullable: false),
+                    Moeda = table.Column<string>(type: "varchar(3)", maxLength: 3, nullable: false),
+                    Salario = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Telefone = table.Column<string>(type: "varchar(11)", maxLength: 11, nullable: false),
+                    Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Professores", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Turmas",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    CodigoTurma = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ProfessorId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    DisciplinaId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Turmas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Estudantes_Turmas_TurmaId",
-                        column: x => x.TurmaId,
-                        principalTable: "Turmas",
-                        principalColumn: "Id");
+                        name: "FK_Turmas_Disciplinas_DisciplinaId",
+                        column: x => x.DisciplinaId,
+                        principalTable: "Disciplinas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Turmas_Professores_ProfessorId",
+                        column: x => x.ProfessorId,
+                        principalTable: "Professores",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -103,14 +102,15 @@ namespace SitemaDeMatricula.Migrations
                 name: "Matriculas",
                 columns: table => new
                 {
-                    MatriculaId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     DataMatricula = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     EstudanteId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    TurmaId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                    TurmaId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Matriculas", x => x.MatriculaId);
+                    table.PrimaryKey("PK_Matriculas", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Matriculas_Estudantes_EstudanteId",
                         column: x => x.EstudanteId,
@@ -127,30 +127,25 @@ namespace SitemaDeMatricula.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Estudantes_TurmaId",
-                table: "Estudantes",
-                column: "Id");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Matriculas_EstudanteId_TurmaId",
                 table: "Matriculas",
-                columns: new[] { "Id", "Id" },
+                columns: new[] { "EstudanteId", "TurmaId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Matriculas_TurmaId",
                 table: "Matriculas",
-                column: "Id");
+                column: "TurmaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Turmas_DisciplinaId",
                 table: "Turmas",
-                column: "Id");
+                column: "DisciplinaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Turmas_ProfessorId",
                 table: "Turmas",
-                column: "Id");
+                column: "ProfessorId");
         }
 
         /// <inheritdoc />

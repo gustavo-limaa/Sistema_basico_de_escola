@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SitemaDeMatricula.Aplicacao.Dtos.Professor;
+namespace SistemaDeMatricula.Aplicacao.Dtos.Professor;
 
-public record ProfessorDtoList(
+public sealed record ProfessorDtoList(
     [Required]
     Guid ProfessorId,
     [Required][MinLength(3)][MaxLength(80)]

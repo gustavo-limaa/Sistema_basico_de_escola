@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SitemaDeMatricula.Aplicacao.Dtos.Matricola;
-using SitemaDeMatricula.Aplicacao.Usecases.Matriculas;
-using SitemaDeMatricula.Percistencia.Controllers;
+using SistemaDeMatricula.Aplicacao.Dtos.Matricola;
+using SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
+using SistemaDeMatricula.Percistencia.Controllers;
 
 [Route("api/matriculas")]
-public class MatriculaController : MainController
+public sealed class MatriculaController : MainController
 {
     [HttpPost]
     public async Task<IActionResult> Criar(

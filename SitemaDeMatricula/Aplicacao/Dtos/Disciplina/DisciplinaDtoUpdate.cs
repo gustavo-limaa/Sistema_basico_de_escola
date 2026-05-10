@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SitemaDeMatricula.Aplicacao.Dtos.Disciplina;
+namespace SistemaDeMatricula.Aplicacao.Dtos.Disciplina;
 
-public record DisciplinaDtoUpdate(
+public sealed record DisciplinaDtoUpdate(
     [Required( ErrorMessage = "O ID da disciplina é obrigatório.")]
     Guid DisciplinaId,
     [Required( ErrorMessage = "O nome da disciplina é obrigatório.")]

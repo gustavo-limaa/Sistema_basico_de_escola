@@ -28,7 +28,7 @@ namespace SitemaDeMatricula.Migrations
                 table: "Estudantes");
 
             migrationBuilder.DropColumn(
-                name: "TurmaId",
+                name: "Id",
                 table: "Estudantes");
 
             migrationBuilder.AddColumn<bool>(
@@ -92,9 +92,9 @@ namespace SitemaDeMatricula.Migrations
             migrationBuilder.AddForeignKey(
                 name: "FK_Turmas_Disciplinas_DisciplinaId",
                 table: "Turmas",
-                column: "DisciplinaId",
+                column: "Id",
                 principalTable: "Disciplinas",
-                principalColumn: "DisciplinaId",
+                principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
@@ -102,14 +102,14 @@ namespace SitemaDeMatricula.Migrations
                 table: "Turmas",
                 column: "DisciplinaId1",
                 principalTable: "Disciplinas",
-                principalColumn: "DisciplinaId");
+                principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Turmas_Professores_ProfessorId",
                 table: "Turmas",
-                column: "ProfessorId",
+                column: "Id",
                 principalTable: "Professores",
-                principalColumn: "ProfessorId",
+                principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
         }
 
@@ -157,7 +157,7 @@ namespace SitemaDeMatricula.Migrations
                 table: "Disciplinas");
 
             migrationBuilder.AddColumn<Guid>(
-                name: "TurmaId",
+                name: "Id",
                 table: "Estudantes",
                 type: "char(36)",
                 nullable: true,
@@ -177,29 +177,29 @@ namespace SitemaDeMatricula.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Estudantes_TurmaId",
                 table: "Estudantes",
-                column: "TurmaId");
+                column: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Estudantes_Turmas_TurmaId",
                 table: "Estudantes",
-                column: "TurmaId",
+                column: "Id",
                 principalTable: "Turmas",
-                principalColumn: "TurmaId");
+                principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Turmas_Disciplinas_DisciplinaId",
                 table: "Turmas",
-                column: "DisciplinaId",
+                column: "Id",
                 principalTable: "Disciplinas",
-                principalColumn: "DisciplinaId",
+                principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Turmas_Professores_ProfessorId",
                 table: "Turmas",
-                column: "ProfessorId",
+                column: "Id",
                 principalTable: "Professores",
-                principalColumn: "ProfessorId",
+                principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
         }
     }

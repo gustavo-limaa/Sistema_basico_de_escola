@@ -1,6 +1,6 @@
-﻿namespace SitemaDeMatricula.Aplicacao.Dtos.turma;
+﻿namespace SistemaDeMatricula.Aplicacao.Dtos.turma;
 
-public record TurmaDtoResponse(
+public sealed record TurmaDtoResponse(
     Guid Id,
     string CodigoFormatado,
     string sigla,// Ex: "MAT-2026-1-001"

@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SitemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Modelos;
-using SitemaDeMatricula.InfraEstrutura.Data;
+using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Modelos;
+using SistemaDeMatricula.Infraestrutura.Data;
 
-namespace SitemaDeMatricula.Infraestrutura.Repositorios
+namespace SistemaDeMatricula.Infraestrutura.Repositorios
 {
     public class RepositorioMatricula : IRepositorioMatricula
     {
@@ -53,7 +53,7 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
 
         public async Task<Matricula?> ObterPorIdAsync(Guid id)
         {
-            return await _appDbContext.Matriculas.AsNoTracking().Include(m => m.Estudante).Include(m => m.Turma).FirstOrDefaultAsync(m => m.MatriculaId == id);
+            return await _appDbContext.Matriculas.AsNoTracking().Include(m => m.Estudante).Include(m => m.Turma).FirstOrDefaultAsync(m => m.Id == id);
         }
 
         public async Task<bool> SalvarAlteracoesAsync()

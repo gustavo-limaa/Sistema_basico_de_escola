@@ -1,12 +1,12 @@
-﻿using SitemaDeMatricula.Aplicacao.Dtos.Matricola;
-using SitemaDeMatricula.Domain;
-using SitemaDeMatricula.Domain.Interfaces;
+﻿using SistemaDeMatricula.Aplicacao.Dtos.Matricola;
+using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Interfaces;
 using SitemaDeMatricula.Domain.Mapper;
 using SitemaDeMatricula.Domain.Modelos;
 
-namespace SitemaDeMatricula.Aplicacao.Usecases.Matriculas;
+namespace SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
 
-public class MatricularEstudanteUsecase
+public sealed class MatricularEstudanteUsecase
 {
     private readonly IRepositorioMatricula _matriculaRepo;
     private readonly IRepositorioEstudante _estudanteRepo;

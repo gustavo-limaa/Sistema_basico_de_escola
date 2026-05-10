@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SitemaDeMatricula.Domain.Value_Object;
+namespace SistemaDeMatricula.Domain.Value_Object;
 
 [ComplexType]
 public sealed class ObjectDataNascimento

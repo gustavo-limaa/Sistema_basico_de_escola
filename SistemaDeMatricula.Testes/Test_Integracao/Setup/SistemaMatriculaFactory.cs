@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SitemaDeMatricula.InfraEstrutura.Data;
+using SistemaDeMatricula.Infraestrutura.Data;
 using System.Collections.Generic;
 
 namespace SistemaDeMatricula.Testes.Test_Integracao.Setup;

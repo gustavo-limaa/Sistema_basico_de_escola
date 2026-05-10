@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SitemaDeMatricula.Domain;
+namespace SistemaDeMatricula.Domain;
 
 public enum TipoErro
 {

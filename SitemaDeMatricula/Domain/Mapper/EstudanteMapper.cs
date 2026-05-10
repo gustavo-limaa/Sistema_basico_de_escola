@@ -1,16 +1,16 @@
-﻿using SitemaDeMatricula.Aplicacao.Dtos.estudante;
-using SitemaDeMatricula.Domain.Modelos;
+﻿using SistemaDeMatricula.Aplicacao.Dtos.estudante;
+using SistemaDeMatricula.Domain.Modelos;
 using SitemaDeMatricula.Domain.Value_Object;
 using SitemaDeMatricula.Domain.Value_Objetc;
 
-namespace SitemaDeMatricula.Domain.Mapper;
+namespace SistemaDeMatricula.Domain.Mapper;
 
 public static class EstudanteMapper
 {
     public static EstudanteDtoResponse ToEstudanteDtoResponse(this Estudante estudante)
     {
         return new EstudanteDtoResponse(
-            estudante.EstudanteId,
+            estudante.Id,
             estudante.NomeCompleto.Valor,
             estudante.Email.Valor,
             estudante.DataNascimento.Valor,
@@ -46,7 +46,7 @@ public static class EstudanteMapper
     public static EstudanteDtoList ToListDto(this Estudante estudante)
     {
         return new EstudanteDtoList(
-            estudante.EstudanteId,
+            estudante.Id,
             estudante.NomeCompleto.Valor,
             estudante.Email.Valor
         );
