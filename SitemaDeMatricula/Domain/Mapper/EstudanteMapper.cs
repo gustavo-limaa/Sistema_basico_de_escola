@@ -1,6 +1,6 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.estudante;
 using SistemaDeMatricula.Domain.Modelos;
-using SitemaDeMatricula.Domain.Value_Object;
+using SistemaDeMatricula.Domain.Value_Object;
 using SitemaDeMatricula.Domain.Value_Objetc;
 
 namespace SistemaDeMatricula.Domain.Mapper;

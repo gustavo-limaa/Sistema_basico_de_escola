@@ -23,13 +23,11 @@
         [ForeignKey("Id")]
         public Turma Turma { get; private set; } = null!;
 
-        public Matricula(Guid estudanteId, Guid turmaId)
+        public Matricula(Guid estudanteId, Guid turmaId) : base()
         {
-            Id = Guid.NewGuid();
             EstudanteId = estudanteId;
             TurmaId = turmaId;
             DataMatricula = DateTime.UtcNow;
-            Ativo = true;
         }
 
         protected Matricula()

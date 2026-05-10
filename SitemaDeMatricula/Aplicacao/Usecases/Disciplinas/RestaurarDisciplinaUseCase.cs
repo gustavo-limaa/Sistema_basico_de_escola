@@ -1,6 +1,4 @@
-﻿using SitemaDeMatricula.Domain;
-using SitemaDeMatricula.Domain.Interfaces;
-using SistemaDeMatricula.Domain;
+﻿using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
 using SistemaDeMatricula.Aplicacao.Dtos.Disciplina;

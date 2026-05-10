@@ -1,7 +1,6 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.turma;
 using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Mapper;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Turmas
 {

@@ -1,8 +1,5 @@
 ﻿using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Aplicacao.Dtos.estudante;
-using SitemaDeMatricula.Domain.Mapper;
-using SitemaDeMatricula.Domain.Modelos;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Estudante;
 

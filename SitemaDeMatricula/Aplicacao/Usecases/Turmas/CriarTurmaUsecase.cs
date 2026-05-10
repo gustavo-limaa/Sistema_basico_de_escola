@@ -1,10 +1,8 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.turma;
 using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Modelos;
 using SistemaDeMatricula.Domain.Value_Object;
-using SitemaDeMatricula.Domain.Mapper;
-using SitemaDeMatricula.Domain.Modelos;
-using System.Runtime.CompilerServices;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Turmas;
 

@@ -1,6 +1,5 @@
 ﻿using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Modelos;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Turmas;
 

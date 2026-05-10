@@ -7,9 +7,8 @@ namespace SistemaDeMatricula.Domain.Modelos;
 
 public sealed class Estudante : ModeloMain
 {
-    public Estudante(Guid estudanteId, ObjectNomeCompleto nomeCompleto, ObjectDataNascimento dataNascimento, ObjectCPF cpf, ObjectEmail email, ObjectTelefone telefone)
+    public Estudante(Guid estudanteId, ObjectNomeCompleto nomeCompleto, ObjectDataNascimento dataNascimento, ObjectCPF cpf, ObjectEmail email, ObjectTelefone telefone) : base()
     {
-        Id = Guid.NewGuid();
         NomeCompleto = nomeCompleto;
         DataNascimento = dataNascimento;
         Cpf = cpf;
@@ -20,26 +19,17 @@ public sealed class Estudante : ModeloMain
     public Estudante()
     { }
 
-    [Required(ErrorMessage = "O nome completo é obrigatório.")]
-    public ObjectNomeCompleto NomeCompleto { get; set; }
+    public ObjectNomeCompleto NomeCompleto { get; private set; }
 
-    [Required(ErrorMessage = "A data de nascimento é obrigatória.")]
-    [Column(TypeName = "date")]
-    [DataType(DataType.Date)]
-    public ObjectDataNascimento DataNascimento { get; set; }
+    public ObjectDataNascimento DataNascimento { get; private set; }
 
-    [Required(ErrorMessage = "O CPF é obrigatório.")]
-    public ObjectCPF Cpf { get; set; }
+    public ObjectCPF Cpf { get; private set; }
 
-    [Required(ErrorMessage = "O e-mail é obrigatório.")]
-    [EmailAddress(ErrorMessage = "O formato do e-mail é inválido.")]
-    [MaxLength(150)]
-    public ObjectEmail Email { get; set; }
+    public ObjectEmail Email { get; private set; }
 
-    [Required(ErrorMessage = "O telefone de contato é obrigatório.")]
-    public ObjectTelefone Telefone { get; set; }
+    public ObjectTelefone Telefone { get; private set; }
 
-    public ICollection<Matricula> Matriculas { get; set; } = new List<Matricula>();
+    public ICollection<Matricula> Matriculas { get; private set; } = new List<Matricula>();
 
     public void AtualizarDados(ObjectNomeCompleto nome, ObjectEmail email, ObjectDataNascimento data, ObjectTelefone telefone)
     {

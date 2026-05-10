@@ -9,10 +9,8 @@ namespace SistemaDeMatricula.Domain.Modelos;
 
 public sealed class Professor : ModeloMain
 {
-    public Professor(ObjectNomeCompleto nomeCompleto, ObjectCPF cpf, ObjectEmail email, ValorMonetario salario, CategoriaProfessor categoria, ObjectDataNascimento dataNascimento, ObjectTelefone telefone)
+    public Professor(ObjectNomeCompleto nomeCompleto, ObjectCPF cpf, ObjectEmail email, ValorMonetario salario, CategoriaProfessor categoria, ObjectDataNascimento dataNascimento, ObjectTelefone telefone) : base()
     {
-        Id = Guid.NewGuid();
-        Ativo = true;
         NomeCompleto = nomeCompleto;
         Cpf = cpf;
         Email = email;

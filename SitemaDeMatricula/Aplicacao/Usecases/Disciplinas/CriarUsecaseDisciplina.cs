@@ -1,7 +1,7 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.Disciplina;
 using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Mapper;
+using SistemaDeMatricula.Domain.Mapper;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Disciplinas;
 

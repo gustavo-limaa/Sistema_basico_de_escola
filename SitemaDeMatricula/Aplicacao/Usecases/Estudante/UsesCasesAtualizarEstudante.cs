@@ -2,9 +2,8 @@
 using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
-using SitemaDeMatricula.Domain.Modelos;
-using SitemaDeMatricula.Domain.Value_Object;
 using SitemaDeMatricula.Domain.Value_Objetc;
+using SistemaDeMatricula.Domain.Value_Object;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Estudante;
 

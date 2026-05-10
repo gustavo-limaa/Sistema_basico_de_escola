@@ -15,15 +15,13 @@ public sealed class Turma : ModeloMain
 
     public List<Matricula> Matriculas { get; private set; } = new();
 
-    public Turma(CodigoTurma codigo, Guid professorId, Guid disciplinaId)
+    public Turma(CodigoTurma codigo, Guid professorId, Guid disciplinaId) : base()
     {
         if (string.IsNullOrWhiteSpace(codigo.ValorFormatado)) throw new ArgumentException("Código da turma é obrigatório.");
 
-        Id = Guid.NewGuid();
         CodigoTurma = codigo;
         ProfessorId = professorId;
         DisciplinaId = disciplinaId;
-        Ativo = true;
     }
 
     protected Turma()

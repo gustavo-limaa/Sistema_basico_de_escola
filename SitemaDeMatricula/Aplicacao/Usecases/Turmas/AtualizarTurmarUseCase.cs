@@ -2,7 +2,6 @@
 using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Value_Object;
-using SitemaDeMatricula.Domain.Mapper;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Turmas;
 

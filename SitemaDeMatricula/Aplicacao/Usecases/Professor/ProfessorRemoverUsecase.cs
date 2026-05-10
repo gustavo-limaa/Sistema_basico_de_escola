@@ -1,7 +1,5 @@
 ﻿using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Aplicacao.Dtos.Professor;
-using SitemaDeMatricula.Domain.Mapper;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Professor;
 

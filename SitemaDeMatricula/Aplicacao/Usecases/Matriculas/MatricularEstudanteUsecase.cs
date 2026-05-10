@@ -1,8 +1,8 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.Matricola;
 using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Mapper;
-using SitemaDeMatricula.Domain.Modelos;
+using SistemaDeMatricula.Domain.Mapper;
+using SistemaDeMatricula.Domain.Modelos;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
 
