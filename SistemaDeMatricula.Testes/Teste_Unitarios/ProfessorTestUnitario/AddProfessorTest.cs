@@ -1,14 +1,8 @@
 ﻿using Moq;
+using SistemaDeMatricula.Aplicacao.Dtos.Professor;
 using SistemaDeMatricula.Aplicacao.Usecases.Professor;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Modelos;
-using SitemaDeMatricula.Aplicacao.Dtos.Professor;
-using SitemaDeMatricula.Domain.Mapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SistemaDeMatricula.Testes.Teste_Unitarios.ProfessorTestUnitario
 {

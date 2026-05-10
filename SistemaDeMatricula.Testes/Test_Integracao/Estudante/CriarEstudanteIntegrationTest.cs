@@ -1,16 +1,11 @@
 ﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using SistemaDeMatricula.Aplicacao.Dtos.estudante;
 using SistemaDeMatricula.Infraestrutura.Data;
 using SistemaDeMatricula.Testes.Test_Integracao.Setup;
 using SistemaDeMatricula.Testes.Teste_Unitarios;
-using SitemaDeMatricula.Aplicacao.Dtos.estudante;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SistemaDeMatricula.Testes.Test_Integracao.Estudante;
 

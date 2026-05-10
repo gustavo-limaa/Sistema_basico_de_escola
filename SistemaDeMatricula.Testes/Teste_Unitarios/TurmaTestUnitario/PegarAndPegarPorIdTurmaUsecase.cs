@@ -3,12 +3,6 @@ using Moq;
 using SistemaDeMatricula.Aplicacao.Dtos.turma;
 using SistemaDeMatricula.Aplicacao.Usecases.Turmas;
 using SistemaDeMatricula.Domain.Interfaces;
-using SitemaDeMatricula.Domain.Modelos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SistemaDeMatricula.Testes.Teste_Unitarios.TurmaTestUnitario;
 

@@ -2,13 +2,6 @@
 using SistemaDeMatricula.Aplicacao.Usecases.Estudante;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Modelos;
-using SitemaDeMatricula.Aplicacao.Dtos.estudante;
-using SitemaDeMatricula.Domain.Value_Objetc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SistemaDeMatricula.Testes.Teste_Unitarios.EstudanteTestUnitario;
 

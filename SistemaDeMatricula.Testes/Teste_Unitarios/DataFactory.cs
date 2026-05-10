@@ -1,13 +1,11 @@
 ﻿//SistemaDeMatricula.Testes\Teste_Unitarios\DataFactory.cs
 using Bogus;
 using Bogus.Extensions.Brazil;
-using SitemaDeMatricula.Domain.Value_Object;
 using SitemaDeMatricula.Domain.Value_Objetc;
-using Xunit.Sdk;
-using System.Globalization;
 using SistemaDeMatricula.Domain.Modelos;
 using SistemaDeMatricula.Aplicacao.Dtos.estudante;
 using SistemaDeMatricula.Domain.Uteis;
+using SistemaDeMatricula.Domain.Value_Object;
 
 namespace SistemaDeMatricula.Testes.Teste_Unitarios;
 
@@ -24,8 +22,6 @@ public static class DataFactory
                 id,
                 new ObjectNomeCompleto(f.Person.FullName),
                 new ObjectDataNascimento(dataNascimentoOnly),
-                // O segredo está aqui: .Cpf(false) gera um CPF válido matematicamente
-                // sem pontos e traços, exatamente como o seu ObjectCPF espera.
                 new ObjectCPF(f.Person.Cpf(false)),
                 new ObjectEmail(f.Internet.Email()),
                 new ObjectTelefone(f.Phone.PhoneNumber("119########"))
