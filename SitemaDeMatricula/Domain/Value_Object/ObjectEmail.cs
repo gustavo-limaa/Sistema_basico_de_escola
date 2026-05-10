@@ -9,7 +9,6 @@ public partial record ObjectEmail
     [GeneratedRegex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.IgnoreCase)]
     private static partial Regex EmailRegex();
 
-    // 1. Porta da Frente
     public ObjectEmail(string valor)
     {
         var (email, error) = Criar(valor);
@@ -20,10 +19,8 @@ public partial record ObjectEmail
     {
     }
 
-    // 2. Porta dos Fundos
     private ObjectEmail(string valor, bool validado) => Valor = valor;
 
-    // 3. Factory Method
     public static (ObjectEmail? Email, string Error) Criar(string input)
     {
         if (string.IsNullOrWhiteSpace(input)) return (null, "O e-mail não pode ser vazio.");

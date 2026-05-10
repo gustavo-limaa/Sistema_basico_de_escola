@@ -12,13 +12,13 @@ public interface IRepositorioEstudante
 
     Task<IEnumerable<Estudante>> ObterTodosAsync();
 
-    Task<Estudante?> ObterPorIdAsync(Guid estudanteId); // Pode retornar null se não achar
+    Task<Estudante?> ObterPorIdAsync(Guid estudanteId);
 
     Task AdicionarAsync(Estudante estudante);
 
-    void Atualizar(Estudante estudante); // Geralmente void porque o EF já rastreia
+    void Atualizar(Estudante estudante);
 
     void Remover(Estudante estudante);
 
-    Task<bool> SalvarAlteracoesAsync(); // O método que realmente "comita" no banco
+    Task<bool> SalvarAlteracoesAsync();
 }

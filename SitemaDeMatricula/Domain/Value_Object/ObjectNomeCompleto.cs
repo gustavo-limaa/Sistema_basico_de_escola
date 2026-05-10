@@ -19,7 +19,7 @@ public partial record ObjectNomeCompleto
     private ObjectNomeCompleto()
     {
     }
-    // Porta dos Fundos
+
     private ObjectNomeCompleto(string valor, bool validado) => Valor = valor;
 
     public static (ObjectNomeCompleto? Nome, string Error) Criar(string input)

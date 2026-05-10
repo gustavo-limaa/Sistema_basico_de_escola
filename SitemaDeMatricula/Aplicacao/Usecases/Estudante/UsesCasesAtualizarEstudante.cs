@@ -23,14 +23,11 @@ public class UsesCasesAtualizarEstudante
         {
             if (dto is null) return Result<EstudanteDtoResponse>.Falha("Dados de atualização inválidos.");
 
-            // 1. Busca o estudante existente no banco
             var resultBusca = await _repositorioEstudante.ObterPorIdAsync(id);
             if (resultBusca == null) return Result<EstudanteDtoResponse>.Falha("Estudante não encontrado.");
 
             var estudante = resultBusca;
 
-            // 2. Usa o método da ENTIDADE para atualizar os campos (Regra de Negócio)
-            // Lembra que criamos o 'AtualizarDados' lá no começo?
             estudante.AtualizarDados(
                 new ObjectNomeCompleto(dto.NomeCompleto),
                 new ObjectEmail(dto.Email),
@@ -38,12 +35,10 @@ public class UsesCasesAtualizarEstudante
                 new ObjectTelefone(dto.Telefone)
             );
 
-            // 3. Persiste a mudança no banco
             _repositorioEstudante.Atualizar(estudante);
             var resultUpdate = await _repositorioEstudante.SalvarAlteracoesAsync();
             if (!resultUpdate) return Result<EstudanteDtoResponse>.Falha("Falha ao atualizar o estudante.");
 
-            // 4. Retorna o DTO de resposta
             return Result<EstudanteDtoResponse>.Ok(estudante.ToEstudanteDtoResponse());
         }
         catch (Exception ex)

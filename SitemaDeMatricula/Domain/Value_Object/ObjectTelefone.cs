@@ -22,7 +22,6 @@ public partial record ObjectTelefone
     {
     }
 
-    // Porta dos Fundos
     private ObjectTelefone(string valor, bool validado) => Valor = valor;
 
     public static (ObjectTelefone? Telefone, string Error) Criar(string input)

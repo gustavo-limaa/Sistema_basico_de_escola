@@ -16,25 +16,19 @@ public class ProfessorCriarUsecases
 
     public async Task<Result<ProfessorDtoResponse>> ExecutarAsync(ProfessorDtoCreate dto)
     {
-        // 1. Fail Fast Simples
         if (dto == null) return Result<ProfessorDtoResponse>.Falha("Dados não fornecidos.");
 
         try
         {
-            // 2. O Domínio valida a lógica de formato (CPF, Email, Salário)
-            // Se o DTO tiver lixo, o ToProfessor() estoura uma exceção de validação aqui mesmo
             var professor = dto.ToProfessor();
 
-            // Checagem de CPF
             var professorExistenteCpf = await _repositorioProfessor.ObterPorCpfAsync(dto.Cpf);
             if (professorExistenteCpf != null)
                 return Result<ProfessorDtoResponse>.Conflito("Já existe um professor cadastrado com este CPF.");
 
-            // Checagem de E-mail (Para bater com o seu teste!)
             var professorExistenteEmail = await _repositorioProfessor.ObterPorEmailAsync(dto.Email);
             if (professorExistenteEmail != null)
                 return Result<ProfessorDtoResponse>.Conflito("Já existe um professor cadastrado com este e-mail.");
-            // 4. Persistência
             await _repositorioProfessor.AdicionarAsync(professor);
             var sucesso = await _repositorioProfessor.SalvarAlteracoesAsync();
 
@@ -42,7 +36,7 @@ public class ProfessorCriarUsecases
                 ? Result<ProfessorDtoResponse>.Ok(professor.ToProfessorDtoResponse())
                 : Result<ProfessorDtoResponse>.Falha("Erro ao persistir os dados no banco.");
         }
-        catch (ArgumentException ex) // Ou a sua Exception personalizada de Domínio
+        catch (ArgumentException ex)
         {
             return Result<ProfessorDtoResponse>.Falha(ex.Message);
         }

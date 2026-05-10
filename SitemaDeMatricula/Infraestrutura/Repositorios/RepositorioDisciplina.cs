@@ -43,7 +43,6 @@ public class DisciplinaRepositorio : IDisciplinaRepositorio
 
     public async Task<Disciplina?> ObterDesativadaPorIdAsync(Guid id)
     {
-        // Aqui sim usamos o Ignore! E filtramos apenas pelas que estão desativadas.
         return await _context.Disciplinas
             .IgnoreQueryFilters()
             .FirstOrDefaultAsync(d => d.DisciplinaId == id);
@@ -56,7 +55,6 @@ public class DisciplinaRepositorio : IDisciplinaRepositorio
 
     public async Task<bool> ExisteDisciplinaComMesmoNomeAsync(string nome)
     {
-        // Aqui o EF compara a string com o seu Value Object automaticamente
         return await _context.Disciplinas.AnyAsync(d => d.Nome == nome);
     }
 
@@ -66,7 +64,6 @@ public class DisciplinaRepositorio : IDisciplinaRepositorio
 
         if (disciplina == null) return false;
 
-        // Usando os métodos da sua Entidade Rica!
         if (ativo)
             disciplina.Ativar();
         else

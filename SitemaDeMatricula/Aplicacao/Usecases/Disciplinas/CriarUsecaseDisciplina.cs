@@ -15,13 +15,11 @@ public class CriarUsecaseDisciplina
         _disciplinaRepositorio = disciplinaRepositorio;
     }
 
-    // 1. Mude o retorno para Result<DisciplinaDtoResponse>
     public async Task<Result<DisciplinaDtoResponse>> Executar(DisciplinaDtoCreate dto)
     {
         if (dto is null)
             return Result<DisciplinaDtoResponse>.Falha("Dados da disciplina são obrigatórios.");
 
-        // Verificar se já existe uma disciplina com o mesmo nome
         if (await _disciplinaRepositorio.ExisteDisciplinaComMesmoNomeAsync(dto.Nome))
             return Result<DisciplinaDtoResponse>.Conflito("Já existe uma disciplina com esse nome.");
 
@@ -30,8 +28,6 @@ public class CriarUsecaseDisciplina
         await _disciplinaRepositorio.AdicionarAsync(novaDisciplina);
         await _disciplinaRepositorio.SalvarAlteracoesAsync();
 
-        // 2. Aqui está o segredo: Retornamos o DTO mapeado!
-        // Usando aquele ToResponse() que você criou no Mapper
         var response = novaDisciplina.ToResponse();
 
         return Result<DisciplinaDtoResponse>.Ok(response);

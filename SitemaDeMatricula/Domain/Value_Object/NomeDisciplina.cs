@@ -12,7 +12,6 @@ public record NomeDisciplina
         if (valor.Length < 3 || valor.Length > 100)
             throw new ArgumentException("O nome da disciplina deve ter entre 3 e 100 caracteres.");
 
-        // Aqui você pode até colocar um .ToUpper() ou .Trim() para padronizar
         Valor = valor.Trim();
     }
 

@@ -23,10 +23,8 @@ public class UsesCasesCriarEstudante
             if (dto is null)
                 return Result<EstudanteDtoResponse>.Falha("Dados de estudante são obrigatórios.");
 
-            // --- ADICIONE ISSO AQUI ---
             if (await _repositorioEstudante.ExisteCpfAsync(dto.Cpf))
                 return Result<EstudanteDtoResponse>.Falha("CPF já cadastrado.");
-            // --------------------------
 
             var novoEstudante = dto.ToEstudante();
 

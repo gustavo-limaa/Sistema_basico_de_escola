@@ -27,7 +27,6 @@
 
         public bool Ativo { get; private set; } = true;
 
-        // Construtor para garantir a criação correta
         public Matricula(Guid estudanteId, Guid turmaId)
         {
             MatriculaId = Guid.NewGuid();

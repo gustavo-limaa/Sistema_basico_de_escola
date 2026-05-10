@@ -20,7 +20,6 @@ public class MatriculaController : MainController
     public async Task<IActionResult> PegarPorId(Guid id, [FromServices] ObterMatriculaPorIdUsecase usecase) =>
         CustomResponse(await usecase.ExecutarAsync(id));
 
-    // EM VEZ DE ATUALIZAR, USAMOS TRANSFERIR
     [HttpPatch("{id:guid}/transferir")]
     public async Task<IActionResult> Transferir(
         Guid id,
@@ -30,7 +29,6 @@ public class MatriculaController : MainController
         return CustomResponse(await usecase.ExecutarAsync(id, novaTurmaId));
     }
 
-    // SOFT DELETE DA MATRÍCULA (CANCELAMENTO)
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Cancelar(Guid id, [FromServices] DesativarMatriculaUsecase usecase) =>
         CustomResponse(await usecase.ExecutarAsync(id));

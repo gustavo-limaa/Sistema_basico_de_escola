@@ -29,7 +29,7 @@ public class AppDbContext : DbContext
             e.ComplexProperty(x => x.DataNascimento, p =>
             {
                 p.Property(v => v.Valor)
-                 .HasColumnName("DataNascimento") // Nome da coluna no MySQL
+                 .HasColumnName("DataNascimento")
                  .IsRequired();
             });
 
@@ -44,7 +44,7 @@ public class AppDbContext : DbContext
 
             e.ComplexProperty(x => x.Telefone, p =>
                 p.Property(v => v.Valor).HasColumnName("Telefone").HasMaxLength(11));
-        }); // <--- FECHA Estudante aqui
+        });
 
         // 2. PROFESSOR
         modelBuilder.Entity<Professor>(p =>
@@ -74,7 +74,7 @@ public class AppDbContext : DbContext
             p.Property(x => x.Categoria).HasColumnName("Categoria").IsRequired();
         });
         // 3. DISCIPLINA
-        // 3. DISCIPLINA (Versão Limpa)
+
         modelBuilder.Entity<Disciplina>(d =>
         {
             d.HasKey(x => x.DisciplinaId);
@@ -94,10 +94,6 @@ public class AppDbContext : DbContext
                     v => new CargaHoraria(v)
                 )
                 .IsRequired();
-
-            // Note que aqui NÃO colocamos o HasMany(t => t.Turmas).
-            // Deixamos a configuração lá no bloco da Turma (item 4),
-            // que já faz o link com d.Turmas corretamente.
         });
 
         // 4. TURMA
@@ -106,54 +102,46 @@ public class AppDbContext : DbContext
             t.HasKey(x => x.TurmaId);
             t.Property(x => x.CodigoTurma)
             .HasConversion(
-            vo => vo.ValorFormatado, // Converte para string ao salvar no banco
-            stringDoBanco => CodigoTurma.CriarDeString(stringDoBanco) // Converte para VO ao ler do banco
+            vo => vo.ValorFormatado,
+            stringDoBanco => CodigoTurma.CriarDeString(stringDoBanco)
             )
-            .HasColumnName("CodigoTurma") // Nome da coluna no SQL
+            .HasColumnName("CodigoTurma")
             .IsRequired();
 
             t.HasQueryFilter(t => t.Ativo);
 
-            // 1. Relacionamento com Disciplina (Essencial!)
-            // Dentro do mapeamento da Turma no AppDbContext
             t.HasOne(x => x.Disciplina)
-             .WithMany(d => d.Turmas) // Conecta com a lista que já existe na Disciplina
+             .WithMany(d => d.Turmas)
              .HasForeignKey(x => x.DisciplinaId)
              .OnDelete(DeleteBehavior.Restrict);
 
-            // 2. Relacionamento com Professor
             t.HasOne(p => p.Professor)
-             .WithMany() // Se o Professor tiver List<Turma>, coloque p => p.Turmas
+             .WithMany()
              .HasForeignKey(p => p.ProfessorId)
              .OnDelete(DeleteBehavior.Restrict);
 
-            // 3. Relacionamento com Matrículas (Um-para-Muitos)
             t.HasMany(m => m.Matriculas)
              .WithOne(m => m.Turma)
              .HasForeignKey(m => m.TurmaId);
         });
 
-        // 5. MATRICULA (A tabela N:N que faltava mapear)
-
         modelBuilder.Entity<Matricula>(m =>
         {
             m.HasKey(x => x.MatriculaId);
 
-            // Ligação com Estudante (1 Estudante -> Várias Matrículas)
             m.HasOne(x => x.Estudante)
-             .WithMany(e => e.Matriculas) // Plural aqui!
+             .WithMany(e => e.Matriculas)
              .HasForeignKey(x => x.EstudanteId)
              .OnDelete(DeleteBehavior.Restrict);
 
-            // Ligação com Turma (1 Turma -> Várias Matrículas)
             m.HasOne(x => x.Turma)
-             .WithMany(t => t.Matriculas) // Plural aqui!
+             .WithMany(t => t.Matriculas)
              .HasForeignKey(x => x.TurmaId)
              .OnDelete(DeleteBehavior.Restrict);
 
             m.HasIndex(x => new { x.EstudanteId, x.TurmaId }).IsUnique();
         });
 
-        base.OnModelCreating(modelBuilder); // Sempre por último
+        base.OnModelCreating(modelBuilder);
     }
 }

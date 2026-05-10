@@ -6,9 +6,8 @@ public class Turma
 {
     public Guid TurmaId { get; private set; }
     public CodigoTurma CodigoTurma { get; private set; }
-    public bool Ativo { get; private set; } // Importante para o Soft Delete
+    public bool Ativo { get; private set; }
 
-    // Relacionamentos
     public Guid ProfessorId { get; private set; }
 
     public virtual Professor Professor { get; private set; }
@@ -18,10 +17,8 @@ public class Turma
 
     public List<Matricula> Matriculas { get; private set; } = new();
 
-    // Construtor Público para criação (Domínio)
     public Turma(CodigoTurma codigo, Guid professorId, Guid disciplinaId)
     {
-        // Validação básica: se o código for vazio, o sistema nem deixa criar
         if (string.IsNullOrWhiteSpace(codigo.ValorFormatado)) throw new ArgumentException("Código da turma é obrigatório.");
 
         TurmaId = Guid.NewGuid();
@@ -31,11 +28,9 @@ public class Turma
         Ativo = true;
     }
 
-    // Construtor para o Entity Framework (O "fantasma" que o banco usa)
     protected Turma()
     { }
 
-    // Comportamentos
     public void Desativar() => Ativo = false;
 
     public void Ativar() => Ativo = true;

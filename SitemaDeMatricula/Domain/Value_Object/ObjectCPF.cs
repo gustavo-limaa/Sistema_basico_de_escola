@@ -16,11 +16,9 @@
             if (cpf is null)
                 throw new ArgumentException(error);
 
-            // Se chegou aqui, o Criar já validou tudo. É só guardar o valor!
             Valor = cpf.Valor;
         }
 
-        // 2. CONSTRUTOR PRIVADO (Para o Factory Method usar)
         private ObjectCPF(string valor, bool validado)
         {
             Valor = valor;
@@ -29,7 +27,7 @@
         private ObjectCPF()
         {
         }
-        // 3. FACTORY METHOD (A Bomba foi desarmada!)
+
         public static (ObjectCPF? Cpf, string Error) Criar(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
@@ -43,7 +41,6 @@
             if (!ValidarDigitos(cpfLimpo))
                 return (null, "CPF matematicamente inválido.");
 
-            // Retorna direto usando o construtor privado, passando 'true'
             return (new ObjectCPF(cpfLimpo, true), string.Empty);
         }
 

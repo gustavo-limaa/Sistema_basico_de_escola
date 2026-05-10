@@ -20,11 +20,8 @@ public class ListarTurmaUsecase
 
     public async Task<Result<IEnumerable<TurmaDtoResponse>>> ExecutarAsync()
     {
-        // O Repositório já deve ter o .Include(t => t.Professor).Include(t => t.Disciplina)
-        // E também o .AsNoTracking() para performance!
         var turmas = await _turmaRepo.ListarTodasAsync();
 
-        // O Mapper resolve o problema de Professor/Disciplina inativos (que vêm nulos)
         var turmasDto = turmas.Select(t => t.ToTurmaDtoResponse()).ToList();
 
         return Result<IEnumerable<TurmaDtoResponse>>.Ok(turmasDto);

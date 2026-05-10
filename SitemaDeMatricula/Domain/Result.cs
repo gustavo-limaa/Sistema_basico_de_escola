@@ -20,7 +20,7 @@ public class Result<T>
 
     public T? Dados { get; private set; }
     public string Mensagem { get; private set; }
-    public TipoErro Tipo { get; private set; } // Nova propriedade
+    public TipoErro Tipo { get; private set; }
 
     protected Result(bool sucesso, T? dados, string mensagem, TipoErro tipo = TipoErro.Validacao)
     {
@@ -30,11 +30,9 @@ public class Result<T>
         Tipo = tipo;
     }
 
-    // Para resolver o problema do 404
     public static Result<T> NaoEncontrado(string mensagem)
         => new(false, default, mensagem, TipoErro.NaoEncontrado);
 
-    // Para erros de infraestrutura ou catch (Exceções)
     public static Result<T> Inesperado(string mensagem)
         => new(false, default, mensagem, TipoErro.Inesperado);
 

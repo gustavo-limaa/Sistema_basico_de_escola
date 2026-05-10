@@ -23,7 +23,6 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
 
         public async Task<bool> AlternarStatusAsync(Turma turma)
         {
-            // Buscamos a turma para garantir que ela está sendo rastreada pelo Contexto
             var turmaExistente = await _context.Turmas.FindAsync(turma.TurmaId);
             if (turmaExistente == null) return false;
 
@@ -60,15 +59,12 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
 
         public async Task<bool> RemoverAsync(Turma turma)
         {
-            // 1. Buscamos para garantir que o EF está rastreando a instância real do banco
             var turmaExistente = await _context.Turmas.FindAsync(turma.TurmaId);
 
             if (turmaExistente == null) return false;
 
-            // 2. Mudamos apenas o estado que nos interessa
             turmaExistente.Desativar();
 
-            // 3. Persistimos a mudança. O EF sabe exatamente o que fazer aqui.
             await SalvarAlteracoesAsync();
 
             return true;
@@ -78,7 +74,7 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
         {
             return await _context.Turmas.Include(t => t.Professor)
                 .Include(t => t.Disciplina)
-                .IgnoreQueryFilters().AsNoTracking()  // 👈 A chave para ver os "fantasmas" (inativos)
+                .IgnoreQueryFilters().AsNoTracking()
                 .FirstOrDefaultAsync(t => t.TurmaId == id);
         }
 
@@ -106,14 +102,12 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
 
         public async Task<bool> RestaurarAsync(Guid id)
         {
-            // Usamos IgnoreQueryFilters() porque, por padrão, ela está "invisível"
             var turmaInativa = await _context.Turmas
                 .IgnoreQueryFilters()
                 .FirstOrDefaultAsync(t => t.TurmaId == id);
 
             if (turmaInativa == null) return false;
 
-            turmaInativa.Ativar(); // Método que você cria na Entidade (Ativo = true)
             await SalvarAlteracoesAsync();
             return true;
         }

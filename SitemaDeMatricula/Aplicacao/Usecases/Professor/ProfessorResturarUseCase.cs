@@ -36,7 +36,6 @@ public class ProfessorRestaurarUseCase
             var sucesso = await _repositorioProfessor.SalvarAlteracoesAsync();
 
             return sucesso
-                // Retornamos o DTO do professor para satisfazer o tipo Result<T>
                 ? Result<ProfessorDtoResponse>.Ok(professor.ToProfessorDtoResponse())
                 : Result<ProfessorDtoResponse>.Falha("Erro ao persistir os dados no banco.");
         }

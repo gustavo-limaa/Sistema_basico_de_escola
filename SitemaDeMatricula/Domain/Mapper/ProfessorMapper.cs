@@ -12,13 +12,13 @@ namespace SitemaDeMatricula.Domain.Mapper
         {
             return new ProfessorDtoResponse(
                 professor.ProfessorId,
-                professor.NomeCompleto.Valor, // Se o Nome for um VO record, use .Valor aqui também!
-                professor.Cpf.Valor,               // <--- AQUI! Troque .ToString() por .Valor
+                professor.NomeCompleto.Valor,
+                professor.Cpf.Valor,
                 professor.DataNascimento.Valor,
-                professor.Email.Valor,             // <--- Use .Valor aqui também
-                professor.Telefone.Valor,          // <--- E aqui
+                professor.Email.Valor,
+                professor.Telefone.Valor,
                 professor.Salario.Valor,
-                professor.Categoria.ToString()     // Aqui o .ToString() funciona porque é um Enum
+                professor.Categoria.ToString()
             );
         }
 
@@ -28,7 +28,7 @@ namespace SitemaDeMatricula.Domain.Mapper
                 new ObjectNomeCompleto(dto.NomeCompleto),
                 new ObjectCPF(dto.Cpf),
                 new ObjectEmail(dto.Email),
-                new ValorMonetario(dto.Salario), // Aqui o decimal entra liso!
+                new ValorMonetario(dto.Salario),
                 Enum.Parse<CategoriaProfessor>(dto.Categoria),
                 new ObjectDataNascimento(dto.DataNascimento),
                 new ObjectTelefone(dto.Telefone)

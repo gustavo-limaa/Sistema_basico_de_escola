@@ -18,7 +18,6 @@ public class ListarTodasMatriculasUsecase
     {
         var matriculas = await _matriculaRepo.ListarTodasAsync();
 
-        // Se vier vazio, o seu Mapper de lista já deve tratar e devolver []
         var response = matriculas.ToMatriculaDtoResponseList();
 
         return Result<IEnumerable<MatriculaDtoResponse>>.Ok(response);

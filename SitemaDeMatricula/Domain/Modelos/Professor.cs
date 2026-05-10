@@ -9,7 +9,6 @@ namespace SitemaDeMatricula.Domain.Modelos;
 
 public class Professor
 {
-    // Construtor para garantir que o Professor nasça com dados válidos
     public Professor(ObjectNomeCompleto nomeCompleto, ObjectCPF cpf, ObjectEmail email, ValorMonetario salario, CategoriaProfessor categoria, ObjectDataNascimento dataNascimento, ObjectTelefone telefone)
     {
         ProfessorId = Guid.NewGuid();
@@ -66,8 +65,6 @@ public class Professor
 
     {
         if (!Ativo) throw new ArgumentException("Não é possível atualizar um professor desativado.");
-        // Aqui você pode adicionar lógica extra se precisar,
-        // mas os próprios Value Objects já garantem a validação.
 
         NomeCompleto = novoNome;
         Email = novoEmail;

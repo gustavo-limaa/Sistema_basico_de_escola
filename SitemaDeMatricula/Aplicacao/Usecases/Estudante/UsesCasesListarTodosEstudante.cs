@@ -19,14 +19,11 @@ public class UsesCasesListarTodosEstudante
     {
         try
         {
-            // 1. Chama o repositório
             var result = await _repositorioEstudante.ObterTodosAsync();
 
-            // Se o repositório retornar null em vez de uma lista (mesmo que vazia)
             if (result is null)
                 return Result<List<EstudanteDtoResponse>>.Falha("Erro ao acessar o repositório de estudantes.");
 
-            // 2. Mapeia a lista
             var estudantesDto = result
                 .Select(e => e.ToEstudanteDtoResponse())
 
@@ -36,7 +33,6 @@ public class UsesCasesListarTodosEstudante
         }
         catch (Exception ex)
         {
-            // Agora sim! O catch captura a Exception do Mock e transforma no seu Result.Falha
             return Result<List<EstudanteDtoResponse>>.Falha($"Erro ao listar estudantes: {ex.Message}");
         }
     }

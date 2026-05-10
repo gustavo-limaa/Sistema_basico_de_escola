@@ -4,12 +4,8 @@ using Scalar.AspNetCore;
 using SitemaDeMatricula.Percistencia.Controllers;
 using SitemaDeMatricula.Infraestrutura;
 
-// <-- Adicione esse using!
-
 var builder = WebApplication.CreateBuilder(args);
 
-// --- TUDO QUE É CONFIGURAÇÃO DE SERVIÇO FICA AQUI (ANTES DO BUILD) ---
-// No Program.cs, procure a linha do AddControllers e mude para isso:
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(ProfessorController).Assembly)
     //.AddApplicationPart(typeof(EstudanteController).Assembly)
@@ -38,9 +34,6 @@ if (app.Environment.IsDevelopment())
         options.WithTitle("Sistema de Matrícula - API")
                .WithTheme(ScalarTheme.Mars)
                .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
-
-        // Se o WithEndpoint der erro, não use ele.
-        // Por padrão o Scalar já tenta ler o /openapi/v1.json
     });
 }
 

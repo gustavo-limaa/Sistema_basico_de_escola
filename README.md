@@ -1,4 +1,4 @@
-assim ne 🎓 Sistema Básico de Escola
+🎓 Sistema Básico de Escola
 Este é um projeto de back-end robusto desenvolvido em C# e .NET, focado na gestão escolar. O sistema foi construído aplicando os princípios mais modernos de engenharia de software para garantir escalabilidade e manutenibilidade através de um desenvolvimento orientado a testes (TDD).
 
 🚀 Status do Projeto: Fase de Refinamento
@@ -30,7 +30,7 @@ Abaixo, a execução da suíte de testes validando 153 cenários, incluindo flux
 
 Nota: A cobertura inclui testes unitários e de integração, garantindo que as regras de negócio e a persistência em banco de dados estejam em harmonia.
 
-(Aqui você cola o seu print no GitHub)
+
 
 🏗️ Destaques da Implementação
 Validação de Conflitos: Lógica integrada nos Use Cases para impedir duplicidade de códigos de turma ou CPFs duplicados.
@@ -50,5 +50,6 @@ Terminologia Profissional: Priorização de termos em Inglês para commits e doc
 
 [ ] Configuração de CI/CD via GitHub Actions.
 
-Desenvolvido por Zander Gustavo (gustavo-limaa) 
+Desenvolvido por Zander Gustavo (gustavo-limaa)
+
 ![Suíte de Testes](docs/testes-sucesso.png)

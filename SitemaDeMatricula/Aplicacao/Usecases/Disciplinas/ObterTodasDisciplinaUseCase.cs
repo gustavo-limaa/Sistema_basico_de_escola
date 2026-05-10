@@ -19,7 +19,6 @@ public class ObterTodasDisciplinaUseCase
     {
         var disciplinas = await _disciplinaRepositorio.ObterTodasAsync();
 
-        // Transformamos a lista de Entidades em uma lista de DTOs de Resposta
         var dtos = disciplinas.Select(d => d.ToResponse());
 
         return Result<IEnumerable<DisciplinaDtoResponse>>.Ok(dtos);

@@ -20,25 +20,19 @@ public class EstudanteController : ControllerBase
     [HttpGet("{Id}")]
     public async Task<IActionResult> ObterPorId([FromServices] UsesCasesPegarPorIdEstudante useCase, Guid id)
     {
-        // 1. Validação básica de entrada (O porteiro checa o crachá)
         if (id == Guid.Empty)
             return BadRequest("O ID do estudante deve ser informado.");
 
-        // 2. Chama a lógica de negócio
         var result = await useCase.ExecuteAsync(id);
 
-        // 3. Decide a resposta baseada no Result
         if (!result.Sucesso)
         {
-            // Se a falha for porque não encontrou, retornamos 404
             if (result.Mensagem.Contains("não encontrado", StringComparison.OrdinalIgnoreCase))
                 return NotFound(result.Mensagem);
 
-            // Outros erros de negócio retornam 400
             return BadRequest(result.Mensagem);
         }
 
-        // 4. Se deu tudo certo, retorna 200 com os dados
         return Ok(result.Dados);
     }
 

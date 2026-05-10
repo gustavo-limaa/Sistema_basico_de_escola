@@ -19,20 +19,16 @@ public class UsesCasesDeletarEstudante
     {
         try
         {
-            // 1. Chama o repositório para deletar
             var result = await _repositorioEstudante.ObterPorIdAsync(id);
             if (result is null)
                 return Result<bool>.Falha("Estudante não encontrado.");
 
-            // 2. Verifica se o repositório retornou uma falha (ex: erro de banco ou estudante não encontrado)
             if (result is null)
                 return Result<bool>.Falha("Estudante não encontrado.");
-            // 3. Chama o repositório para deletar
             _repositorioEstudante.Remover(result);
             var deleteResult = await _repositorioEstudante.SalvarAlteracoesAsync();
             if (!deleteResult)
                 return Result<bool>.Falha("Falha ao deletar o estudante.");
-            // 4. Retorna true se deletou com sucesso
             return Result<bool>.Ok(true);
         }
         catch (Exception ex)

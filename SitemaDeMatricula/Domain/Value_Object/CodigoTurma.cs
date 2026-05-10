@@ -31,12 +31,10 @@ public sealed class CodigoTurma
         if (ano < DateTime.Now.Year)
             return Result<CodigoTurma>.Falha("O ano não pode ser inferior ao atual.");
 
-        // Usando o seu método estático Ok
         var novoCodigo = new CodigoTurma(sigla.ToUpper(), ano, semestre, numero);
         return Result<CodigoTurma>.Ok(novoCodigo);
     }
 
-    // Dentro da classe CodigoTurma
     public static CodigoTurma CriarDeString(string valorCompleto)
     {
         // Divide a string nos traços: ["MAT", "2026", "1", "001"]
@@ -50,12 +48,9 @@ public sealed class CodigoTurma
         var semestre = int.Parse(partes[2]);
         var numero = int.Parse(partes[3]);
 
-        // Como os dados já vieram do banco (supostamente válidos),
-        // podemos usar o construtor privado diretamente
         return new CodigoTurma(sigla, ano, semestre, numero);
     }
 
-    // Construtor necessário para o EF Core (pode ser privado)
     private CodigoTurma()
     { }
 }

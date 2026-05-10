@@ -17,7 +17,7 @@ namespace SitemaDeMatricula.Infraestrutura.Repositorios
         public async Task AdicionarAsync(Matricula matricula)
         {
             await _appDbContext.Matriculas.AddAsync(matricula);
-            await SalvarAlteracoesAsync(); // Ajustado aqui também
+            await SalvarAlteracoesAsync();
         }
 
         public async Task AtualizarAsync(Matricula matricula)

@@ -20,6 +20,5 @@ public interface IDisciplinaRepositorio
 
     Task<Disciplina?> ObterDesativadaPorIdAsync(Guid id);
 
-    // Um bônus para o seu UseCase:
     Task<bool> ExisteDisciplinaComMesmoNomeAsync(string nome);
 }

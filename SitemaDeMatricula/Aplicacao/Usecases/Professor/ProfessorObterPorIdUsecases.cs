@@ -16,17 +16,13 @@ public class ProfessorObterPorIdUsecases
 
     public async Task<Result<ProfessorDtoResponse>> ExecutarAsync(Guid professorId)
     {
-        // 1. Fail Fast (Sempre no topo)
         if (professorId == Guid.Empty)
             return Result<ProfessorDtoResponse>.Falha("ID do professor é inválido.");
 
-        // 2. Busca (Ação principal)
         var professor = await _repositorioProfessor.ObterPorIdAsync(professorId);
 
-        // 3. Validação do resultado
         if (professor == null)
-            return Result<ProfessorDtoResponse>.NaoEncontrado("Professor não encontrado."); // 👈 Isso gera o 404
-        // 4. Transformação e Retorno
+            return Result<ProfessorDtoResponse>.NaoEncontrado("Professor não encontrado.");
         return Result<ProfessorDtoResponse>.Ok(professor.ToProfessorDtoResponse());
     }
 }
