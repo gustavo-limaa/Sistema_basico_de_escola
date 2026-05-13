@@ -13,6 +13,7 @@ public static class TurmaMapper
             turma.CodigoTurma.Semestre,
             turma.CodigoTurma.Ano,
             turma.CodigoTurma.Numero,
+            turma.CapacidadeMaxima,
             turma.Disciplina?.Nome ?? "Disciplina não carregada",
             turma.Professor?.NomeCompleto?.Valor ?? "Professor não carregado",
             turma.Ativo
@@ -24,16 +25,19 @@ public static class TurmaMapper
         return new Turma(
             codigoValidado,
             dto.ProfessorId,
-            dto.DisciplinaId
+            dto.DisciplinaId,
+            dto.CapacidadeMaxima
+
         );
     }
 
-    public static void ToUpdateTurma(this Turma turma, TurmaDtoUpdate dto, CodigoTurma novoCodigo)
+    public static void ToUpdateTurma(this Turma turma, TurmaDtoUpdate dto, CodigoTurma novoCodigo, int novaCapacidade)
     {
         turma.AtualizarDados(
         novoCodigo,
         dto.ProfessorId,
-        dto.DisciplinaId
+        dto.DisciplinaId,
+        novaCapacidade
     );
     }
 }

@@ -8,6 +8,7 @@ public sealed record TurmaDtoUpdate(
     Guid ProfessorId,
     [Required(ErrorMessage = "ID da disciplina é obrigatório.")]
     Guid DisciplinaId,
+    int novaCapacidade,
     [Required(ErrorMessage = "O status da turma é obrigatório.")]
     bool Ativo,
     [Required]
@@ -18,4 +19,5 @@ public sealed record TurmaDtoUpdate(
     int AnoLetivo,
     [Required]
     int Numero
+
 );

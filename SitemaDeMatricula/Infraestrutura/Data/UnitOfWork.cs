@@ -30,11 +30,8 @@ public class UnitOfWork : IUnitOfWork
 
     public IDisciplinaRepositorio Disciplinas => _disciplinas ??= new DisciplinaRepositorio(_context);
 
-    // O maestro gerencia todos eles:
-
     public async Task<bool> CommitAsync()
     {
-        // Salva todas as mudanças feitas em qualquer repositório acima de uma vez só
         return await _context.SaveChangesAsync() > 0;
     }
 

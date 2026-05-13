@@ -50,7 +50,8 @@ public sealed class CriarTurmaUseCase
         if (!disciplina.Ativo)
             return Result<TurmaDtoResponse>.Conflito("Não é possível vincular uma disciplina inativa a uma nova turma."); // Retorna 400
 
-        var novaTurma = new Turma(codigoVO, dto.ProfessorId, dto.DisciplinaId);
+        var novaTurma = new Turma(codigoVO, dto.ProfessorId, dto.DisciplinaId, dto.CapacidadeMaxima
+            );
         await _turmaRepo.AdicionarAsync(novaTurma);
         return Result<TurmaDtoResponse>.Ok(novaTurma.ToTurmaDtoResponse());
     }

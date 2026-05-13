@@ -13,26 +13,36 @@ public sealed class Turma : ModeloMain
     public Guid DisciplinaId { get; private set; }
     public Disciplina Disciplina { get; private set; }
 
+    public int CapacidadeMaxima { get; private set; }
+
     public List<Matricula> Matriculas { get; private set; } = new();
 
-    public Turma(CodigoTurma codigo, Guid professorId, Guid disciplinaId) : base()
+    public Turma(CodigoTurma codigo, Guid professorId, Guid disciplinaId, int capacidadeMaxima) : base()
     {
         if (string.IsNullOrWhiteSpace(codigo.ValorFormatado)) throw new ArgumentException("Código da turma é obrigatório.");
 
         CodigoTurma = codigo;
         ProfessorId = professorId;
         DisciplinaId = disciplinaId;
+        CapacidadeMaxima = capacidadeMaxima;
     }
 
     protected Turma()
     { }
 
+    public bool TemVagaDisponivel(int totalMatriculados)
+    {
+        return totalMatriculados < CapacidadeMaxima;
+    }
+
     public void Desativar() => Ativo = false;
 
     public void Ativar() => Ativo = true;
 
-    public void AtualizarDados(CodigoTurma novoCodigo, Guid novoProfessorId, Guid novaDisciplinaId)
+    public void AtualizarDados(CodigoTurma novoCodigo, Guid novoProfessorId, Guid novaDisciplinaId, int novaCapacidade)
     {
+        if (novaCapacidade <= 0)
+            throw new ArgumentException("A capacidade deve ser maior que zero.");
         if (string.IsNullOrWhiteSpace(novoCodigo.ValorFormatado))
             throw new ArgumentException("Código inválido.");
 

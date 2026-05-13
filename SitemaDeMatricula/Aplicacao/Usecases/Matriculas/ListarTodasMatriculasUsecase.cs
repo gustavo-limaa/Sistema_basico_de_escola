@@ -2,21 +2,25 @@
 using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
+using SistemaDeMatricula.Domain.Modelos;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
 
 public sealed class ListarTodasMatriculasUsecase
 {
-    private readonly IRepositorioMatricula _matriculaRepo;
+    private readonly IUnitOfWork _uow;
 
-    public ListarTodasMatriculasUsecase(IRepositorioMatricula matriculaRepo)
+    public ListarTodasMatriculasUsecase(IUnitOfWork uow)
     {
-        _matriculaRepo = matriculaRepo;
+        _uow = uow;
     }
 
     public async Task<Result<IEnumerable<MatriculaDtoResponse>>> ExecutarAsync()
     {
-        var matriculas = await _matriculaRepo.ListarTodasAsync();
+        var matriculas = await _uow.Matriculas.ListarTodasAsync();
+
+        if (matriculas == null)
+            return Result<IEnumerable<MatriculaDtoResponse>>.Ok(Enumerable.Empty<MatriculaDtoResponse>());
 
         var response = matriculas.ToMatriculaDtoResponseList();
 

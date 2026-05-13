@@ -2,7 +2,7 @@
 
 namespace SistemaDeMatricula.Aplicacao.Dtos.Matricola;
 
-public sealed record MatriculaDtoCreate(
+public readonly record struct MatriculaDtoCreate(
     [Required(ErrorMessage = "O ID do estudante é obrigatório.")]
 Guid EstudanteId,
     [Required(ErrorMessage = "O ID da turma é obrigatório.")]

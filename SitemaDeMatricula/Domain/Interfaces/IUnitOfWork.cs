@@ -2,7 +2,6 @@
 
 public interface IUnitOfWork : IDisposable
 {
-    // Repositórios como propriedades
     IRepositorioEstudante Estudantes { get; }
 
     IRepositorioTurma Turmas { get; }
@@ -10,6 +9,5 @@ public interface IUnitOfWork : IDisposable
     IRepositorioProfessor Professores { get; }
     IDisciplinaRepositorio Disciplinas { get; }
 
-    // O único lugar que decide QUANDO salvar
     Task<bool> CommitAsync();
 }
