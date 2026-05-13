@@ -42,7 +42,9 @@ public class AtualizarTurmaUsecaseTestUnitario
             Sigla: dto.CodigoTurma.Sigla,
             Semestre: dto.CodigoTurma.Semestre,
             AnoLetivo: dto.CodigoTurma.Ano,
-            Numero: dto.CodigoTurma.Numero
+            Numero: dto.CodigoTurma.Numero,
+            CapacidadeMaxima: dto.CapacidadeMaxima
+
         );
 
         return turmaDto;
@@ -77,6 +79,7 @@ public class AtualizarTurmaUsecaseTestUnitario
         var turmaAtualizar = new TurmaDtoUpdate(
             ProfessorId: dtoNovo.ProfessorId,
             DisciplinaId: dtoNovo.DisciplinaId,
+            novaCapacidade: dtoNovo.CapacidadeMaxima,
             Ativo: true,
             Sigla: "NEW", // Mudando algo para testar
             Semestre: 2,
@@ -105,6 +108,7 @@ public class AtualizarTurmaUsecaseTestUnitario
         (
             ProfessorId: turmaA.ProfessorId,
             DisciplinaId: turmaA.DisciplinaId,
+            novaCapacidade: 123,
             Ativo: true,
             Sigla: "MAT", // Mudando algo para testar
             Semestre: 2,
@@ -137,6 +141,7 @@ public class AtualizarTurmaUsecaseTestUnitario
         (
             ProfessorId: turmaA.ProfessorId,
             DisciplinaId: turmaA.DisciplinaId,
+            novaCapacidade: 123,
             Ativo: true,
             Sigla: "MAT", // Mudando algo para testar
             Semestre: 2,
@@ -176,6 +181,8 @@ public class AtualizarTurmaUsecaseTestUnitario
         var DTOATULIZAR = new TurmaDtoUpdate(
             ProfessorId: turmaA.ProfessorId,
             DisciplinaId: turmaA.DisciplinaId,
+            novaCapacidade: 123,
+
             Ativo: true,
             Sigla: "MAT",
             Semestre: 2,
@@ -213,6 +220,8 @@ public class AtualizarTurmaUsecaseTestUnitario
         (
             ProfessorId: turmaA.ProfessorId,
             DisciplinaId: turmaA.DisciplinaId,
+            novaCapacidade: 1231,
+
             Ativo: true,
             Sigla: "MAT", // Mudando algo para testar
             Semestre: 2,
@@ -250,6 +259,8 @@ public class AtualizarTurmaUsecaseTestUnitario
         (
             ProfessorId: turmaA.ProfessorId,
             DisciplinaId: turmaA.DisciplinaId,
+            novaCapacidade: 1234,
+
             Ativo: true,
             Sigla: "MAT", // Mudando algo para testar
             Semestre: 2,
@@ -285,6 +296,8 @@ public class AtualizarTurmaUsecaseTestUnitario
         (
             ProfessorId: turmaA.ProfessorId,
             DisciplinaId: turmaA.DisciplinaId,
+            novaCapacidade: 123,
+
             Ativo: true,
             Sigla: "MAT", // Mudando algo para testar
             Semestre: 2,

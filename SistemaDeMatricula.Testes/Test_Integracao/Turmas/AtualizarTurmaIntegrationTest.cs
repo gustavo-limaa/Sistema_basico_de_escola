@@ -106,7 +106,9 @@ public class AtualizarTurmaIntegrationTest
             Sigla: dto.CodigoTurma.Sigla,
             Semestre: dto.CodigoTurma.Semestre,
             AnoLetivo: dto.CodigoTurma.Ano,
-            Numero: dto.CodigoTurma.Numero
+            Numero: dto.CodigoTurma.Numero,
+            CapacidadeMaxima: dto.CapacidadeMaxima
+
         );
 
         // 2. Executa a criação real na API
@@ -157,6 +159,7 @@ public class AtualizarTurmaIntegrationTest
         var dadosParaAtualizar = new TurmaDtoUpdate(
             ProfessorId: profId,
             DisciplinaId: discId,
+            novaCapacidade: 123,
             Ativo: true,
             Sigla: "HIS",
             Semestre: 2,
@@ -192,6 +195,8 @@ public class AtualizarTurmaIntegrationTest
         var dadosParaAtualizar = new TurmaDtoUpdate(
             ProfessorId: profId,
             DisciplinaId: discId,
+            novaCapacidade: 1231,
+
             Ativo: true,
             Sigla: "HIS",
             Semestre: -2,

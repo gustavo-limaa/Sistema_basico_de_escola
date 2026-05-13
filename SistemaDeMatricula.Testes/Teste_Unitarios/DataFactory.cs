@@ -95,7 +95,8 @@ public static class DataFactory
             numero: f.Random.Int(1, 999)
         );
 
-        return new Turma(codigo, profId, discId);
+        var capacidade = f.Random.Int(0, 5000);
+        return new Turma(codigo, profId, discId, capacidade);
     });
 
     public static List<Turma> GerarListaDeTurmas(int quantidade = 50)
