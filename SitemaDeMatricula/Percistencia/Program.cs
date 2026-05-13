@@ -3,6 +3,7 @@ using Scalar.AspNetCore;
 using SistemaDeMatricula.Infraestrutura;
 using SistemaDeMatricula.Infraestrutura.Data;
 using SistemaDeMatricula.Percistencia.Controllers;
+using SistemaDeMatricula.Percistencia.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +39,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapGet("/api/teste", () => "O servidor está ouvindo!").WithName("Teste");
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
