@@ -52,11 +52,16 @@ public class PegarTodosEPegarPorIdProfessorIntegrationTest : IAsyncLifetime
         using var scope = _factory.Services.CreateScope();
         var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        // Guarde o total de deletados para ver no log
-        int deletados = await contexto.Professores.ExecuteDeleteAsync();
+        // 1. Apaga quem depende de todo mundo (A última ponta)
+        await contexto.Matriculas.ExecuteDeleteAsync();
 
-        // Se deletados for 0 e você sabe que tinha dados, o contexto está apontando
-        // para um banco diferente do que a API está usando.
+        // 2. Apaga as Turmas (que dependem de Professor e Disciplina)
+        await contexto.Turmas.ExecuteDeleteAsync();
+
+        // 3. Agora o banco deixa apagar as raízes
+        await contexto.Estudantes.ExecuteDeleteAsync();
+        await contexto.Professores.ExecuteDeleteAsync();
+        await contexto.Disciplinas.ExecuteDeleteAsync();
     }
 
     private ProfessorDtoCreate CriarDtoValido()

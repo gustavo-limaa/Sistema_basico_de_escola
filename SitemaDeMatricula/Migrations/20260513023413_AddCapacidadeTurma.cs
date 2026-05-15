@@ -12,11 +12,11 @@ namespace SitemaDeMatricula.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<int>(
-                name: "CapacidadeMaxima",
-                table: "Turmas",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+            name: "CapacidadeMaxima",
+            table: "Turmas",
+            type: "int",
+            nullable: false,
+            defaultValue: 0);
         }
 
         /// <inheritdoc />

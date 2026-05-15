@@ -26,7 +26,7 @@ namespace SistemaDeMatricula.Infraestrutura.Repositorios
 
         public async Task<int> ContarMatriculasAtivasNaTurmaAsync(Guid turmaId)
         {
-            return await _appDbContext.Matriculas
+            return await _appDbContext.Matriculas.IgnoreQueryFilters()
         .CountAsync(m => m.TurmaId == turmaId && m.Ativo);
         }
 

@@ -28,6 +28,12 @@ public sealed class MatricularEstudanteUsecase
             return Result<MatriculaDtoResponse>.Falha("Este estudante já está matriculado nesta turma.");
         }
 
+        var totalMatriculados = await _uow.Matriculas.ContarMatriculasAtivasNaTurmaAsync(dto.TurmaId);
+
+        if (!turma.TemVagaDisponivel(totalMatriculados))
+        {
+            return Result<MatriculaDtoResponse>.Falha("Turma lotada! Capacidade máxima atingida.");
+        }
         var novaMatricula = new Matricula(dto.EstudanteId, dto.TurmaId);
 
         await _uow.Matriculas.AdicionarAsync(novaMatricula);
