@@ -14,16 +14,17 @@ using System.Threading.Tasks;
 using EstudanteEntity = SistemaDeMatricula.Domain.Modelos.Estudante;
 using TurmaEntity = SistemaDeMatricula.Domain.Modelos.Turma;
 using MatriculaEntity = SistemaDeMatricula.Domain.Modelos.Matricula;
+using FluentAssertions;
 
 namespace SistemaDeMatricula.Testes.Test_Integracao.Matriculas;
 
 [Collection("ApiMatrix")]
-public class ObterAndObterByMatriculaidTestUnitario
+public class ObterAndObterByMatriculaidIntegrationTest
 {
     private readonly HttpClient _client;
     private readonly SistemaMatriculaFactory _factory; // Guardamos a factory para usar depois
 
-    public ObterAndObterByMatriculaidTestUnitario(SistemaMatriculaFactory factory)
+    public ObterAndObterByMatriculaidIntegrationTest(SistemaMatriculaFactory factory)
     {
         _factory = factory;
         _client = factory.CreateClient();
@@ -122,7 +123,10 @@ public class ObterAndObterByMatriculaidTestUnitario
     public async Task Listar_Todas_Matriculas_Quando_Não_Houver_Nenhuma()
     {
         // Arrange
-        // (Não precisamos preparar dados, pois queremos testar o cenário sem matrículas)
+        using var scope = _factory.Services.CreateScope();
+        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await contexto.Matriculas.ExecuteDeleteAsync();
+
         // Act
         var response = await _client.GetAsync("/api/matriculas");
         if (!response.IsSuccessStatusCode)
@@ -130,10 +134,13 @@ public class ObterAndObterByMatriculaidTestUnitario
             var errorContent = await response.Content.ReadAsStringAsync();
             throw new Exception($"Request falhou com status {response.StatusCode}. Conteúdo: {errorContent}");
         }
+
         response.EnsureSuccessStatusCode();
         var matriculasObtidas = await response.Content.ReadFromJsonAsync<IEnumerable<MatriculaDtoResponse>>();
+
         // Assert
         Assert.NotNull(matriculasObtidas);
         Assert.Empty(matriculasObtidas);
+        matriculasObtidas.Should().BeEmpty("Esperamos uma lista vazia quando não houver matrículas no banco.");
     }
 }

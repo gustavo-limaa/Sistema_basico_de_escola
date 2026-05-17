@@ -22,7 +22,7 @@ public sealed class DesativarMatriculaUsecase
         var matricula = await _uow.Matriculas.ObterPorIdAsync(id);
 
         if (matricula == null)
-            return Result<bool>.Falha("Matrícula não encontrada.");
+            return Result<bool>.NaoEncontrado("Matrícula não encontrada.");
 
         if (!matricula.Ativo)
             return Result<bool>.Falha("Matrícula já está desativada.");
