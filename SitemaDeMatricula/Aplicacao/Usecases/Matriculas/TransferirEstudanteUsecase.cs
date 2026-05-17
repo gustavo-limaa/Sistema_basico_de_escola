@@ -20,7 +20,7 @@ namespace SistemaDeMatricula.Aplicacao.Usecases.Matriculas
             // 1. Busca a matrícula antiga (Tracking ligado para o Desativar)
             var matriculaAntiga = await _uow.Matriculas.ObterPorIdAsync(matriculaId);
             if (matriculaAntiga == null)
-                return Result<MatriculaDtoResponse>.Falha("Matrícula original não encontrada.");
+                return Result<MatriculaDtoResponse>.NaoEncontrado("Matrícula original não encontrada.");
 
             // 2. Busca a nova turma
             var novaTurma = await _uow.Turmas.ObterPorIdAsync(novaTurmaId);

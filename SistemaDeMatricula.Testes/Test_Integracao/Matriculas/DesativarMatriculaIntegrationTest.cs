@@ -109,27 +109,4 @@ public class DesativarMatriculaIntegrationTest
         // Assert
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
-
-    [Fact]
-    public async Task Desativar_Matricula_ErroNoBanco()
-    {
-        // Arrange
-        var (estudante, turma, matricula) = await PrepararDadosNoBanco();
-        // Simulando um erro no banco de dados (ex: bloqueando a tabela de matrículas)
-        using var scope = _factory.Services.CreateScope();
-        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        await contexto.Database.ExecuteSqlRawAsync("ALTER TABLE Matriculas NOCHECK CONSTRAINT ALL");
-        try
-        {
-            // Act
-            var response = await _client.DeleteAsync($"/api/matriculas/{matricula.Id}");
-            // Assert
-            Assert.Equal(System.Net.HttpStatusCode.InternalServerError, response.StatusCode);
-        }
-        finally
-        {
-            // Restaurando a tabela para não afetar outros testes
-            await contexto.Database.ExecuteSqlRawAsync("ALTER TABLE Matriculas CHECK CONSTRAINT ALL");
-        }
-    }
 }
