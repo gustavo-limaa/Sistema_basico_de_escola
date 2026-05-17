@@ -127,4 +127,11 @@ public static class DataFactory
     {
         return TurmaFaker().Generate(quantidade);
     }
+
+    public static Faker<Matricula> MatriculaFaker => new Faker<Matricula>("pt_BR")
+        .CustomInstantiator(f =>
+        {
+            // Cria uma matrícula com IDs aleatórios em memória
+            return new Matricula(Guid.NewGuid(), Guid.NewGuid());
+        });
 }

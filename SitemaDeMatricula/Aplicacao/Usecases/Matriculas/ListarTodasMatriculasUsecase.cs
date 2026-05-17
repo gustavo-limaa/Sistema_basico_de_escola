@@ -17,13 +17,21 @@ public sealed class ListarTodasMatriculasUsecase
 
     public async Task<Result<IEnumerable<MatriculaDtoResponse>>> ExecutarAsync()
     {
-        var matriculas = await _uow.Matriculas.ListarTodasAsync();
+        try
+        {
+            var matriculas = await _uow.Matriculas.ListarTodasAsync();
 
-        if (matriculas == null)
-            return Result<IEnumerable<MatriculaDtoResponse>>.Ok(Enumerable.Empty<MatriculaDtoResponse>());
+            if (matriculas == null)
+                return Result<IEnumerable<MatriculaDtoResponse>>.Ok(Enumerable.Empty<MatriculaDtoResponse>());
 
-        var response = matriculas.ToMatriculaDtoResponseList();
+            var response = matriculas.ToMatriculaDtoResponseList();
 
-        return Result<IEnumerable<MatriculaDtoResponse>>.Ok(response);
+            return Result<IEnumerable<MatriculaDtoResponse>>.Ok(response);
+        }
+        catch (Exception ex)
+        {
+            // Agora sim o Use Case trata o erro e devolve uma falha amigável!
+            return Result<IEnumerable<MatriculaDtoResponse>>.Falha($"Ocorreu um erro ao listar as matrículas: {ex.Message}");
+        }
     }
 }
