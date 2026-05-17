@@ -30,7 +30,7 @@ public static class DataFactory
         });
 
     // No DataFactory.cs
-    public static async Task<(Estudante, Turma)> CriarCenarioDeMatriculaValido(
+    public static async Task<(Estudante estudante, Turma turma, Matricula matricula)> CriarCenarioDeMatriculaValido(
     AppDbContext contexto,
     int capacidade = 50) // <-- Adicione esse parâmetro opcional
     {
@@ -55,7 +55,7 @@ public static class DataFactory
 
         await contexto.SaveChangesAsync();
 
-        return (estudante, turma);
+        return (estudante, turma, matricula);
     }
 
     public static Faker<Disciplina> DisciplinaFaker => new Faker<Disciplina>()

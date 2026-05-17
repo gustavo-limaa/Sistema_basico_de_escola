@@ -9,6 +9,7 @@ using SistemaDeMatricula.Testes.Teste_Unitarios;
 using System.Net.Http.Json;
 using EstudanteEntity = SistemaDeMatricula.Domain.Modelos.Estudante;
 using TurmaEntity = SistemaDeMatricula.Domain.Modelos.Turma;
+using MatriculaEntity = SistemaDeMatricula.Domain.Modelos.Matricula;
 
 // No seu método, você usa o apelido:
 
@@ -48,7 +49,7 @@ public class CriarMatriculaIntegrationTest : IAsyncLifetime
         await contexto.Disciplinas.ExecuteDeleteAsync();
     }
 
-    private async Task<(EstudanteEntity, TurmaEntity)> PrepararDadosNoBanco()
+    private async Task<(EstudanteEntity, TurmaEntity, MatriculaEntity)> PrepararDadosNoBanco()
     {
         using var scope = _factory.Services.CreateScope();
         var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -58,7 +59,7 @@ public class CriarMatriculaIntegrationTest : IAsyncLifetime
     [Fact]
     public async Task Criar_Matricula_com_Sucesso()
     {
-        var (_, turma) = await PrepararDadosNoBanco(); // Ignora o estudante que já vem matriculado
+        var (_, turma, _) = await PrepararDadosNoBanco(); // Ignora o estudante que já vem matriculado
 
         // Cria um NOVO estudante que ainda não está na turma
         var novoEstudante = DataFactory.EstudanteFaker.Generate();
@@ -79,7 +80,7 @@ public class CriarMatriculaIntegrationTest : IAsyncLifetime
     public async Task Criar_Matricula_com_falha()
     {
         // Bem mais limpo!
-        var (estudante, turma) = await PrepararDadosNoBanco();
+        var (estudante, turma, matricula) = await PrepararDadosNoBanco();
 
         var dto = new MatriculaDtoCreate(Guid.NewGuid(), turma.Id);
         var postResponse = await _client.PostAsJsonAsync("/api/matriculas", dto);
@@ -91,7 +92,7 @@ public class CriarMatriculaIntegrationTest : IAsyncLifetime
     public async Task Criar_Matricula_com_falha_por_misclick()
     {
         // Bem mais limpo!
-        var (estudante, turma) = await PrepararDadosNoBanco();
+        var (estudante, turma, matricula) = await PrepararDadosNoBanco();
 
         var dto = new MatriculaDtoCreate(estudante.Id, turma.Id);
         var postResponse = await _client.PostAsJsonAsync("/api/matriculas", dto);
@@ -108,7 +109,7 @@ public class CriarMatriculaIntegrationTest : IAsyncLifetime
         var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
         // Criamos um cenário onde a turma só tem 1 vaga
-        var (alun, turma) = await DataFactory.CriarCenarioDeMatriculaValido(contexto, capacidade: 1);
+        var (alun, turma, matricula) = await DataFactory.CriarCenarioDeMatriculaValido(contexto, capacidade: 1);
 
         // CONFERÊNCIA:
         var contagemNoBanco = await contexto.Matriculas.CountAsync(m => m.TurmaId == turma.Id && m.Ativo);

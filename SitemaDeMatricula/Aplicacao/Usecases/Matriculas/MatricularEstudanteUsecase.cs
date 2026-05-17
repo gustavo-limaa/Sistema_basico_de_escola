@@ -3,6 +3,7 @@ using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
 using SistemaDeMatricula.Domain.Modelos;
+using Xunit;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
 

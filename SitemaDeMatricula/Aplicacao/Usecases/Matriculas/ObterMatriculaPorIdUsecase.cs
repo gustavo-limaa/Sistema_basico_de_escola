@@ -21,10 +21,9 @@ public sealed class ObterMatriculaPorIdUsecase
 
         var matricula = await _uow.Matriculas.ObterPorIdAsync(id);
 
-        if (matricula == null)
-            return Result<MatriculaDtoResponse>.Falha("Matrícula não encontrada.");
+        if (matricula is null)
+            return Result<MatriculaDtoResponse>.NaoEncontrado("Matrícula não encontrada.");
 
-        // 4. Retorno seguro
         return Result<MatriculaDtoResponse>.Ok(matricula.ToMatriculaDtoResponse());
     }
 }
