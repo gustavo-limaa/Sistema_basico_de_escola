@@ -3,11 +3,6 @@ using Moq;
 using SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Modelos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SistemaDeMatricula.Testes.Teste_Unitarios.MatriculasTestUnitario;
 
@@ -92,14 +87,14 @@ public class ObterAllAndObterByIdMatriculaTestUnitario
     public async Task Deve_Retornar_Falha_Quando_Obter_Matricula_Por_Id_Com_Id_Invalido()
     {
         // Arrange
-        var matriculaId = Guid.NewGuid();
+        var matriculaId = Guid.Empty;
         _uowMock.Setup(r => r.Matriculas.ObterPorIdAsync(matriculaId))
                 .ReturnsAsync((Matricula)null); // Simula matrícula não encontrada
                                                 // Act
         var resultado = await _CasoById.ExecutarAsync(matriculaId);
         // Assert
         resultado.Sucesso.Should().BeFalse();
-        resultado.Mensagem.Should().Be("Matrícula não encontrada.");
+        resultado.Mensagem.Should().Be("O identificador da matrícula é obrigatório.");
     }
 
     [Fact]
