@@ -7,6 +7,7 @@ public sealed record TurmaDtoCreate(
     Guid DisciplinaId,
     [Required(ErrorMessage = "ID do professor é obrigatório.")]
     Guid ProfessorId,
+    int CapacidadeMaxima,
     [Required] string Sigla,
     [Range(1, 2)] int Semestre,
     [Required] int AnoLetivo,

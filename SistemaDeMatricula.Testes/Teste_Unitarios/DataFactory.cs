@@ -1,11 +1,12 @@
 ﻿//SistemaDeMatricula.Testes\Teste_Unitarios\DataFactory.cs
 using Bogus;
 using Bogus.Extensions.Brazil;
-using SitemaDeMatricula.Domain.Value_Objetc;
-using SistemaDeMatricula.Domain.Modelos;
 using SistemaDeMatricula.Aplicacao.Dtos.estudante;
+using SistemaDeMatricula.Domain.Modelos;
 using SistemaDeMatricula.Domain.Uteis;
 using SistemaDeMatricula.Domain.Value_Object;
+using SistemaDeMatricula.Infraestrutura.Data;
+using SitemaDeMatricula.Domain.Value_Objetc;
 
 namespace SistemaDeMatricula.Testes.Teste_Unitarios;
 
@@ -28,12 +29,33 @@ public static class DataFactory
             );
         });
 
-    public static Matricula GerarMatricula(Guid? estudanteId = null, Guid? turmaId = null)
+    // No DataFactory.cs
+    public static async Task<(Estudante estudante, Turma turma, Matricula matricula)> CriarCenarioDeMatriculaValido(
+    AppDbContext contexto,
+    int capacidade = 50) // <-- Adicione esse parâmetro opcional
     {
-        return new Matricula(
-            estudanteId ?? Guid.NewGuid(),
-            turmaId ?? Guid.NewGuid()
-        );
+        var disciplina = DisciplinaFaker.Generate();
+        var professor = ProfessorFaker.Generate();
+        var estudante = EstudanteFaker.Generate();
+        estudante.ativar();
+
+        await contexto.Disciplinas.AddAsync(disciplina);
+        await contexto.Professores.AddAsync(professor);
+        await contexto.Estudantes.AddAsync(estudante);
+        await contexto.SaveChangesAsync();
+
+        // Agora passamos a 'capacidade' que recebemos no argumento
+        var turma = TurmaFaker(professor.Id, disciplina.Id, capacidade).Generate();
+
+        await contexto.Turmas.AddAsync(turma);
+
+        // IMPORTANTE: Para a turma estar lotada, precisamos matricular esse primeiro estudante
+        var matricula = new Matricula(estudante.Id, turma.Id);
+        await contexto.Matriculas.AddAsync(matricula);
+
+        await contexto.SaveChangesAsync();
+
+        return (estudante, turma, matricula);
     }
 
     public static Faker<Disciplina> DisciplinaFaker => new Faker<Disciplina>()
@@ -80,26 +102,36 @@ public static class DataFactory
             );
         });
 
-    public static Faker<Turma> TurmaFaker(Guid? professorId = null, Guid? disciplinaId = null)
-    => new Faker<Turma>("pt_BR")
-    .CustomInstantiator(f =>
-    {
-        // Se eu passar um ID, ele usa. Se não, ele gera um novo (útil para testes unitários)
-        var profId = professorId ?? Guid.NewGuid();
-        var discId = disciplinaId ?? Guid.NewGuid();
+    public static Faker<Turma> TurmaFaker(Guid? professorId = null, Guid? disciplinaId = null, int? capacidadeForçada = null)
+        => new Faker<Turma>("pt_BR")
+        .CustomInstantiator(f =>
+        {
+            var profId = professorId ?? Guid.NewGuid();
+            var discId = disciplinaId ?? Guid.NewGuid();
 
-        var codigo = new CodigoTurma(
-            sigla: f.Random.AlphaNumeric(3).ToUpper(),
-            ano: f.Date.Soon().Year,
-            semestre: f.Random.Int(1, 2),
-            numero: f.Random.Int(1, 999)
-        );
+            // Se 'capacidadeForçada' tiver valor (vinda do teste), usa ela.
+            // Se for null, sorteia o aleatório (mantém compatibilidade com outros testes).
+            var capacidade = capacidadeForçada ?? f.Random.Int(10, 100);
 
-        return new Turma(codigo, profId, discId);
-    });
+            var codigo = new CodigoTurma(
+                sigla: f.Random.AlphaNumeric(3).ToUpper(),
+                ano: f.Date.Soon().Year,
+                semestre: f.Random.Int(1, 2),
+                numero: f.Random.Int(1, 999)
+            );
+
+            return new Turma(codigo, profId, discId, capacidade);
+        });
 
     public static List<Turma> GerarListaDeTurmas(int quantidade = 50)
     {
         return TurmaFaker().Generate(quantidade);
     }
+
+    public static Faker<Matricula> MatriculaFaker => new Faker<Matricula>("pt_BR")
+        .CustomInstantiator(f =>
+        {
+            // Cria uma matrícula com IDs aleatórios em memória
+            return new Matricula(Guid.NewGuid(), Guid.NewGuid());
+        });
 }

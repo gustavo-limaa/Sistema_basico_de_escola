@@ -109,7 +109,9 @@ public class SoftDeleteTurmaIntegrationTest
             Sigla: dto.CodigoTurma.Sigla,
             Semestre: dto.CodigoTurma.Semestre,
             AnoLetivo: dto.CodigoTurma.Ano,
-            Numero: dto.CodigoTurma.Numero
+            Numero: dto.CodigoTurma.Numero,
+            CapacidadeMaxima: dto.CapacidadeMaxima
+
         );
 
         return turmaDto;
@@ -136,7 +138,7 @@ public class SoftDeleteTurmaIntegrationTest
         // 1. Arrange: Criar a Turma
         var (profId, discId, _) = await CriarDependenciasAsync();
         var dadosTurma = CriarTUrma();
-        var dtoTurma = new TurmaDtoCreate(discId, profId, dadosTurma.Sigla,
+        var dtoTurma = new TurmaDtoCreate(discId, profId, dadosTurma.CapacidadeMaxima, dadosTurma.Sigla,
                                           dadosTurma.Semestre, dadosTurma.AnoLetivo,
                                           dadosTurma.Numero);
 
@@ -176,7 +178,9 @@ public class SoftDeleteTurmaIntegrationTest
             Sigla: dadosturmas.Sigla,
             Semestre: dadosturmas.Semestre,
             AnoLetivo: dadosturmas.AnoLetivo,
-            Numero: dadosturmas.Numero
+            Numero: dadosturmas.Numero,
+            CapacidadeMaxima: dadosturmas.CapacidadeMaxima
+
         );
         var respTurma = await _client.PostAsJsonAsync("/api/turmas", dadosvalidos);
 
@@ -207,7 +211,9 @@ public class SoftDeleteTurmaIntegrationTest
             Sigla: dadosBase.Sigla,
             Semestre: dadosBase.Semestre,
             AnoLetivo: dadosBase.AnoLetivo,
-            Numero: dadosBase.Numero
+            Numero: dadosBase.Numero,
+            CapacidadeMaxima: dadosBase.CapacidadeMaxima
+
         );
 
         var respCriar = await _client.PostAsJsonAsync("/api/turmas", dtoCreate);

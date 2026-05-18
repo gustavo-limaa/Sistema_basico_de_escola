@@ -46,7 +46,9 @@ public class PegarAndPegarPorIdTurmaUsecases
             Sigla: dto.CodigoTurma.Sigla,
             Semestre: dto.CodigoTurma.Semestre,
             AnoLetivo: dto.CodigoTurma.Ano,
-            Numero: dto.CodigoTurma.Numero
+            Numero: dto.CodigoTurma.Numero,
+            CapacidadeMaxima: dto.CapacidadeMaxima
+
         );
 
         return turmaDto;

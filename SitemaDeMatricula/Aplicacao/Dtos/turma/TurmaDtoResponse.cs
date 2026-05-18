@@ -7,6 +7,7 @@ public sealed record TurmaDtoResponse(
     int Semestre,
     int AnoLetivo,
     int Numero,
+    int capacidadeMaxima,
     string NomeDisciplina,
     string NomeProfessor,
     bool Ativo);

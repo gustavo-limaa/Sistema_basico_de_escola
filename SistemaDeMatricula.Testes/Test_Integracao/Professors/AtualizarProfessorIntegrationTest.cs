@@ -34,12 +34,19 @@ public class AtualizarProfessorIntegrationTest : IAsyncLifetime
     // 2. DEPOIS DE CADA TESTE: Aqui é onde a mágica da limpeza acontece
     public async Task DisposeAsync()
     {
-        // Criamos um "escopo" para conseguir pegar o AppDbContext lá de dentro da API
         using var scope = _factory.Services.CreateScope();
         var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        // Agora sim! O 'contexto' existe aqui e podemos limpar a tabela
+        // 1. Apaga quem depende de todo mundo (A última ponta)
+        await contexto.Matriculas.ExecuteDeleteAsync();
+
+        // 2. Apaga as Turmas (que dependem de Professor e Disciplina)
+        await contexto.Turmas.ExecuteDeleteAsync();
+
+        // 3. Agora o banco deixa apagar as raízes
+        await contexto.Estudantes.ExecuteDeleteAsync();
         await contexto.Professores.ExecuteDeleteAsync();
+        await contexto.Disciplinas.ExecuteDeleteAsync();
     }
 
     // 1. A Fonte da Verdade: Gera o objeto do Faker que contém os dados

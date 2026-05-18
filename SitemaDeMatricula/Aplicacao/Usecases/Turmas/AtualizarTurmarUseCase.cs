@@ -48,7 +48,7 @@ public sealed class AtualizarTurmaUseCase
         if (!disciplina.Ativo)
             return Result<TurmaDtoResponse>.Falha("Disciplina não encontrada por está inativa.");
 
-        turmaParaEditar.AtualizarDados(codigoValidado, dto.ProfessorId, dto.DisciplinaId);
+        turmaParaEditar.AtualizarDados(codigoValidado, dto.ProfessorId, dto.DisciplinaId, dto.novaCapacidade);
 
         if (dto.Ativo) turmaParaEditar.Ativar(); else turmaParaEditar.Desativar();
 

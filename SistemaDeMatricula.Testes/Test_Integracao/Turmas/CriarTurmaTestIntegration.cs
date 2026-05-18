@@ -69,7 +69,8 @@ public class CriarTurmaTestIntegration : IAsyncLifetime
             Sigla: dto.CodigoTurma.Sigla,
             Semestre: dto.CodigoTurma.Semestre,
             AnoLetivo: dto.CodigoTurma.Ano,
-            Numero: dto.CodigoTurma.Numero
+            Numero: dto.CodigoTurma.Numero,
+            CapacidadeMaxima: dto.CapacidadeMaxima
         );
     }
 
@@ -98,6 +99,7 @@ public class CriarTurmaTestIntegration : IAsyncLifetime
         var turmaValida = new TurmaDtoCreate(
     discDados.DisciplinaId,
     profDados.ProfessorId,
+    30,
     "CSH",
     1, // <--- Aqui está o erro! Você passou o ANO no lugar do SEMESTRE.
     2026,    // <--- Aqui você passou o 1 no lugar do ANO.
@@ -134,6 +136,7 @@ public class CriarTurmaTestIntegration : IAsyncLifetime
         var turmaInvalida = new TurmaDtoCreate(
             discDados.DisciplinaId,
             profDados.ProfessorId,
+            123,
             "CSH",
             -1, // SEMESTRE INVÁLIDO
             2026,
@@ -162,7 +165,8 @@ public class CriarTurmaTestIntegration : IAsyncLifetime
         // 4. Tentar criar a Turma com o Professor inativo
         var turmaInvalida = new TurmaDtoCreate(
             discDados.DisciplinaId,
-            profDados.ProfessorId, // Professor inativo
+            profDados.ProfessorId,
+            1234,
             "CSH",
             1,
             2026,
@@ -192,8 +196,10 @@ public class CriarTurmaTestIntegration : IAsyncLifetime
         var turmaInvalida = new TurmaDtoCreate(
             discDados.DisciplinaId, // Disciplina inativa
             profDados.ProfessorId,
+            1234,
             "CSH",
             1,
+
             2026,
             001
         );
@@ -217,6 +223,7 @@ public class CriarTurmaTestIntegration : IAsyncLifetime
         var turmaValida = new TurmaDtoCreate(
             discDados.DisciplinaId,
             profDados.ProfessorId,
+            1231,
             "CSH",
             1,
             2026,

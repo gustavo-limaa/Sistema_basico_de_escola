@@ -80,7 +80,8 @@ public class PegarAndPegarPorIdTurmarIntegrationTest : IAsyncLifetime
             Sigla: dto.CodigoTurma.Sigla,
             Semestre: dto.CodigoTurma.Semestre,
             AnoLetivo: dto.CodigoTurma.Ano,
-            Numero: dto.CodigoTurma.Numero
+            Numero: dto.CodigoTurma.Numero,
+            CapacidadeMaxima: dto.CapacidadeMaxima
         );
 
         return turmaDto;
@@ -109,7 +110,9 @@ public class PegarAndPegarPorIdTurmarIntegrationTest : IAsyncLifetime
         var dadosFaker = CriarTUrma();
 
         var turmaParaCriar = new TurmaDtoCreate(
-        discId, profId, dadosFaker.Sigla,
+        discId, profId,
+        dadosFaker.CapacidadeMaxima,
+        dadosFaker.Sigla,
         dadosFaker.Semestre, dadosFaker.AnoLetivo,
         dadosFaker.Numero);
 
@@ -139,7 +142,8 @@ public class PegarAndPegarPorIdTurmarIntegrationTest : IAsyncLifetime
              Sigla: "",
              Semestre: -1, // Inválido!
              AnoLetivo: 1999,
-             Numero: 02131
+             Numero: 02131,
+             CapacidadeMaxima: 312
         );
 
         // Act
@@ -167,7 +171,8 @@ public class PegarAndPegarPorIdTurmarIntegrationTest : IAsyncLifetime
             Sigla: dadosFaker.Sigla,
             Semestre: dadosFaker.Semestre,
             AnoLetivo: dadosFaker.AnoLetivo,
-            Numero: dadosFaker.Numero
+            Numero: dadosFaker.Numero,
+            CapacidadeMaxima: 123
         );
 
         // 3. Act
@@ -201,7 +206,8 @@ public class PegarAndPegarPorIdTurmarIntegrationTest : IAsyncLifetime
             Sigla: dadosFaker.Sigla,
             Semestre: dadosFaker.Semestre,
             AnoLetivo: dadosFaker.AnoLetivo,
-            Numero: dadosFaker.Numero
+            Numero: dadosFaker.Numero,
+            CapacidadeMaxima: 2131
         );
 
         // 3. Act
@@ -222,8 +228,10 @@ public class PegarAndPegarPorIdTurmarIntegrationTest : IAsyncLifetime
         // Arrange
         var (profId, discId, nomeDisc) = await CriarDependenciasAsync();
         var dadosFaker = CriarTUrma();
-        var dtoCriar = new TurmaDtoCreate(discId, profId, dadosFaker.Sigla,
-                                          dadosFaker.Semestre, dadosFaker.AnoLetivo,
+        var dtoCriar = new TurmaDtoCreate(discId, profId, dadosFaker
+            .CapacidadeMaxima,
+            dadosFaker.Sigla,
+            dadosFaker.Semestre, dadosFaker.AnoLetivo,
                                           dadosFaker.Numero);
 
         var respPost = await _client.PostAsJsonAsync("/api/turmas", dtoCriar);
@@ -246,7 +254,7 @@ public class PegarAndPegarPorIdTurmarIntegrationTest : IAsyncLifetime
         // 1. Arrange: Cria a turma
         var (profId, discId, nomeDisc) = await CriarDependenciasAsync();
         var dadosFaker = CriarTUrma();
-        var dtoCriar = new TurmaDtoCreate(discId, profId, dadosFaker.Sigla,
+        var dtoCriar = new TurmaDtoCreate(discId, profId, dadosFaker.CapacidadeMaxima, dadosFaker.Sigla,
                                           dadosFaker.Semestre, dadosFaker.AnoLetivo,
                                           dadosFaker.Numero);
 

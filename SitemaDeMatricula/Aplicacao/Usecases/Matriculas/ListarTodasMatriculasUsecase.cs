@@ -2,24 +2,36 @@
 using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
+using SistemaDeMatricula.Domain.Modelos;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
 
 public sealed class ListarTodasMatriculasUsecase
 {
-    private readonly IRepositorioMatricula _matriculaRepo;
+    private readonly IUnitOfWork _uow;
 
-    public ListarTodasMatriculasUsecase(IRepositorioMatricula matriculaRepo)
+    public ListarTodasMatriculasUsecase(IUnitOfWork uow)
     {
-        _matriculaRepo = matriculaRepo;
+        _uow = uow;
     }
 
     public async Task<Result<IEnumerable<MatriculaDtoResponse>>> ExecutarAsync()
     {
-        var matriculas = await _matriculaRepo.ListarTodasAsync();
+        try
+        {
+            var matriculas = await _uow.Matriculas.ListarTodasAsync();
 
-        var response = matriculas.ToMatriculaDtoResponseList();
+            if (matriculas == null)
+                return Result<IEnumerable<MatriculaDtoResponse>>.Ok(Enumerable.Empty<MatriculaDtoResponse>());
 
-        return Result<IEnumerable<MatriculaDtoResponse>>.Ok(response);
+            var response = matriculas.ToMatriculaDtoResponseList();
+
+            return Result<IEnumerable<MatriculaDtoResponse>>.Ok(response);
+        }
+        catch (Exception ex)
+        {
+            // Agora sim o Use Case trata o erro e devolve uma falha amigável!
+            return Result<IEnumerable<MatriculaDtoResponse>>.Falha($"Ocorreu um erro ao listar as matrículas: {ex.Message}");
+        }
     }
 }

@@ -19,6 +19,7 @@ public class TurmaConfiguration : IEntityTypeConfiguration<Turma>
          )
          .HasColumnName("CodigoTurma")
          .IsRequired();
+        t.Property(x => x.CapacidadeMaxima);
 
         t.HasQueryFilter(t => t.Ativo);
 
