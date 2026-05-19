@@ -19,5 +19,7 @@ namespace SistemaDeMatricula.Domain.Interfaces
         Task<bool> SalvarAlteracoesAsync();
 
         Task<Professor?> ObterPorEmailAsync(string email);
+
+        Task<bool> ExisteTurmaAtivaParaProfessorAsync(Guid professorId);
     }
 }

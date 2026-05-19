@@ -64,4 +64,11 @@ public class RepositorioProfessor : IRepositorioProfessor
     {
         return await _context.SaveChangesAsync() > 0;
     }
+
+    public async Task<bool> ExisteTurmaAtivaParaProfessorAsync(Guid professorId)
+    {
+        return await _context.Turmas
+           .AnyAsync(t => t.ProfessorId == professorId && t.Ativo
+           );
+    }
 }

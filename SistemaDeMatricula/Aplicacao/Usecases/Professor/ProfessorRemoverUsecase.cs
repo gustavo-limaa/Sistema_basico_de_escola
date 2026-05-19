@@ -21,6 +21,8 @@ public sealed class ProfessorRemoverUsecase
 
         if (professorExistente == null)
             return Result<bool>.Falha("Professor não encontrado.");
+        if (!professorExistente.Ativo)
+            return Result<bool>.Falha("Professor já está desativado.");
 
         professorExistente.Desativar();
 
