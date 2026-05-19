@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="SistemaDeMatricula/SistemaDeMatricula.csproj" />
+  <Project Path="SistemaDeMatricula.Testes/SistemaDeMatricula.Testes.csproj" />
+</Solution>

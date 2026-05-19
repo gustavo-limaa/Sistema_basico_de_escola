@@ -1,0 +1,24 @@
+﻿version: '3.8'
+
+services:
+  db-mysql:
+    image: mysql:8.0
+    container_name: mysql-matricula
+    environment:
+      MYSQL_ROOT_PASSWORD: '158575Z'
+      MYSQL_DATABASE: 'SistemaMatricula_DB'
+    ports:
+      - "3307:3306"
+
+  api-sistema:
+    build:
+      context: .
+      dockerfile: SistemaDeMatricula/Percistencia/Docker/Dockerfile
+    container_name: api-matricula
+    ports:
+      - "8080:8080" 
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=db-mysql;Port=3306;Database=SistemaMatricula_DB;Uid=root;Pwd=158575Z;
+    depends_on:
+      - db-mysql

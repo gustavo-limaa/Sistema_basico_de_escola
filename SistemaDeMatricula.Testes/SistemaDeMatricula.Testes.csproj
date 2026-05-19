@@ -1,4 +1,5 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -6,10 +7,6 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Test_Integracao\Disciplinas\DisciplinaDto.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="35.6.5" />
@@ -24,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SitemaDeMatricula\SistemaDeMatricula.csproj" />
+    <ProjectReference Include="..\SistemaDeMatricula\SistemaDeMatricula.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,3 +29,4 @@
   </ItemGroup>
 
 </Project>
+

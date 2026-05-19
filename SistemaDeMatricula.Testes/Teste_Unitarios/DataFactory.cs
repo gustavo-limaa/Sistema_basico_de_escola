@@ -1,10 +1,13 @@
 ﻿//SistemaDeMatricula.Testes\Teste_Unitarios\DataFactory.cs
 using Bogus;
 using Bogus.Extensions.Brazil;
+using SistemaDeMatricula.Domain.Value_Object;
 using SistemaDeMatricula.Aplicacao.Dtos.estudante;
 using SistemaDeMatricula.Domain.Modelos;
 using SistemaDeMatricula.Domain.Uteis;
+
 using SistemaDeMatricula.Domain.Value_Object;
+
 using SistemaDeMatricula.Infraestrutura.Data;
 using SitemaDeMatricula.Domain.Value_Objetc;
 

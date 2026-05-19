@@ -25,10 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\APIS\Cadastro\Cadastro\Modelos\ValueObjects\ValorMonetario.cs" Link="Domain\Value_Object\ValorMonetario.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.14" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.14" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.14" />
