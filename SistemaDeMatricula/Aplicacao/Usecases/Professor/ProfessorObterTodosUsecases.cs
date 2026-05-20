@@ -14,12 +14,12 @@ public sealed class ProfessorObterTodosUsecases
         _repositorioProfessor = repositorioProfessor;
     }
 
-    public async Task<Result<IEnumerable<ProfessorDtoResponse>>> ExecutarAsync()
+    public async Task<Result<List<ProfessorDtoResponse>>> ExecutarAsync()
     {
         var professores = await _repositorioProfessor.ObterTodosAsync();
 
         var professoresDto = professores.Select(p => p.ToProfessorDtoResponse()).ToList();
 
-        return Result<IEnumerable<ProfessorDtoResponse>>.Ok(professoresDto);
+        return Result<List<ProfessorDtoResponse>>.Ok(professoresDto);
     }
 }
