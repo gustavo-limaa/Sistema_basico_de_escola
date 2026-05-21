@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace SitemaDeMatricula.Migrations
+namespace SistemaDeMatricula.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -78,6 +78,7 @@ namespace SitemaDeMatricula.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ProfessorId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     DisciplinaId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    CapacidadeMaxima = table.Column<int>(type: "int", nullable: false),
                     Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
@@ -126,6 +127,32 @@ namespace SitemaDeMatricula.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
+            migrationBuilder.CreateTable(
+                name: "notas",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Valor = table.Column<double>(type: "double", nullable: false),
+                    Importancia = table.Column<int>(type: "int", nullable: false),
+                    Descricao = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Categoria = table.Column<int>(type: "int", nullable: false),
+                    DataEmissao = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    MatriculaId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_notas", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_notas_Matriculas_MatriculaId",
+                        column: x => x.MatriculaId,
+                        principalTable: "Matriculas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Matriculas_EstudanteId_TurmaId",
                 table: "Matriculas",
@@ -136,6 +163,11 @@ namespace SitemaDeMatricula.Migrations
                 name: "IX_Matriculas_TurmaId",
                 table: "Matriculas",
                 column: "TurmaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_notas_MatriculaId",
+                table: "notas",
+                column: "MatriculaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Turmas_DisciplinaId",
@@ -151,6 +183,9 @@ namespace SitemaDeMatricula.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "notas");
+
             migrationBuilder.DropTable(
                 name: "Matriculas");
 

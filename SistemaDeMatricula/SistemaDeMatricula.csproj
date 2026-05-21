@@ -21,6 +21,8 @@
 
   <ItemGroup>
     <Compile Remove="Aplicacao\ProfessorListarTodosUsecases.cs" />
+    <Compile Remove="Migrations\20260521032108_InitialCreate.cs" />
+    <Compile Remove="Migrations\20260521032108_InitialCreate.Designer.cs" />
     <Compile Remove="WeatherForecast.cs" />
   </ItemGroup>
 
@@ -45,6 +47,10 @@
 
   <ItemGroup>
     <None Update="..\.dockerignore" Link="Percistencia\Docker\.dockerignore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

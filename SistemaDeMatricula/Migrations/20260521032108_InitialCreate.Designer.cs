@@ -10,11 +10,11 @@ using SistemaDeMatricula.Infraestrutura.Data;
 
 #nullable disable
 
-namespace SitemaDeMatricula.Migrations
+namespace SistemaDeMatricula.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260510154427_InitialFluentRefactor")]
-    partial class InitialFluentRefactor
+    [Migration("20260521032108_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -145,6 +145,41 @@ namespace SitemaDeMatricula.Migrations
                     b.ToTable("Matriculas", (string)null);
                 });
 
+            modelBuilder.Entity("SistemaDeMatricula.Domain.Modelos.Nota", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("Categoria")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DataEmissao")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Importancia")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("MatriculaId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<double>("Valor")
+                        .HasColumnType("double");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MatriculaId");
+
+                    b.ToTable("notas");
+                });
+
             modelBuilder.Entity("SistemaDeMatricula.Domain.Modelos.Professor", b =>
                 {
                     b.Property<Guid>("Id")
@@ -240,6 +275,9 @@ namespace SitemaDeMatricula.Migrations
                     b.Property<bool>("Ativo")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<int>("CapacidadeMaxima")
+                        .HasColumnType("int");
+
                     b.Property<string>("CodigoTurma")
                         .IsRequired()
                         .HasColumnType("longtext")
@@ -279,6 +317,17 @@ namespace SitemaDeMatricula.Migrations
                     b.Navigation("Turma");
                 });
 
+            modelBuilder.Entity("SistemaDeMatricula.Domain.Modelos.Nota", b =>
+                {
+                    b.HasOne("SistemaDeMatricula.Domain.Modelos.Matricula", "Matricula")
+                        .WithMany("Notas")
+                        .HasForeignKey("MatriculaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Matricula");
+                });
+
             modelBuilder.Entity("SistemaDeMatricula.Domain.Modelos.Turma", b =>
                 {
                     b.HasOne("SistemaDeMatricula.Domain.Modelos.Disciplina", "Disciplina")
@@ -306,6 +355,11 @@ namespace SitemaDeMatricula.Migrations
             modelBuilder.Entity("SistemaDeMatricula.Domain.Modelos.Estudante", b =>
                 {
                     b.Navigation("Matriculas");
+                });
+
+            modelBuilder.Entity("SistemaDeMatricula.Domain.Modelos.Matricula", b =>
+                {
+                    b.Navigation("Notas");
                 });
 
             modelBuilder.Entity("SistemaDeMatricula.Domain.Modelos.Turma", b =>

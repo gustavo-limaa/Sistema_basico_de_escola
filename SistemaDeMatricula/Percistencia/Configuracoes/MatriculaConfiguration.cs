@@ -23,5 +23,8 @@ public class MatriculaConfiguration : IEntityTypeConfiguration<Matricula>
 
         m.HasIndex(x => new { x.EstudanteId, x.TurmaId }).IsUnique();
         m.HasQueryFilter(m => m.Estudante.Ativo);
+
+        m.Metadata.FindNavigation(nameof(Matricula.Notas))
+           .SetPropertyAccessMode(PropertyAccessMode.Field);
     }
 }
