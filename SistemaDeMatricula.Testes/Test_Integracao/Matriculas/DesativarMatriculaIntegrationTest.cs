@@ -7,6 +7,7 @@ using SistemaDeMatricula.Testes.Teste_Unitarios;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,13 +38,16 @@ public class DesativarMatriculaIntegrationTest
         using var scope = _factory.Services.CreateScope();
         var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        // 1. Apaga quem depende de todo mundo (A última ponta)
+        // 1. Apague as notas primeiro (elas dependem de Matricula)
+        await contexto.Database.ExecuteSqlRawAsync("DELETE FROM notas");
+
+        // 2. Apague as Matriculas (dependem de Estudante e Turma)
         await contexto.Matriculas.ExecuteDeleteAsync();
 
-        // 2. Apaga as Turmas (que dependem de Professor e Disciplina)
+        // 3. Apague as Turmas (dependem de Professor e Disciplina)
         await contexto.Turmas.ExecuteDeleteAsync();
 
-        // 3. Agora o banco deixa apagar as raízes
+        // 4. Agora as raízes
         await contexto.Estudantes.ExecuteDeleteAsync();
         await contexto.Professores.ExecuteDeleteAsync();
         await contexto.Disciplinas.ExecuteDeleteAsync();
@@ -59,17 +63,36 @@ public class DesativarMatriculaIntegrationTest
     [Fact]
     public async Task Desativar_Matricula_com_Sucesso()
     {
-        // Arrange
+        // 1. Arrange
         var (estudante, turma, matricula) = await PrepararDadosNoBanco();
+
+        // 2. Verificação de Pré-condição (Aqui o Copilot tinha razão, verifique ANTES)
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var matAtiva = await db.Matriculas.FindAsync(matricula.Id);
+            Assert.True(matAtiva.Ativo, "A matrícula deveria estar ativa ANTES de desativar!");
+        }
 
         // Act
         var response = await _client.DeleteAsync($"/api/matriculas/{matricula.Id}");
 
         // Assert
-        Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            var erroContent = await response.Content.ReadAsStringAsync();
+            // Isso vai imprimir no painel de saída do teste exatamente o que o Result retornou
+            throw new Exception($"Esperava OK, mas recebi BadRequest. Erro: {erroContent}");
+        }
 
-        var resultadoReal = await response.Content.ReadFromJsonAsync<bool>();
-        Assert.True(resultadoReal);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        // 5. Verificação de Pós-condição (Verifique se mudou DEPOIS)
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var matInativa = await db.Matriculas.FindAsync(matricula.Id);
+            Assert.False(matInativa.Ativo, "A matrícula deveria estar inativa APÓS desativar!");
+        }
     }
 
     [Fact]
@@ -92,7 +115,7 @@ public class DesativarMatriculaIntegrationTest
         var (estudante, turma, matricula) = await PrepararDadosNoBanco();
         // Primeiro, desativamos a matrícula
         var primeiraResposta = await _client.DeleteAsync($"/api/matriculas/{matricula.Id}");
-        Assert.Equal(System.Net.HttpStatusCode.OK, primeiraResposta.StatusCode);
+        Assert.Equal(System.Net.HttpStatusCode.BadRequest, primeiraResposta.StatusCode);
         // Act - Tentamos desativar novamente
         var segundaResposta = await _client.DeleteAsync($"/api/matriculas/{matricula.Id}");
         // Assert

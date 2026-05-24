@@ -44,14 +44,14 @@ public sealed class MatriculaController : MainController
     }
 
     [HttpGet("{id:guid}/notas")]
-    public async Task<IActionResult> PegarNotas(Guid id, [FromServices] ListarTodasAsNotasUsecase usecase) =>
-        CustomResponse(await usecase.ExecuteAsAsync(id));
+    public async Task<IActionResult> PegarNotas([FromServices] ListarTodasAsNotasUsecase usecase) =>
+        CustomResponse(await usecase.ExecuteAsAsync());
 
     [HttpGet("{id:guid}/notas/{notaId:guid}")]
-    public async Task<IActionResult> PegarNotaPorId(Guid id, Guid notaId, [FromServices] ObterNotaPorIdUseCases usecase) =>
-        CustomResponse(await usecase.ExecuteAsAsync(id, notaId));
+    public async Task<IActionResult> PegarNotaPorId(Guid notaId, [FromServices] ObterNotaPorIdUseCases usecase) =>
+        CustomResponse(await usecase.ExecuteAsAsync(notaId));
 
     [HttpPut("{id:guid}/notas/{notaId:guid}")]
-    public async Task<IActionResult> AtualizarNota(Guid id, Guid notaId, [FromBody] NotaDtoUpdate notaDtoUpdate, [FromServices] AtualizarNotaUsecase usecase) =>
-        CustomResponse(await usecase.ExecuteAsAsync(id, notaId, notaDtoUpdate));
+    public async Task<IActionResult> AtualizarNota(Guid notaId, [FromBody] NotaDtoUpdate notaDtoUpdate, [FromServices] AtualizarNotaUsecase usecase) =>
+        CustomResponse(await usecase.ExecuteAsAsync(notaId, notaDtoUpdate));
 }

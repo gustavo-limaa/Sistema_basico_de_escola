@@ -2,6 +2,8 @@
 using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
+using SistemaDeMatricula.Domain.Modelos;
+using SistemaDeMatricula.Infraestrutura.Repositorios;
 using System.Security.AccessControl;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Notas;
@@ -21,15 +23,26 @@ public class AdicionarNotasMatriculaUseCase
         if (matricula == null)
             return Result<NotaDtoResponse>.NaoEncontrado("Matrícula não encontrada.");
 
-        matricula.AdicionarNota(notaDtoCreate.Valor, notaDtoCreate.Descricao, notaDtoCreate.Importancia, notaDtoCreate.Categoria);
-        var notacriada = matricula.Notas.Last();
+        // Cria a nota (Domínio)
+        var nota = new Nota
+       (
 
-        await _uow.Matriculas.AtualizarAsync(matricula);
+        valor: notaDtoCreate.Valor,
+        descricao: notaDtoCreate.Descricao,
+        importancia: notaDtoCreate.Importancia,
+        categoria: notaDtoCreate.Categoria,
+        dataEmissao: DateTime.UtcNow,
+        matriculaId: matriculaId
+       );
 
-        await _uow.CommitAsync();
+        // Adiciona de forma explícita via repositório
+        await _uow.Notas.AdicionarAsync(nota);
 
-        var notaDtoResponse = notacriada.ToNotaDtoResponse();
+        // Commit via UnitOfWork
+        var sucesso = await _uow.CommitAsync();
+        if (!sucesso)
+            return Result<NotaDtoResponse>.Falha("Erro ao salvar nota no banco.");
 
-        return Result<NotaDtoResponse>.Ok(notaDtoResponse);
+        return Result<NotaDtoResponse>.Ok(nota.ToNotaDtoResponse());
     }
 }

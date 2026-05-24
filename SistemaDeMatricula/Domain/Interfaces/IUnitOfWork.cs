@@ -1,4 +1,6 @@
-﻿namespace SistemaDeMatricula.Domain.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace SistemaDeMatricula.Domain.Interfaces;
 
 public interface IUnitOfWork : IDisposable
 {
@@ -8,6 +10,7 @@ public interface IUnitOfWork : IDisposable
     IRepositorioMatricula Matriculas { get; }
     IRepositorioProfessor Professores { get; }
     IDisciplinaRepositorio Disciplinas { get; }
+    IRepositorioNotas Notas { get; }
 
-    Task<bool> CommitAsync();
+    public Task<bool> CommitAsync();
 }

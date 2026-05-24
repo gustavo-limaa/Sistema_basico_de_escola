@@ -14,17 +14,12 @@ namespace SistemaDeMatricula.Aplicacao.Usecases.Notas
             _uow = uow;
         }
 
-        public async Task<Result<NotaDtoResponse>> ExecuteAsAsync(Guid matriculaId, Guid notaId)
+        public async Task<Result<NotaDtoResponse>> ExecuteAsAsync(Guid notaId)
         {
-            var matricula = await _uow.Matriculas.ObterPorIdAsync(matriculaId);
-            if (matricula == null)
-                return Result<NotaDtoResponse>.NaoEncontrado("Matrícula não encontrada.");
-
-            var nota = matricula.Notas.FirstOrDefault(n => n.Id == notaId);
-            if (nota == null)
-                return Result<NotaDtoResponse>.NaoEncontrado("Nota não encontrada.");
-            var notaDtoResponse = nota.ToNotaDtoResponse();
-            return Result<NotaDtoResponse>.Ok(notaDtoResponse);
+            var nota = await _uow.Notas.ObterPorId(notaId);
+            if (nota is null)
+                return Result<NotaDtoResponse>.NaoEncontrado("Nota não encontrada para a matrícula informada.");
+            return Result<NotaDtoResponse>.Ok(nota.ToNotaDtoResponse());
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using SistemaDeMatricula.Domain.Uteis;
+﻿using SistemaDeMatricula.Aplicacao.Dtos.Notas;
+using SistemaDeMatricula.Domain.Uteis;
 using SistemaDeMatricula.Domain.Value_Object;
 using System.Reflection.PortableExecutable;
 

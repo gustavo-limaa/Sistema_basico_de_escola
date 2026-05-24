@@ -15,14 +15,11 @@ public class ListarTodasAsNotasUsecase
         _uow = uow;
     }
 
-    public async Task<Result<IEnumerable<NotaDtoResponse>>> ExecuteAsAsync(Guid matriculaId)
+    public async Task<Result<IEnumerable<NotaDtoResponse>>> ExecuteAsAsync()
     {
-        var matricula = await _uow.Matriculas.ObterPorIdAsync(matriculaId);
-        if (matricula == null)
-            return Result<IEnumerable<NotaDtoResponse>>.NaoEncontrado("Matrícula não encontrada.");
+        var notas = await _uow.Notas.ListarTodasNotas
+            ();
 
-        var notasDto = matricula.Notas.Select(n => n.ToNotaDtoResponse());
-
-        return Result<IEnumerable<NotaDtoResponse>>.Ok(notasDto);
+        return Result<IEnumerable<NotaDtoResponse>>.Ok(notas.Select(n => n.ToNotaDtoResponse()));
     }
 }

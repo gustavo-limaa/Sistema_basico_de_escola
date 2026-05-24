@@ -30,12 +30,19 @@ public sealed class DesativarMatriculaUsecase
         matricula.Desativar();
 
         await _uow.Matriculas.AtualizarAsync(matricula);
+        try
+        {
+            var sucesso = await _uow.CommitAsync();
+            if (!sucesso)
+                return Result<bool>.Falha("Ocorreu um erro ao desativar a matrícula no banco de dados.");
 
-        var sucesso = await _uow.CommitAsync();
-
-        if (!sucesso)
-            return Result<bool>.Falha("Ocorreu um erro ao desativar a matrícula no banco de dados.");
-
-        return Result<bool>.Ok(true);
+            return Result<bool>.Ok(true);
+        }
+        catch (Exception ex)
+        {
+            // LOGUE O ERRO REAL AQUI
+            // Exemplo: ex.InnerException?.Message traz a causa raiz (ex: violação de FK)
+            return Result<bool>.Falha($"Erro técnico: {ex.Message} | {ex.InnerException?.Message}");
+        }
     }
 }

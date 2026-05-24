@@ -15,19 +15,15 @@ public class AtualizarNotaUsecase
         _uow = uow;
     }
 
-    public async Task<Result<NotaDtoResponse>> ExecuteAsAsync(Guid id, Guid notaid, NotaDtoUpdate Dto)
+    public async Task<Result<NotaDtoResponse>> ExecuteAsAsync(Guid notaid, NotaDtoUpdate Dto)
     {
-        var matricula = await _uow.Matriculas.ObterPorIdAsync(id);
-        if (matricula == null)
-            return Result<NotaDtoResponse>.NaoEncontrado("Matrícula não encontrada.");
-
-        var notaExistente = matricula.Notas.FirstOrDefault(n => n.Id == notaid);
-        if (notaExistente == null)
+        var nota = await _uow.Notas.ObterPorId(notaid);
+        if (nota is null)
             return Result<NotaDtoResponse>.NaoEncontrado("Nota não encontrada.");
 
-        notaExistente.AtualizarDados(Dto.Valor, Dto.Descricao ?? notaExistente.Descricao, Dto.Importancia ?? notaExistente.Importancia, Dto.Categoria ?? notaExistente.Categoria);
+        nota.AtualizarDados(Dto.Valor, Dto.Descricao ?? nota.Descricao, Dto.Importancia ?? nota.Importancia, Dto.Categoria ?? nota.Categoria);
 
         await _uow.CommitAsync();
-        return Result<NotaDtoResponse>.Ok(notaExistente.ToNotaDtoResponse());
+        return Result<NotaDtoResponse>.Ok(nota.ToNotaDtoResponse());
     }
 }

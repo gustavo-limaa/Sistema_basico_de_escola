@@ -1,6 +1,7 @@
 ﻿using SistemaDeMatricula.Aplicacao.Usecases.Disciplinas;
 using SistemaDeMatricula.Aplicacao.Usecases.Estudante;
 using SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
+using SistemaDeMatricula.Aplicacao.Usecases.Notas;
 using SistemaDeMatricula.Aplicacao.Usecases.Professor;
 using SistemaDeMatricula.Aplicacao.Usecases.Turmas;
 using SistemaDeMatricula.Domain.Interfaces;
@@ -43,6 +44,10 @@ namespace SistemaDeMatricula.Infraestrutura
             services.AddScoped<ListarTodasMatriculasUsecase>();
             services.AddScoped<ObterMatriculaPorIdUsecase>();
             services.AddScoped<TransferirEstudanteUsecase>();
+            services.AddScoped<ListarTodasAsNotasUsecase>();
+            services.AddScoped<ObterNotaPorIdUseCases>();
+            services.AddScoped<AdicionarNotasMatriculaUseCase>();
+            services.AddScoped<AtualizarNotaUsecase>();
             // Use Case
 
             // Repositório
@@ -52,6 +57,7 @@ namespace SistemaDeMatricula.Infraestrutura
             services.AddScoped<IRepositorioTurma, RepositorioTurma>();
             services.AddScoped<IRepositorioMatricula, RepositorioMatricula>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IRepositorioNotas, RepositorioNotas>();
             // Repositório
 
             return services;
