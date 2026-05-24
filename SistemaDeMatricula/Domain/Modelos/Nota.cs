@@ -20,6 +20,7 @@ namespace SistemaDeMatricula.Domain.Modelos
 
         public Nota(Guid matriculaId, TipoImportancia importancia, CategoriaAvaliacao categoria, double valor, string descricao, DateTime dataEmissao) : base()
         {
+            if (valor < 0) throw new ArgumentException("Nota nao pode ser negativa");
             MatriculaId = matriculaId;
             Importancia = importancia;
             Categoria = categoria;

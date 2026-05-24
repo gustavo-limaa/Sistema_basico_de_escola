@@ -23,6 +23,9 @@ public class AdicionarNotasMatriculaUseCase
         if (matricula == null)
             return Result<NotaDtoResponse>.NaoEncontrado("Matrícula não encontrada.");
 
+        if (!matricula.Ativo)
+            return Result<NotaDtoResponse>.Falha("Não é possível adicionar notas a uma matrícula inativa.");
+
         // Cria a nota (Domínio)
         var nota = new Nota
        (
