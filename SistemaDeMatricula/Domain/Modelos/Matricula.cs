@@ -1,6 +1,7 @@
 ﻿namespace SistemaDeMatricula.Domain.Modelos
 {
     using Microsoft.AspNetCore.Components.Web;
+    using SistemaDeMatricula.Aplicacao.Dtos.Notas;
     using SistemaDeMatricula.Domain.Uteis;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
@@ -21,7 +22,9 @@
         public IReadOnlyCollection<Nota> Notas => _notas.AsReadOnly();
         public bool Aprovado => CalcularMediaFinal() >= 6.0;
         public bool Recuperacao => CalcularMediaFinal() >= 4.0 && CalcularMediaFinal() < 6.0;
+
         public bool Reprovado => CalcularMediaFinal() < 4.0;
+
         public Double MediaFinal => CalcularMediaFinal();
 
         public Matricula(Guid estudanteId, Guid turmaId) : base()
@@ -50,7 +53,22 @@
         {
             TipoImportancia.Alta => 3,
             TipoImportancia.Media => 2,
-            _ => 1 // O Default ou Baixa valem 1
+            _ => 1
         };
+
+        public Nota AdicionarNota(double valor, string descricao, TipoImportancia importancia, CategoriaAvaliacao categoria)
+        {
+            if (valor < 0) throw new ArgumentException("Nota não pode ser negativa");
+
+            var novaNota = new Nota(this.Id, importancia, categoria, valor, descricao, DateTime.UtcNow);
+            _notas.Add(novaNota);
+
+            return novaNota;
+        }
+
+        internal NotaDtoResponse ToNotaDtoResponse()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

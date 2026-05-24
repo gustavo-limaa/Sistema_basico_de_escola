@@ -23,6 +23,7 @@
     <Compile Remove="Aplicacao\ProfessorListarTodosUsecases.cs" />
     <Compile Remove="Migrations\20260521032108_InitialCreate.cs" />
     <Compile Remove="Migrations\20260521032108_InitialCreate.Designer.cs" />
+    <Compile Remove="Percistencia\Configuracoes\NotasConfiguration.cs" />
     <Compile Remove="WeatherForecast.cs" />
   </ItemGroup>
 

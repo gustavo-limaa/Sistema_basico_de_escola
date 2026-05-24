@@ -21,7 +21,7 @@ namespace SistemaDeMatricula.Infraestrutura.Repositorios
 
         public async Task AtualizarAsync(Matricula matricula)
         {
-            _appDbContext.Matriculas.Update(matricula);
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task<int> ContarMatriculasAtivasNaTurmaAsync(Guid turmaId)
@@ -46,12 +46,12 @@ namespace SistemaDeMatricula.Infraestrutura.Repositorios
 
         public async Task<IEnumerable<Matricula>> ListarTodasAsync()
         {
-            return await _appDbContext.Matriculas.AsNoTracking().Include(m => m.Estudante).Include(m => m.Turma).ToListAsync();
+            return await _appDbContext.Matriculas.AsNoTracking().Include(m => m.Notas).Include(m => m.Estudante).Include(m => m.Turma).ToListAsync();
         }
 
         public async Task<Matricula?> ObterPorIdAsync(Guid id)
         {
-            return await _appDbContext.Matriculas.AsNoTracking().Include(m => m.Estudante).Include(m => m.Turma).FirstOrDefaultAsync(m => m.Id == id);
+            return await _appDbContext.Matriculas.Include(m => m.Notas).Include(m => m.Estudante).Include(m => m.Turma).FirstOrDefaultAsync(m => m.Id == id);
         }
     }
 }

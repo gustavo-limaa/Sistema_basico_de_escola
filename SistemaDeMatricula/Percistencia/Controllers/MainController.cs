@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using SistemaDeMatricula.Domain;
 
 namespace SistemaDeMatricula.Percistencia.Controllers;
@@ -6,11 +7,13 @@ namespace SistemaDeMatricula.Percistencia.Controllers;
 [ApiController]
 public abstract class MainController : ControllerBase
 {
-    protected ActionResult CustomResponse<T>(Result<T> result)
+    protected ActionResult CustomResponse<T>(Result<T> result, bool isCreated = false)
     {
         if (result.Sucesso)
         {
             if (result.Dados == null) return NoContent();
+
+            if (isCreated) return Created("", result.Dados); // Retorna 201
 
             return Ok(result.Dados);
         }
