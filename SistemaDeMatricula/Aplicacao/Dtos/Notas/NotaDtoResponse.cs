@@ -2,7 +2,7 @@
 
 namespace SistemaDeMatricula.Aplicacao.Dtos.Notas;
 
-public record NotaDtoResponse(
+public sealed record NotaDtoResponse(
     Guid Id,
     Guid MatriculaId,
     double Valor,

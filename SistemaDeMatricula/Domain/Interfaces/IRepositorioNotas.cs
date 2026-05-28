@@ -8,6 +8,8 @@ namespace SistemaDeMatricula.Domain.Interfaces
 
         Task AtualizarAsync(Nota nota);
 
+        IQueryable<Nota> ObterNotasporMatricula(Guid matriculaId);
+
         Task<List<Nota>> ListarTodasNotas();
 
         Task<Nota> ObterPorId(Guid id);

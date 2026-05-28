@@ -8,7 +8,7 @@ using System.Security.AccessControl;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Notas;
 
-public class AdicionarNotasMatriculaUseCase
+public sealed class AdicionarNotasMatriculaUseCase
 {
     private readonly IUnitOfWork _uow;
 

@@ -2,7 +2,7 @@
 
 namespace SistemaDeMatricula.Aplicacao.Dtos.Notas;
 
-public record NotaDtoUpdate(
+public sealed record NotaDtoUpdate(
 
    double Valor,
    string? Descricao,

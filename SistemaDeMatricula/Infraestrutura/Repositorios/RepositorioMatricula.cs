@@ -53,5 +53,10 @@ namespace SistemaDeMatricula.Infraestrutura.Repositorios
         {
             return await _appDbContext.Matriculas.Include(m => m.Notas).Include(m => m.Estudante).Include(m => m.Turma).FirstOrDefaultAsync(m => m.Id == id);
         }
+
+        public async Task<bool> ExisteAsync(Guid id)
+        {
+            return await _appDbContext.Matriculas.AnyAsync(m => m.Id == id);
+        }
     }
 }

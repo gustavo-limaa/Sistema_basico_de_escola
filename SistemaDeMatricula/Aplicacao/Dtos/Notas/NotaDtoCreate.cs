@@ -2,7 +2,7 @@
 
 namespace SistemaDeMatricula.Aplicacao.Dtos.Notas;
 
-public record NotaDtoCreate(
+public sealed record NotaDtoCreate(
 
     double Valor,
     string Descricao,

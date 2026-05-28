@@ -6,7 +6,7 @@ using SistemaDeMatricula.Domain.Uteis;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Notas;
 
-public class AtualizarNotaUsecase
+public sealed class AtualizarNotaUsecase
 {
     private readonly IUnitOfWork _uow;
 
@@ -15,11 +15,14 @@ public class AtualizarNotaUsecase
         _uow = uow;
     }
 
-    public async Task<Result<NotaDtoResponse>> ExecuteAsAsync(Guid notaid, NotaDtoUpdate Dto)
+    public async Task<Result<NotaDtoResponse>> ExecuteAsAsync(Guid matriculaId, Guid notaid, NotaDtoUpdate Dto)
     {
         var nota = await _uow.Notas.ObterPorId(notaid);
         if (nota is null)
             return Result<NotaDtoResponse>.NaoEncontrado("Nota não encontrada.");
+
+        if (nota.MatriculaId != matriculaId)
+            return Result<NotaDtoResponse>.NaoEncontrado("Nota não encontrada para a matrícula informada.");
 
         nota.AtualizarDados(Dto.Valor, Dto.Descricao ?? nota.Descricao, Dto.Importancia ?? nota.Importancia, Dto.Categoria ?? nota.Categoria);
 

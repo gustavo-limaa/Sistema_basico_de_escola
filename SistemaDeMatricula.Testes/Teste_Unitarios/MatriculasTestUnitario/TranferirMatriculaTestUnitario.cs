@@ -28,7 +28,8 @@ public class TranferirMatriculaTestUnitario
         // Arrange
         var matriculaId = Guid.NewGuid();
         var novaTurmaId = Guid.NewGuid();
-        var matriculaAntiga = new Matricula(Guid.NewGuid(), Guid.NewGuid());
+        var matriculaAntiga = new Matricula(matriculaId
+            , novaTurmaId);
         var novaTurma = DataFactory.TurmaFaker().Generate();
         _uowMock.Setup(u => u.Matriculas.ObterPorIdAsync(matriculaId))
             .ReturnsAsync(matriculaAntiga);

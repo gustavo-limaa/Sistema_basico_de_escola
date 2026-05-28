@@ -25,5 +25,7 @@ namespace SistemaDeMatricula.Infraestrutura.Repositorios
 
         public async Task<Nota?> ObterPorId(Guid id)
            => await _contexto.notas.FirstOrDefaultAsync(n => n.Id == id);
+
+        public IQueryable<Nota> ObterNotasporMatricula(Guid matriculaId) => _contexto.notas.AsNoTracking().Where(n => n.MatriculaId == matriculaId);
     }
 }

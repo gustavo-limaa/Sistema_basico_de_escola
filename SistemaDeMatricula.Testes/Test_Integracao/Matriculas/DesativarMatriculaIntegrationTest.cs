@@ -115,7 +115,7 @@ public class DesativarMatriculaIntegrationTest
         var (estudante, turma, matricula) = await PrepararDadosNoBanco();
         // Primeiro, desativamos a matrícula
         var primeiraResposta = await _client.DeleteAsync($"/api/matriculas/{matricula.Id}");
-        Assert.Equal(System.Net.HttpStatusCode.BadRequest, primeiraResposta.StatusCode);
+        Assert.Equal(System.Net.HttpStatusCode.OK, primeiraResposta.StatusCode);
         // Act - Tentamos desativar novamente
         var segundaResposta = await _client.DeleteAsync($"/api/matriculas/{matricula.Id}");
         // Assert

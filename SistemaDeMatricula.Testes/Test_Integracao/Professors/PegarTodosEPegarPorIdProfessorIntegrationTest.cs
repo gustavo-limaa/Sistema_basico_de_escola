@@ -150,7 +150,8 @@ public class PegarTodosEPegarPorIdProfessorIntegrationTest : IAsyncLifetime
 
         // Garantimos que ele está "invisível" (404)
         var responseGetInativo = await _client.GetAsync($"/api/professores/{criado.ProfessorId}");
-        responseGetInativo.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        responseGetInativo.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound
+            );
 
         // 2. Act: Chamamos a restauração (PATCH)
         var responseRestore = await _client.PatchAsync($"/api/professores/{criado.ProfessorId}/restaurar", null);

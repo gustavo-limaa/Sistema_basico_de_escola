@@ -17,5 +17,7 @@ namespace SistemaDeMatricula.Domain.Interfaces
         Task<int> ContarMatriculasAtivasNaTurmaAsync(Guid turmaId);
 
         Task<bool> ExisteQualquerMatriculaAtivaParaTurmaAsync(Guid turmaId);
+
+        Task<bool> ExisteAsync(Guid id);
     }
 }
