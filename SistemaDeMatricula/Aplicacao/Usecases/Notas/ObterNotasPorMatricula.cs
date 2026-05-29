@@ -18,7 +18,9 @@ namespace SistemaDeMatricula.Aplicacao.Usecases.Notas
 
         public async Task<Result<IEnumerable<NotaDtoResponse>>> ExecuteAsAsync(Guid matriculaId)
         {
-            // Agora o banco filtra lá no servidor!
+            if (!await _uow.Matriculas.ExisteAsync(matriculaId))
+                return Result<IEnumerable<NotaDtoResponse>>.NaoEncontrado("Matrícula não encontrada.");
+
             var notas = await _uow.Notas.ObterNotasporMatricula(matriculaId).ToListAsync();
 
             return Result<IEnumerable<NotaDtoResponse>>.Ok(notas.Select(n => n.ToNotaDtoResponse()));

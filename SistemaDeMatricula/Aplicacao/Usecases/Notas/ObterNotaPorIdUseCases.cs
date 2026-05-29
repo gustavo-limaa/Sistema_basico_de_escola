@@ -18,13 +18,12 @@ namespace SistemaDeMatricula.Aplicacao.Usecases.Notas
         {
             var nota = await _uow.Notas.ObterPorId(notaId);
 
-            if (nota.MatriculaId != matriculaId)
-                return Result<NotaDtoResponse>.NaoEncontrado("Nota não encontrada para a matrícula informada.");
-            if (nota.Id != notaId)
-                return Result<NotaDtoResponse>.NaoEncontrado("Nota não encontrada para a matrícula informada.");
-
             if (nota is null)
-                return Result<NotaDtoResponse>.NaoEncontrado("Nota não encontrada para a matrícula informada.");
+                return Result<NotaDtoResponse>.NaoEncontrado("Nota não encontrada.");
+
+            // 3. Validação de dono (Só acessa o MatriculaId SE a nota não for nula)
+            if (nota.MatriculaId != matriculaId)
+                return Result<NotaDtoResponse>.NaoEncontrado("Nota não encontrada para esta matrícula.");
             return Result<NotaDtoResponse>.Ok(nota.ToNotaDtoResponse());
         }
     }

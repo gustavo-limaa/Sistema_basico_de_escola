@@ -20,7 +20,7 @@ namespace SistemaDeMatricula.Domain.Modelos
 
         public Nota(Guid matriculaId, TipoImportancia importancia, CategoriaAvaliacao categoria, double valor, string descricao, DateTime dataEmissao) : base()
         {
-            if (valor < 0) throw new ArgumentException("Nota nao pode ser negativa");
+            if (valor < 0 || valor > 10) throw new ArgumentException("Nota nao pode ser negativa ou maior que 10");
             MatriculaId = matriculaId;
             Importancia = importancia;
             Categoria = categoria;
@@ -31,7 +31,7 @@ namespace SistemaDeMatricula.Domain.Modelos
 
         public void AtualizarDados(double valor, string descricao, TipoImportancia importancia, CategoriaAvaliacao categoria)
         {
-            if (valor < 0) throw new ArgumentException("Nota não pode ser negativa");
+            if (valor < 0 || valor > 10) throw new ArgumentException("Nota não pode ser negativa ou maior que 10");
             Valor = valor;
             Descricao = descricao;
             Importancia = importancia;

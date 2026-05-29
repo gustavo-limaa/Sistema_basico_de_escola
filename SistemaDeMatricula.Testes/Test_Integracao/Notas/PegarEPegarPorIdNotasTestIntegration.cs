@@ -140,21 +140,6 @@ public class PegarEPegarPorIdNotasTestIntegration
     }
 
     [Fact]
-    public async Task PegarTodasNotas_DeveRetornarListaVazia_QuandoNaoExistiremNotas()
-    {
-        var matricula = DataFactory.MatriculaFaker.Generate();
-
-        // 2. Act
-        var response = await _client.GetAsync($"/api/matriculas/{matricula.Id}/notas");
-        response.EnsureSuccessStatusCode();
-        var notas = await response.Content.ReadFromJsonAsync<List<NotaDtoResponse>>();
-
-        // 3. Assert
-        Assert.NotNull(notas);
-        Assert.Empty(notas); // Agora sim, deve passar!
-    }
-
-    [Fact]
     public async Task PegarNotaPorId_DeveRetornarNotFound_QuandoMatriculaNaoExistir()
     {
         // Arrange
@@ -169,12 +154,11 @@ public class PegarEPegarPorIdNotasTestIntegration
     [Fact]
     public async Task PegarTodasNotas_DeveRetornarNotFound_QuandoMatriculaNaoExistir()
     {
-        // Arrange
-        var matriculaIdInexistente = Guid.NewGuid();
-        // Act
-        var getResponse = await _client.GetAsync($"/api/matriculas/{matriculaIdInexistente}/notas");
-        // Assert
-        Assert.Equal(System.Net.HttpStatusCode.NotFound, getResponse.StatusCode);
+        var matricula = DataFactory.MatriculaFaker.Generate();
+
+        var response = await _client.GetAsync($"/api/matriculas/{matricula.Id}/notas");
+
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact]
