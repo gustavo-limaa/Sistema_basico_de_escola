@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SistemaDeMatricula.Aplicacao.Dtos.Matricola;
+using SistemaDeMatricula.Aplicacao.Dtos.Notas;
 using SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
+using SistemaDeMatricula.Aplicacao.Usecases.Notas;
 using SistemaDeMatricula.Percistencia.Controllers;
 
 [Route("api/matriculas")]
@@ -32,4 +34,28 @@ public sealed class MatriculaController : MainController
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Cancelar(Guid id, [FromServices] DesativarMatriculaUsecase usecase) =>
         CustomResponse(await usecase.ExecutarAsync(id));
+
+    // endpoint para notas
+    [HttpPost("{id:guid}/notas")]
+    public async Task<IActionResult> AdicionarNota(Guid id, [FromBody] NotaDtoCreate notaDtoCreate,
+        [FromServices] AdicionarNotasMatriculaUseCase usecase)
+    {
+        return CustomResponse(await usecase.ExecuteAsAsync(id, notaDtoCreate), isCreated: true);
+    }
+
+    [HttpGet("{id:guid}/notas")]
+    public async Task<IActionResult> PegarNotas(Guid id, [FromServices] ListarTodasAsNotasUsecase usecase) =>
+        CustomResponse(await usecase.ExecuteAsAsync(id));
+
+    [HttpGet("{id:guid}/notas/{notaId:guid}")]
+    public async Task<IActionResult> PegarNotaPorId(Guid id, Guid notaId, [FromServices] ObterNotaPorIdUseCases usecase) =>
+        CustomResponse(await usecase.ExecuteAsAsync(id, notaId));
+
+    [HttpPut("{id:guid}/notas/{notaId:guid}")]
+    public async Task<IActionResult> AtualizarNota(Guid id, Guid notaId, [FromBody] NotaDtoUpdate notaDtoUpdate, [FromServices] AtualizarNotaUsecase usecase) =>
+        CustomResponse(await usecase.ExecuteAsAsync(id, notaId, notaDtoUpdate));
+
+    [HttpGet("{matriculaId}/notas")]
+    public async Task<IActionResult> ListarNotas(Guid matriculaId, [FromServices] ObterNotasPorMatricula useCase) =>
+        CustomResponse(await useCase.ExecuteAsAsync(matriculaId));
 }

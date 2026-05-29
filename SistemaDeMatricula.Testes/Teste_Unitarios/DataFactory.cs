@@ -41,21 +41,28 @@ public static class DataFactory
         var professor = ProfessorFaker.Generate();
         var estudante = EstudanteFaker.Generate();
         estudante.ativar();
+        professor.ativar();
+        disciplina.ativar();
 
         await contexto.Disciplinas.AddAsync(disciplina);
         await contexto.Professores.AddAsync(professor);
         await contexto.Estudantes.AddAsync(estudante);
+
         await contexto.SaveChangesAsync();
 
         // Agora passamos a 'capacidade' que recebemos no argumento
         var turma = TurmaFaker(professor.Id, disciplina.Id, capacidade).Generate();
+        turma.ativar();
+
+        if (!turma.Ativo || !estudante.Ativo)
+            throw new Exception("Cenário criado com entidades inativas!");
 
         await contexto.Turmas.AddAsync(turma);
 
         // IMPORTANTE: Para a turma estar lotada, precisamos matricular esse primeiro estudante
         var matricula = new Matricula(estudante.Id, turma.Id);
+        matricula.ativar();
         await contexto.Matriculas.AddAsync(matricula);
-
         await contexto.SaveChangesAsync();
 
         return (estudante, turma, matricula);

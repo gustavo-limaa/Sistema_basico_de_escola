@@ -1,4 +1,5 @@
-﻿using SistemaDeMatricula.Domain.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Infraestrutura.Data;
 using SistemaDeMatricula.Infraestrutura.Repositorios;
 
@@ -13,8 +14,9 @@ public class UnitOfWork : IUnitOfWork
 
     private IRepositorioTurma _turmas;
     private IRepositorioMatricula _matriculas;
-    private IDisciplinaRepositorio _disciplinas; // Novo!
-    private IRepositorioProfessor _professores;  // Novo!
+    private IDisciplinaRepositorio _disciplinas;
+    private IRepositorioProfessor _professores;
+    private IRepositorioNotas _notas;
 
     public UnitOfWork(AppDbContext context)
     {
@@ -30,13 +32,29 @@ public class UnitOfWork : IUnitOfWork
 
     public IDisciplinaRepositorio Disciplinas => _disciplinas ??= new DisciplinaRepositorio(_context);
 
-    public async Task<bool> CommitAsync()
+    public IRepositorioNotas Notas => _notas ??= new RepositorioNotas(_context);
+
+    private async Task<bool> CommitAsync()
     {
-        return await _context.SaveChangesAsync() > 0;
+        try
+        {
+            return await _context.SaveChangesAsync() >= 0; // Se alterou 0 ou 1 linha, é sucesso
+        }
+        catch (DbUpdateException ex)
+        {
+            // Logue isso para ver o erro de banco real
+            System.Diagnostics.Debug.WriteLine($"ERRO DB: {ex.InnerException?.Message}");
+            throw; // Relance a exceção para o teste mostrar o erro real
+        }
     }
 
     public void Dispose()
     {
         _context.Dispose();
+    }
+
+    Task<bool> IUnitOfWork.CommitAsync()
+    {
+        return CommitAsync();
     }
 }

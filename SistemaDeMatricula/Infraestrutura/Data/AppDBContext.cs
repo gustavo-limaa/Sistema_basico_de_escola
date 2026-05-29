@@ -19,6 +19,7 @@ public class AppDbContext : DbContext
     public DbSet<Disciplina> Disciplinas { get; set; }
     public DbSet<Turma> Turmas { get; set; }
     public DbSet<Matricula> Matriculas { get; set; }
+    public DbSet<Nota> notas { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

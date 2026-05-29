@@ -1,5 +1,7 @@
 ﻿using System.Net;
 using System.Text.Json;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 
 namespace SistemaDeMatricula.Percistencia.Middleware;
 
@@ -45,7 +47,12 @@ public class GlobalExceptionMiddleware
             mensagem = exception.Message, // Aqui vai a mensagem que você escreveu no VO!
             detalhes = context.Response.StatusCode == 500 ? "Erro interno no servidor." : null
         };
+        var options = new JsonSerializerOptions
+        {
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            WriteIndented = true
+        };
 
-        return context.Response.WriteAsync(JsonSerializer.Serialize(response));
+        return context.Response.WriteAsync(JsonSerializer.Serialize(response, options));
     }
 }
