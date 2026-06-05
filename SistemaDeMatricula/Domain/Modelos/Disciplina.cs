@@ -1,4 +1,5 @@
-﻿using SistemaDeMatricula.Domain.Value_Object;
+﻿using SistemaDeMatricula.Domain.Uteis;
+using SistemaDeMatricula.Domain.Value_Object;
 using SitemaDeMatricula.Domain.Value_Objetc;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -39,9 +40,9 @@ public sealed class Disciplina : ModeloMain
     private void ValidarDados(string nome, int cargaHoraria)
     {
         if (string.IsNullOrWhiteSpace(nome))
-            throw new ArgumentException("O nome da disciplina é obrigatório.");
+            throw new DomainException("O nome da disciplina é obrigatório.");
 
         if (cargaHoraria <= 0)
-            throw new ArgumentException("A carga horária deve ser positiva.");
+            throw new DomainException("A carga horária deve ser positiva.");
     }
 }

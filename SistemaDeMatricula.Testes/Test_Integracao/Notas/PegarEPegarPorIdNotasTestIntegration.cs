@@ -131,7 +131,7 @@ public class PegarEPegarPorIdNotasTestIntegration
         // Assert
         Assert.NotNull(notasObtidas);
         Assert.Single(notasObtidas);
-        var notaObtida = notasObtidas.First();
+        var notaObtida = notasObtidas.FirstOrDefault(n => n.Id == notaCriada.Id);
         Assert.Equal(notaCriada.Id, notaObtida.Id);
         Assert.Equal(novaNota.Valor, notaObtida.Valor);
         Assert.Equal(novaNota.Descricao, notaObtida.Descricao);

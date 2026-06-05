@@ -1,4 +1,6 @@
-﻿namespace SistemaDeMatricula.Domain.Value_Object;
+﻿using SistemaDeMatricula.Domain.Uteis;
+
+namespace SistemaDeMatricula.Domain.Value_Object;
 
 public record NomeDisciplina
 {
@@ -7,10 +9,10 @@ public record NomeDisciplina
     public NomeDisciplina(string valor)
     {
         if (string.IsNullOrWhiteSpace(valor))
-            throw new ArgumentException("O nome da disciplina não pode ser vazio.");
+            throw new DomainException("O nome da disciplina não pode ser vazio.");
 
         if (valor.Length < 3 || valor.Length > 100)
-            throw new ArgumentException("O nome da disciplina deve ter entre 3 e 100 caracteres.");
+            throw new DomainException("O nome da disciplina deve ter entre 3 e 100 caracteres.");
 
         Valor = valor.Trim();
     }

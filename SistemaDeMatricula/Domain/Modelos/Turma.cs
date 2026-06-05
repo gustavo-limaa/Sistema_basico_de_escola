@@ -1,4 +1,5 @@
-﻿using SistemaDeMatricula.Domain.Value_Object;
+﻿using SistemaDeMatricula.Domain.Uteis;
+using SistemaDeMatricula.Domain.Value_Object;
 
 namespace SistemaDeMatricula.Domain.Modelos;
 
@@ -19,7 +20,7 @@ public sealed class Turma : ModeloMain
 
     public Turma(CodigoTurma codigo, Guid professorId, Guid disciplinaId, int capacidadeMaxima) : base()
     {
-        if (string.IsNullOrWhiteSpace(codigo.ValorFormatado)) throw new ArgumentException("Código da turma é obrigatório.");
+        if (string.IsNullOrWhiteSpace(codigo.ValorFormatado)) throw new DomainException("Código da turma é obrigatório.");
 
         CodigoTurma = codigo;
         ProfessorId = professorId;
@@ -42,12 +43,12 @@ public sealed class Turma : ModeloMain
     public void AtualizarDados(CodigoTurma novoCodigo, Guid novoProfessorId, Guid novaDisciplinaId, int novaCapacidade)
     {
         if (novaCapacidade <= 0)
-            throw new ArgumentException("A capacidade deve ser maior que zero.");
+            throw new DomainException("A capacidade deve ser maior que zero.");
         if (string.IsNullOrWhiteSpace(novoCodigo.ValorFormatado))
-            throw new ArgumentException("Código inválido.");
+            throw new DomainException("Código inválido.");
 
         if (novoProfessorId == Guid.Empty || novaDisciplinaId == Guid.Empty)
-            throw new ArgumentException("Professor e Disciplina são obrigatórios.");
+            throw new DomainException("Professor e Disciplina são obrigatórios.");
 
         CodigoTurma = novoCodigo;
         ProfessorId = novoProfessorId;

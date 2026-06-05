@@ -1,5 +1,6 @@
 ﻿namespace SitemaDeMatricula.Domain.Value_Objetc
 {
+    using SistemaDeMatricula.Domain.Uteis;
     using System.Text.RegularExpressions;
 
     public partial record ObjectCPF
@@ -14,7 +15,7 @@
             var (cpf, error) = Criar(valor);
 
             if (cpf is null)
-                throw new ArgumentException(error);
+                throw new DomainException(error);
 
             Valor = cpf.Valor;
         }

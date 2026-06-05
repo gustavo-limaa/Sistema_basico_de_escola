@@ -20,7 +20,12 @@ namespace SistemaDeMatricula.Domain.Modelos
 
         public Nota(Guid matriculaId, TipoImportancia importancia, CategoriaAvaliacao categoria, double valor, string descricao, DateTime dataEmissao) : base()
         {
-            if (valor < 0 || valor > 10) throw new ArgumentException("Nota nao pode ser negativa ou maior que 10");
+            if (valor < 0 || valor > 10) throw new DomainException("Nota não pode ser negativa É nem menor q 0 ou maior que 10");
+            if (string.IsNullOrWhiteSpace(descricao)) throw new DomainException("Descrição não pode ser vazia");
+            if (matriculaId == Guid.Empty) throw new DomainException("MatriculaId não pode ser vazio");
+            if (!Enum.IsDefined(typeof(TipoImportancia), importancia)) throw new DomainException("Tipo de importância inválido");
+            if (dataEmissao == DateTime.MinValue) throw new DomainException("Data de emissão inválida");
+            if (!Enum.IsDefined(typeof(CategoriaAvaliacao), categoria)) throw new DomainException("Categoria de avaliação inválida");
             MatriculaId = matriculaId;
             Importancia = importancia;
             Categoria = categoria;
@@ -31,7 +36,11 @@ namespace SistemaDeMatricula.Domain.Modelos
 
         public void AtualizarDados(double valor, string descricao, TipoImportancia importancia, CategoriaAvaliacao categoria)
         {
-            if (valor < 0 || valor > 10) throw new ArgumentException("Nota não pode ser negativa ou maior que 10");
+            if (valor < 0 || valor > 10) throw new DomainException("Nota não pode ser negativa É nem menor q 0 ou maior que 10");
+            if (string.IsNullOrWhiteSpace(descricao)) throw new DomainException("Descrição não pode ser vazia");
+            if (!Enum.IsDefined(typeof(TipoImportancia), importancia)) throw new DomainException("Tipo de importância inválido");
+            if (!Enum.IsDefined(typeof(CategoriaAvaliacao), categoria)) throw new DomainException("Categoria de avaliação inválida");
+            if (DataEmissao == DateTime.MinValue) throw new DomainException("Data de emissão inválida");
             Valor = valor;
             Descricao = descricao;
             Importancia = importancia;

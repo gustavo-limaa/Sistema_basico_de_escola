@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using SistemaDeMatricula.Domain.Uteis;
+using System.Text.RegularExpressions;
 
 namespace SitemaDeMatricula.Domain.Value_Objetc;
 
@@ -12,7 +13,7 @@ public partial record ObjectEmail
     public ObjectEmail(string valor)
     {
         var (email, error) = Criar(valor);
-        if (email == null) throw new ArgumentException(error);
+        if (email == null) throw new DomainException(error);
         Valor = email.Valor;
     }
     private ObjectEmail()

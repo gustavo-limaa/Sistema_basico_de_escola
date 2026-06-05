@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using SistemaDeMatricula.Domain.Uteis;
+using System.Text.RegularExpressions;
 
 namespace SitemaDeMatricula.Domain.Value_Objetc;
 
@@ -15,7 +16,7 @@ public partial record ObjectTelefone
     public ObjectTelefone(string valor)
     {
         var (telefone, error) = Criar(valor);
-        if (telefone is null) throw new ArgumentException(error);
+        if (telefone is null) throw new DomainException(error);
         Valor = telefone.Valor;
     }
     private ObjectTelefone()

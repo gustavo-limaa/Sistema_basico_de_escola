@@ -1,6 +1,7 @@
-﻿using System.Net;
-using System.Text.Json;
+﻿using SistemaDeMatricula.Domain.Uteis;
+using System.Net;
 using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Text.Unicode;
 
 namespace SistemaDeMatricula.Percistencia.Middleware;
@@ -33,9 +34,9 @@ public class GlobalExceptionMiddleware
     {
         context.Response.ContentType = "application/json";
 
-        // Aqui definimos o Status Code baseado no tipo do erro
         context.Response.StatusCode = exception switch
         {
+            DomainException => (int)HttpStatusCode.BadRequest,
             ArgumentException => (int)HttpStatusCode.BadRequest,    // Erro de validação dos seus VOs
             KeyNotFoundException => (int)HttpStatusCode.NotFound,   // Objeto não encontrado
             _ => (int)HttpStatusCode.InternalServerError            // Erro genérico (500)
