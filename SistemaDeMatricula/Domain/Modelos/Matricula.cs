@@ -58,17 +58,12 @@
 
         public Nota AdicionarNota(double valor, string descricao, TipoImportancia importancia, CategoriaAvaliacao categoria)
         {
-            if (valor < 0) throw new ArgumentException("Nota não pode ser negativa");
+            if (valor < 0) throw new DomainException("Nota não pode ser negativa");
 
             var novaNota = new Nota(this.Id, importancia, categoria, valor, descricao, DateTime.UtcNow);
             _notas.Add(novaNota);
 
             return novaNota;
-        }
-
-        internal NotaDtoResponse ToNotaDtoResponse()
-        {
-            throw new NotImplementedException();
         }
     }
 }

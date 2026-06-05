@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using SistemaDeMatricula.Domain.Uteis;
+using System.Text.RegularExpressions;
 
 namespace SitemaDeMatricula.Domain.Value_Objetc;
 
@@ -12,7 +13,7 @@ public partial record ObjectNomeCompleto
     public ObjectNomeCompleto(string valor)
     {
         var (nome, error) = Criar(valor);
-        if (nome is null) throw new ArgumentException(error);
+        if (nome is null) throw new DomainException(error);
         Valor = nome.Valor;
     }
 

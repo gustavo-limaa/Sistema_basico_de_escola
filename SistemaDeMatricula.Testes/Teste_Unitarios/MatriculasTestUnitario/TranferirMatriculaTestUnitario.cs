@@ -30,13 +30,17 @@ public class TranferirMatriculaTestUnitario
         var novaTurmaId = Guid.NewGuid();
         var matriculaAntiga = new Matricula(matriculaId
             , novaTurmaId);
+
         var novaTurma = DataFactory.TurmaFaker().Generate();
+
         _uowMock.Setup(u => u.Matriculas.ObterPorIdAsync(matriculaId))
             .ReturnsAsync(matriculaAntiga);
+
         _uowMock.Setup(u => u.Turmas.ObterPorIdAsync(novaTurmaId))
             .ReturnsAsync(novaTurma);
         _uowMock.Setup(u => u.Matriculas.ContarMatriculasAtivasNaTurmaAsync(novaTurmaId))
             .ReturnsAsync(29);
+
         _uowMock.Setup(u => u.CommitAsync())
             .ReturnsAsync(true);
         // Act

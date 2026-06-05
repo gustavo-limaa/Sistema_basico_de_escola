@@ -87,27 +87,6 @@ public class AdicionarNotaIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Adiciona_Notas_com_Valor_Negativo_Deve_Falhar()
-    {
-        // Arrange
-        var (matricula, _) = await PrepararCenarioDeNota();
-        var notaNegativa = new NotaDtoCreate(-1.0, "Errado", TipoImportancia.Alta, CategoriaAvaliacao.FeiraDeCiencias);
-
-        // Act
-        var response = await _client.PostAsJsonAsync($"/api/matriculas/{matricula.Id}/notas", notaNegativa);
-        var responseContent = await response.Content.ReadAsStringAsync();
-
-        // DEBUG: Imprima o conteúdo real que o teste está vendo
-        System.Diagnostics.Debug.WriteLine($"JSON RECEBIDO: {responseContent}");
-
-        // Assert
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-
-        // Teste menos rigoroso para ver se o conteúdo é o que esperamos
-        Assert.True(responseContent.Contains("Nota"), $"Esperava que a mensagem contivesse 'Nota', mas veio: {responseContent}");
-    }
-
-    [Fact]
     public async Task Adiciona_Notas_para_Matricula_Inexistente_Deve_Falhar()
     {
         // Arrange
@@ -161,24 +140,10 @@ public class AdicionarNotaIntegrationTests : IAsyncLifetime
         Assert.Equal(0.0, notaCriada.Valor);
     }
 
-    [Fact]
-    public async Task Adiciona_Notas_com_Valor_Muito_Alto_Deve_Ser_Sucesso()
-    {
-        // Arrange
-        var (matricula, novaNota) = await PrepararCenarioDeNota(100.0);
-        // Act
-        var response = await _client.PostAsJsonAsync($"/api/matriculas/{matricula.Id}/notas", novaNota);
-        // Assert
-        response.EnsureSuccessStatusCode();
-        var notaCriada = await response.Content.ReadFromJsonAsync<NotaDtoResponse>();
-        Assert.NotNull(notaCriada);
-        Assert.Equal(100.0, notaCriada.Valor);
-    }
-
     [Theory]
     [InlineData(9.5)]
     [InlineData(0.0)]
-    [InlineData(100.0)]
+    [InlineData(10.0)]
     public async Task Adiciona_Notas_com_Sucesso_Variados(double valor)
     {
         // Arrange

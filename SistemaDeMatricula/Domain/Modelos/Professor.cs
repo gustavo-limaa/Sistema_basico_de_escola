@@ -23,24 +23,18 @@ public sealed class Professor : ModeloMain
     protected Professor()
     { } // EF Core
 
-    [Required(ErrorMessage = "O nome é obrigatório.")]
     public ObjectNomeCompleto NomeCompleto { get; private set; }
 
-    [Required(ErrorMessage = "A data de nascimento é obrigatória.")]
     public ObjectDataNascimento DataNascimento { get; private set; }
 
-    [Required]
     public ObjectCPF Cpf { get; private set; }
 
-    [Required]
     public ObjectEmail Email { get; private set; }
 
     public ObjectTelefone Telefone { get; private set; }
 
-    [Required]
     public ValorMonetario Salario { get; private set; }
 
-    [Required(ErrorMessage = "A categoria/disciplina é obrigatória.")]
     public CategoriaProfessor Categoria { get; private set; }
 
     public void Desativar() => Ativo = false;
@@ -57,7 +51,7 @@ public sealed class Professor : ModeloMain
         ObjectTelefone novoTelefone)
 
     {
-        if (!Ativo) throw new ArgumentException("Não é possível atualizar um professor desativado.");
+        if (!Ativo) throw new DomainException("Não é possível atualizar um professor desativado.");
 
         NomeCompleto = novoNome;
         Email = novoEmail;

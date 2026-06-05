@@ -17,6 +17,11 @@ public sealed class AdicionarNotasMatriculaUseCase
         _uow = uow;
     }
 
+    public async Task<bool> ExecutarAsync(Guid matriculaId, NotaDtoCreate novaNota)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<Result<NotaDtoResponse>> ExecuteAsAsync(Guid matriculaId, NotaDtoCreate notaDtoCreate)
     {
         var matricula = await _uow.Matriculas.ObterPorIdAsync(matriculaId);
@@ -26,7 +31,6 @@ public sealed class AdicionarNotasMatriculaUseCase
         if (!matricula.Ativo)
             return Result<NotaDtoResponse>.Falha("Não é possível adicionar notas a uma matrícula inativa.");
 
-        // Cria a nota (Domínio)
         var nota = new Nota
        (
 
@@ -38,7 +42,6 @@ public sealed class AdicionarNotasMatriculaUseCase
         matriculaId: matriculaId
        );
 
-        // Adiciona de forma explícita via repositório
         await _uow.Notas.AdicionarAsync(nota);
 
         // Commit via UnitOfWork
