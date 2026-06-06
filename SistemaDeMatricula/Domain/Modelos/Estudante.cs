@@ -1,4 +1,5 @@
-﻿using SistemaDeMatricula.Domain.Value_Object;
+﻿using SistemaDeMatricula.Domain.Uteis;
+using SistemaDeMatricula.Domain.Value_Object;
 using SitemaDeMatricula.Domain.Value_Objetc;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -9,6 +10,8 @@ public sealed class Estudante : ModeloMain
 {
     public Estudante(Guid estudanteId, ObjectNomeCompleto nomeCompleto, ObjectDataNascimento dataNascimento, ObjectCPF cpf, ObjectEmail email, ObjectTelefone telefone) : base()
     {
+        if (estudanteId == Guid.Empty) throw new DomainException("O ID do estudante não pode ser vazio.");
+
         NomeCompleto = nomeCompleto;
         DataNascimento = dataNascimento;
         Cpf = cpf;
@@ -29,7 +32,8 @@ public sealed class Estudante : ModeloMain
 
     public ObjectTelefone Telefone { get; private set; }
 
-    public ICollection<Matricula> Matriculas { get; private set; } = new List<Matricula>();
+    private readonly List<Matricula> _matriculas = new();
+    public IReadOnlyCollection<Matricula> Matriculas => _matriculas.AsReadOnly();
 
     public void AtualizarDados(ObjectNomeCompleto nome, ObjectEmail email, ObjectDataNascimento data, ObjectTelefone telefone)
     {
@@ -37,5 +41,27 @@ public sealed class Estudante : ModeloMain
         this.Email = email;
         this.DataNascimento = data;
         this.Telefone = telefone;
+    }
+
+    public void AdicionarMatricula(Matricula matricula)
+    {
+        if (_matriculas.Any(m => m.Id == matricula.Id))
+            throw new DomainException("Já existe uma matrícula com este ID para este estudante.");
+        if (_matriculas.Any(m => m.TurmaId == matricula.TurmaId))
+            throw new DomainException("O estudante já está matriculado nesta turma.");
+        if (_matriculas.Any(m => m.TurmaId == matricula.TurmaId && m.Aprovado))
+            throw new DomainException("O estudante já foi aprovado nesta turma.");
+        _matriculas.Add(matricula);
+    }
+
+    public void RemoverMatricula(Matricula matricula)
+    {
+        // Você pode adicionar regras aqui também, se precisar
+        // Ex: "Não pode remover matrícula se já tiver nota lançada"
+
+        if (!_matriculas.Contains(matricula))
+            throw new DomainException("Esta matrícula não pertence a este estudante.");
+
+        _matriculas.Remove(matricula);
     }
 }

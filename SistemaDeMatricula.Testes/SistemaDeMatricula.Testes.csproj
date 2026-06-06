@@ -29,9 +29,5 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="TestModeloBase\" />
-  </ItemGroup>
-
 </Project>
 
