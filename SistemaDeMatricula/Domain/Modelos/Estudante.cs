@@ -44,13 +44,19 @@ public sealed class Estudante : ModeloMain
     }
 
     public void AdicionarMatricula(Matricula matricula)
+
     {
         if (_matriculas.Any(m => m.Id == matricula.Id))
             throw new DomainException("Já existe uma matrícula com este ID para este estudante.");
         if (_matriculas.Any(m => m.TurmaId == matricula.TurmaId))
             throw new DomainException("O estudante já está matriculado nesta turma.");
+        // Verifica se já existe matrícula com a mesma turma E já aprovada
         if (_matriculas.Any(m => m.TurmaId == matricula.TurmaId && m.Aprovado))
             throw new DomainException("O estudante já foi aprovado nesta turma.");
+        // Verifica recuperação apenas para a mesma turma
+        if (_matriculas.Any(m => m.TurmaId == matricula.TurmaId && m.Recuperacao))
+            throw new DomainException("O estudante está em recuperação nesta turma.");
+
         _matriculas.Add(matricula);
     }
 

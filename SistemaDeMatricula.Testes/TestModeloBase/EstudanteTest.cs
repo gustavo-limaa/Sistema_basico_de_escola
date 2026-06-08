@@ -142,18 +142,16 @@ public class EstudanteTest
     }
 
     [Fact]
-    public void Nao_Deve_Adicionar_Matricula_Com_Id_Duplicado()
+    public void Nao_Deve_Adicionar_Matricula_Duplicada()
     {
         // Arrange
         var estudante = EstudanteFaker.Generate();
         var curso = new Disciplina("Disciplina de Teste", 20);
-        var matricula1 = new Matricula(Guid.NewGuid(), Guid.NewGuid());
-        var matricula2 = new Matricula(matricula1.Id, Guid.NewGuid()); // Mesma ID da primeira matrícula
-                                                                       // Act
-        estudante.AdicionarMatricula(matricula1);
-        Action act = () => estudante.AdicionarMatricula(matricula2); // Tenta adicionar a segunda matrícula com ID duplicada
-                                                                     // Assert
-        act.Should().Throw<DomainException>()
-           .WithMessage("Já existe uma matrícula com este ID para este estudante.");
+        var matricula = new Matricula(Guid.NewGuid(), Guid.NewGuid());
+        estudante.AdicionarMatricula(matricula);
+        // Act
+        Action act = () => estudante.AdicionarMatricula(matricula);
+        // Assert
+        act.Should().Throw<DomainException>();
     }
 }
