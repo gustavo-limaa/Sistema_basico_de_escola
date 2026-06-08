@@ -1,4 +1,5 @@
 ﻿using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Uteis;
 
 namespace SistemaDeMatricula.Domain.Value_Object;
 
@@ -25,13 +26,13 @@ public sealed class CodigoTurma
     public static Result<CodigoTurma> Criar(string sigla, int ano, int semestre, int numero)
     {
         if (string.IsNullOrWhiteSpace(sigla) || sigla.Length != 3)
-            return Result<CodigoTurma>.Falha("A sigla deve ter exatamente 3 caracteres.");
+            throw new DomainException("A sigla deve ter exatamente 3 caracteres.");
 
         if (semestre != 1 && semestre != 2)
-            return Result<CodigoTurma>.Falha("O semestre deve ser 1 ou 2.");
+            throw new DomainException("O semestre deve ser 1 ou 2.");
 
         if (ano < DateTime.Now.Year)
-            return Result<CodigoTurma>.Falha("O ano não pode ser inferior ao atual.");
+            throw new DomainException("O ano não pode ser inferior ao atual.");
 
         var novoCodigo = new CodigoTurma(sigla.ToUpper(), ano, semestre, numero);
         return Result<CodigoTurma>.Ok(novoCodigo);
@@ -43,7 +44,7 @@ public sealed class CodigoTurma
         var partes = valorCompleto.Split('-');
 
         if (partes.Length != 4)
-            throw new Exception("Formato de código de turma inválido no banco de dados.");
+            throw new DomainException("Formato de código de turma inválido no banco de dados.");
 
         var sigla = partes[0];
         var ano = int.Parse(partes[1]);
