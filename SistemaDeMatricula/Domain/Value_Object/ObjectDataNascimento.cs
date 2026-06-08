@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using SistemaDeMatricula.Domain.Uteis;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SistemaDeMatricula.Domain.Value_Object;
 
@@ -23,13 +24,13 @@ public sealed class ObjectDataNascimento
     public static (ObjectDataNascimento? Data, string Error) Criar(DateOnly dataInput)
     {
         var hoje = DateOnly.FromDateTime(DateTime.Now);
-        if (dataInput > hoje) return (null, "A data de nascimento não pode ser no futuro.");
+        if (dataInput > hoje) throw new DomainException("A data de nascimento não pode ser no futuro.");
 
         int idade = hoje.Year - dataInput.Year;
         if (dataInput > hoje.AddYears(-idade)) idade--;
 
-        if (idade < 6) return (null, "O aluno deve ter no mínimo 6 anos para ser matriculado.");
-        if (idade > 120) return (null, "Data de nascimento inválida (idade limite excedida).");
+        if (idade < 6) throw new DomainException("O aluno deve ter no mínimo 6 anos para ser matriculado.");
+        if (idade > 120) throw new DomainException("Data de nascimento inválida (idade limite excedida).");
 
         return (new ObjectDataNascimento(dataInput, true), string.Empty);
     }

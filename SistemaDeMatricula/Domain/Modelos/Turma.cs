@@ -21,7 +21,10 @@ public sealed class Turma : ModeloMain
     public Turma(CodigoTurma codigo, Guid professorId, Guid disciplinaId, int capacidadeMaxima) : base()
     {
         if (string.IsNullOrWhiteSpace(codigo.ValorFormatado)) throw new DomainException("Código da turma é obrigatório.");
-
+        if (capacidadeMaxima <= 0) throw new DomainException("A capacidade deve ser maior que zero.");
+        if (professorId == Guid.Empty) throw new DomainException("O professor é obrigatório.");
+        if (disciplinaId == Guid.Empty) throw new DomainException("A disciplina é obrigatória.");
+        if (capacidadeMaxima > 500) throw new DomainException("A capacidade máxima é limitada a 500.");
         CodigoTurma = codigo;
         ProfessorId = professorId;
         DisciplinaId = disciplinaId;

@@ -16,6 +16,13 @@
         public Guid TurmaId { get; private set; }
         public Turma Turma { get; private set; } = null!;
 
+        public Matricula(Guid estudanteId, Guid turmaId) : base()
+        {
+            EstudanteId = estudanteId;
+            TurmaId = turmaId;
+            DataMatricula = DateTime.UtcNow;
+        }
+
         //Estado do estudante
         private List<Nota> _notas = new List<Nota>();
 
@@ -26,13 +33,6 @@
         public bool Reprovado => CalcularMediaFinal() < 4.0;
 
         public Double MediaFinal => CalcularMediaFinal();
-
-        public Matricula(Guid estudanteId, Guid turmaId) : base()
-        {
-            EstudanteId = estudanteId;
-            TurmaId = turmaId;
-            DataMatricula = DateTime.UtcNow;
-        }
 
         protected Matricula()
         { } // Necessário para o EF Core
