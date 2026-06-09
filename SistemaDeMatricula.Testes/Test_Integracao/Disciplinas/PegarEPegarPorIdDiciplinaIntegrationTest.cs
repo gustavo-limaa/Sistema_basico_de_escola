@@ -11,42 +11,13 @@ using System.Net.Http.Json;
 namespace SistemaDeMatricula.Testes.Test_Integracao.Disciplinas;
 
 [Collection("ApiMatrix")]
-public class PegarEPegarPorIdDiciplinaIntegrationTest : IAsyncLifetime
+public class PegarEPegarPorIdDiciplinaIntegrationTest : IntegrationTestBase, IAsyncLifetime
 {
-    private readonly HttpClient _client;
-    private readonly SistemaMatriculaFactory _factory;
-
-    public PegarEPegarPorIdDiciplinaIntegrationTest(SistemaMatriculaFactory factory)
+    public PegarEPegarPorIdDiciplinaIntegrationTest(SistemaMatriculaFactory factory) : base(factory)
     {
-        _factory = factory;
-        _client = factory.CreateClient();
     }
 
     private List<Disciplina> _disciplinasSeed = new();
-
-    public async Task InitializeAsync()
-    {
-        // Criamos um escopo para acessar o banco antes do teste começar
-        using var scope = _factory.Services.CreateScope();
-        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        // 1. Geramos 3 disciplinas fakes
-        _disciplinasSeed = DataFactory.DisciplinaFaker.Generate(3);
-
-        // 2. Salvamos no banco
-        await contexto.Disciplinas.AddRangeAsync(_disciplinasSeed);
-        await contexto.SaveChangesAsync();
-    }
-
-    // A faxina depois de cada GET
-    public async Task DisposeAsync()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        // Limpa a tabela para o próximo teste de GET entrar no banco vazio
-        await contexto.Disciplinas.ExecuteDeleteAsync();
-    }
 
     [Fact]
     public async Task Deve_Retornar_Lista_De_Disciplinas_Ativas()

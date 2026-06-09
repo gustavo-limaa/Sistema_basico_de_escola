@@ -15,28 +15,10 @@ using System.Threading.Tasks;
 namespace SistemaDeMatricula.Testes.Test_Integracao.Estudante;
 
 [Collection("ApiMatrix")] // <--- Não esqueça de entrar na mesma "Matrix"
-public class GetsEstudanteIntegrationTest : IAsyncLifetime // <--- O segredo da limpeza
+public class GetsEstudanteIntegrationTest : IntegrationTestBase, IAsyncLifetime // <--- O segredo da limpeza
 {
-    private readonly HttpClient _client;
-    private readonly SistemaMatriculaFactory _factory;
-
-    public GetsEstudanteIntegrationTest(SistemaMatriculaFactory factory)
+    public GetsEstudanteIntegrationTest(SistemaMatriculaFactory factory) : base(factory)
     {
-        _factory = factory;
-        _client = factory.CreateClient();
-    }
-
-    // O que fazer antes de cada teste de GET
-    public Task InitializeAsync() => Task.CompletedTask;
-
-    // A faxina depois de cada GET
-    public async Task DisposeAsync()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        // Limpa a tabela para o próximo teste de GET entrar no banco vazio
-        await contexto.Estudantes.ExecuteDeleteAsync();
     }
 
     [Fact]

@@ -13,34 +13,10 @@ using System.Net.Http.Json;
 namespace SistemaDeMatricula.Testes.Test_Integracao.Turmas;
 
 [Collection("ApiMatrix")]
-public class PegarAndPegarPorIdTurmarIntegrationTest : IAsyncLifetime
+public class PegarAndPegarPorIdTurmarIntegrationTest : IntegrationTestBase, IAsyncLifetime
 {
-    private readonly HttpClient _client;
-    private readonly SistemaMatriculaFactory _factory; // Guardamos a factory para usar depois
-
-    public PegarAndPegarPorIdTurmarIntegrationTest(SistemaMatriculaFactory factory)
+    public PegarAndPegarPorIdTurmarIntegrationTest(SistemaMatriculaFactory factory) : base(factory)
     {
-        _factory = factory;
-        _client = factory.CreateClient();
-    }
-
-    // 1. ANTES DE CADA TESTE: Não precisamos de nada especial aqui
-    public Task InitializeAsync() => Task.CompletedTask;
-
-    // 2. DEPOIS DE CADA TESTE: Aqui é onde a mágica da limpeza acontece
-    public async Task DisposeAsync()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        // 1. Limpa as Turmas ignorando qualquer filtro (pega as inativas também!)
-        await contexto.Turmas
-            .IgnoreQueryFilters()
-            .ExecuteDeleteAsync();
-
-        // 2. Agora sim, os pais podem ser removidos com segurança
-        await contexto.Professores.ExecuteDeleteAsync();
-        await contexto.Disciplinas.ExecuteDeleteAsync();
     }
 
     private ProfessorDtoCreate CriarDtoValido()

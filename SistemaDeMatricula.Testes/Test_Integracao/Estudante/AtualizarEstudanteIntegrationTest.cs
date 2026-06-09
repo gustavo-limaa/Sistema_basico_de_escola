@@ -15,29 +15,10 @@ using System.Threading.Tasks;
 namespace SistemaDeMatricula.Testes.Test_Integracao.Estudante;
 
 [Collection("ApiMatrix")]
-public class AtualizarEstudanteIntegrationTest : IAsyncLifetime
+public class AtualizarEstudanteIntegrationTest : IntegrationTestBase, IAsyncLifetime
 {
-    private readonly HttpClient _client;
-    private readonly SistemaMatriculaFactory _factory;
-
-    public AtualizarEstudanteIntegrationTest(SistemaMatriculaFactory factory)
-    {
-        _factory = factory;
-        _client = factory.CreateClient();
-    }
-
-    // O que fazer antes de cada teste de GET
-    public Task InitializeAsync() => Task.CompletedTask;
-
-    // A faxina depois de cada GET
-    public async Task DisposeAsync()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        // Limpa a tabela para o próximo teste de GET entrar no banco vazio
-        await contexto.Estudantes.ExecuteDeleteAsync();
-    }
+    public AtualizarEstudanteIntegrationTest(SistemaMatriculaFactory factory) : base(factory)
+    { }
 
     [Fact]
     public async Task Deve_Atualizar_Estudante_Quando_Id_Existir_No_Banco()

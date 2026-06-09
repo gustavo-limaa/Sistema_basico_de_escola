@@ -15,39 +15,12 @@ using TurmaEntity = SistemaDeMatricula.Domain.Modelos.Turma;
 namespace SistemaDeMatricula.Testes.Test_Integracao.Notas;
 
 [Collection("ApiMatrix")]
-public class AdicionarNotaIntegrationTests : IAsyncLifetime
+public class AdicionarNotaIntegrationTests : IntegrationTestBase, IAsyncLifetime
 {
-    private readonly HttpClient _client;
-    private readonly SistemaMatriculaFactory _factory; // Guardamos a factory para usar depois
-
-    public AdicionarNotaIntegrationTests(SistemaMatriculaFactory factory)
+    public AdicionarNotaIntegrationTests(SistemaMatriculaFactory factory) : base(factory)
     {
-        _factory = factory;
-        _client = factory.CreateClient();
     }
 
-    // 1. ANTES DE CADA TESTE: Não precisamos de nada especial aqui
-    public Task InitializeAsync() => Task.CompletedTask;
-
-    // 2. DEPOIS DE CADA TESTE: Aqui é onde a mágica da limpeza acontece
-    public async Task DisposeAsync()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        // 1. Apaga quem depende de todo mundo (A última ponta)
-        await contexto.Matriculas.ExecuteDeleteAsync();
-
-        // 2. Apaga as Turmas (que dependem de Professor e Disciplina)
-        await contexto.Turmas.ExecuteDeleteAsync();
-
-        // 3. Agora o banco deixa apagar as raízes
-        await contexto.Estudantes.ExecuteDeleteAsync();
-        await contexto.Professores.ExecuteDeleteAsync();
-        await contexto.Disciplinas.ExecuteDeleteAsync();
-    }
-
-    // Dentro da classe de teste ou de uma classe auxiliar (ex: TestDataBuilder)
     private async Task<(Matricula matricula, NotaDtoCreate novaNota)> PrepararCenarioDeNota(double valor = 9.5)
     {
         var (estudante, turma, matricula) = await PrepararDadosNoBanco();

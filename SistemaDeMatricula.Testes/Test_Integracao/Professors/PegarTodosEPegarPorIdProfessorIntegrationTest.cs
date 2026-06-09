@@ -15,54 +15,13 @@ using System.Threading.Tasks;
 namespace SistemaDeMatricula.Testes.Test_Integracao.Professors;
 
 [Collection("ApiMatrix")]
-public class PegarTodosEPegarPorIdProfessorIntegrationTest : IAsyncLifetime
+public class PegarTodosEPegarPorIdProfessorIntegrationTest : IntegrationTestBase, IAsyncLifetime
 {
-    private readonly HttpClient _client;
-    private readonly SistemaMatriculaFactory _factory; // Guardamos a factory para usar depois
-
-    public PegarTodosEPegarPorIdProfessorIntegrationTest(SistemaMatriculaFactory factory)
+    public PegarTodosEPegarPorIdProfessorIntegrationTest(SistemaMatriculaFactory factory) : base(factory)
     {
-        _factory = factory;
-        _client = factory.CreateClient();
     }
 
     // 1. ANTES DE CADA TESTe: Aqui é onde a mágica da preparação acontece
-    public async Task InitializeAsync()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        // 1. Geramos 10 professores usando o seu Bogus
-        var listaProfessores = DataFactory.ProfessorFaker.Generate(10);
-
-        // 2. "Macete": Desativamos 3 professores da lista
-        // Isso serve para testar se o GET ignora os inativos automaticamente
-        listaProfessores[0].Desativar();
-        listaProfessores[1].Desativar();
-        listaProfessores[2].Desativar();
-
-        // 3. Salvamos no banco de teste
-        await contexto.Professores.AddRangeAsync(listaProfessores);
-        await contexto.SaveChangesAsync();
-    }
-
-    // 2. DEPOIS DE CADA TESTE: Aqui é onde a mágica da limpeza acontece
-    public async Task DisposeAsync()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        // 1. Apaga quem depende de todo mundo (A última ponta)
-        await contexto.Matriculas.ExecuteDeleteAsync();
-
-        // 2. Apaga as Turmas (que dependem de Professor e Disciplina)
-        await contexto.Turmas.ExecuteDeleteAsync();
-
-        // 3. Agora o banco deixa apagar as raízes
-        await contexto.Estudantes.ExecuteDeleteAsync();
-        await contexto.Professores.ExecuteDeleteAsync();
-        await contexto.Disciplinas.ExecuteDeleteAsync();
-    }
 
     private ProfessorDtoCreate CriarDtoValido()
     {

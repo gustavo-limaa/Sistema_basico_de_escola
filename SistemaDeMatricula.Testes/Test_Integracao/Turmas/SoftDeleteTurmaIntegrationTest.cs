@@ -19,37 +19,10 @@ using System.Threading.Tasks;
 namespace SistemaDeMatricula.Testes.Test_Integracao.Turmas;
 
 [Collection("ApiMatrix")]
-public class SoftDeleteTurmaIntegrationTest
+public class SoftDeleteTurmaIntegrationTest : IntegrationTestBase
 {
-    private readonly HttpClient _client;
-    private readonly SistemaMatriculaFactory _factory; // Guardamos a factory para usar depois
-
-    public SoftDeleteTurmaIntegrationTest(SistemaMatriculaFactory factory)
+    public SoftDeleteTurmaIntegrationTest(SistemaMatriculaFactory factory) : base(factory)
     {
-        _factory = factory;
-        _client = factory.CreateClient();
-    }
-
-    // 1. ANTES DE CADA TESTE: Não precisamos de nada especial aqui
-    public Task InitializeAsync() => Task.CompletedTask;
-
-    // 2. DEPOIS DE CADA TESTE: Aqui é onde a mágica da limpeza acontece
-    public async Task DisposeAsync()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        // 1. O "neto" primeiro: Matrículas são as primeiras a sair
-        // Use o IgnoreQueryFilters aqui também para garantir que nada escape
-        await contexto.Matriculas.IgnoreQueryFilters().ExecuteDeleteAsync();
-
-        // 2. O "filho": Agora as Turmas podem ir embora com segurança
-        await contexto.Turmas.IgnoreQueryFilters().ExecuteDeleteAsync();
-
-        // 3. Os "pais": Por fim, limpamos as entidades base
-        await contexto.Professores.ExecuteDeleteAsync();
-        await contexto.Disciplinas.ExecuteDeleteAsync();
-        await contexto.Estudantes.ExecuteDeleteAsync();
     }
 
     private async Task<EstudanteDtoResponse> CriarEstudanteAsync()
