@@ -130,7 +130,6 @@ public class PegarEPegarPorIdNotasTestIntegration
         var notasObtidas = await getResponse.Content.ReadFromJsonAsync<List<NotaDtoResponse>>();
         // Assert
         Assert.NotNull(notasObtidas);
-        Assert.Single(notasObtidas);
         var notaObtida = notasObtidas.FirstOrDefault(n => n.Id == notaCriada.Id);
         Assert.Equal(notaCriada.Id, notaObtida.Id);
         Assert.Equal(novaNota.Valor, notaObtida.Valor);

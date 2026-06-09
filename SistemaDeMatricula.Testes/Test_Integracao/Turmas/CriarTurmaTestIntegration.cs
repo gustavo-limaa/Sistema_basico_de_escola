@@ -223,7 +223,7 @@ public class CriarTurmaTestIntegration : IAsyncLifetime
         var turmaValida = new TurmaDtoCreate(
             discDados.DisciplinaId,
             profDados.ProfessorId,
-            1231,
+            499,
             "CSH",
             1,
             2026,
@@ -233,6 +233,7 @@ public class CriarTurmaTestIntegration : IAsyncLifetime
         resposta1.EnsureSuccessStatusCode();
         // 3. Tentar criar a mesma Turma novamente (mesmo código)
         var resposta2 = await _client.PostAsJsonAsync("/api/turmas", turmaValida);
-        resposta2.StatusCode.Should().Be(HttpStatusCode.Conflict);
+        resposta2.StatusCode.Should().Be(HttpStatusCode.Conflict
+            );
     }
 }

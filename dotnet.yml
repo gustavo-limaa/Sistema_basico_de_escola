@@ -1,0 +1,40 @@
+name: .NET CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }} 
+          MYSQL_DATABASE: SistemaMatricula_Testes_DB
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --no-restore
+      
+    - name: Test
+      env:
+        ConnectionStrings__DefaultConnection: "Server=127.0.0.1;Port=3306;Database=SistemaMatricula_Testes_DB;Uid=root;Pwd=${{ secrets.DB_PASSWORD }};"
+      run: dotnet test --no-build --verbosity normal
