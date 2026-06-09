@@ -38,5 +38,5 @@ jobs:
       
     - name: Test
       env:
-        ConnectionStrings__DefaultConnection: "Server=127.0.0.1;Port=3306;Database=SistemaMatricula_Testes_DB;Uid=root;Pwd=${{secrets.DB_PASSWORD}};"
+       ConnectionStrings__DefaultConnection: "Server=127.0.0.1;Port=3306;Database=SistemaMatricula_Testes_DB;Uid=root;Pwd=rootpassword;"
       run: dotnet test --no-build --verbosity normal

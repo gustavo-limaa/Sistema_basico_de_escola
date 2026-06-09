@@ -13,19 +13,28 @@ public class SistemaMatriculaFactory : WebApplicationFactory<Program>, IAsyncLif
     {
         builder.ConfigureAppConfiguration((context, config) =>
         {
-            // 1. O .NET monta as configurações (lê appsettings, segredos, etc.)
+            // Adiciona suporte a variáveis de ambiente (essencial para o GitHub Actions)
+            config.AddEnvironmentVariables();
+
             var settings = config.Build();
 
-            // 2. Buscamos a string de conexão que você criou no secrets.json
-            var connectionString = settings.GetConnectionString("TestConnection");
+            // Tenta buscar "TestConnection" ou cai na "DefaultConnection"
+            var connectionString = settings.GetConnectionString("TestConnection")
+                                   ?? settings.GetConnectionString("DefaultConnection");
 
-            // 3. "Enganamos" a API: dizemos que a DefaultConnection dela
-            // agora é o valor que pegamos do nosso banco de testes.
-            config.AddInMemoryCollection(new Dictionary<string, string>
+            // Se, mesmo assim, for nulo, significa que algo correu mal no pipeline
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new Exception("String de conexão não encontrada! Verifique o ambiente.");
+            }
+
+            config.AddInMemoryCollection(new Dictionary<string, string?>
         {
-            { "ConnectionStrings:DefaultConnection", connectionString! }
-        });
-        });
+            { "ConnectionStrings:DefaultConnection", connectionString }
+        }
+            );
+        }
+        );
     }
 
     public async Task InitializeAsync()
@@ -33,7 +42,6 @@ public class SistemaMatriculaFactory : WebApplicationFactory<Program>, IAsyncLif
         using var scope = Services.CreateScope();
         var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        // CRIA O BANCO UMA ÚNICA VEZ PARA TODA A BATERIA DE TESTES
         await contexto.Database.EnsureCreatedAsync();
     }
 
