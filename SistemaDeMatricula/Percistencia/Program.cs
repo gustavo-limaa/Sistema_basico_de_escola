@@ -25,7 +25,12 @@ builder.Services.AddDbContext<AppDbContext>((provider, options) =>
 });
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (!app.Environment.IsEnvironment("Testing")) // Ajuste conforme o nome do seu ambiente
+{
+    app.UseHttpsRedirection();
+}
+
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Testing"))
 {
     app.MapOpenApi();
 
@@ -40,7 +45,6 @@ if (app.Environment.IsDevelopment())
 app.MapGet("/api/teste", () => "O servidor está ouvindo!").WithName("Teste");
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
-app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 

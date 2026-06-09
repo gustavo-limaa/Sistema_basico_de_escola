@@ -18,6 +18,7 @@ public class SistemaMatriculaFactory : WebApplicationFactory<Program>, IAsyncLif
 
             // 2. Adiciona variáveis de ambiente (onde o GitHub injeta a string)
             config.AddEnvironmentVariables();
+            builder.UseEnvironment("Development");
 
             // 3. Opcional: Adiciona o json apenas se existir
             config.AddJsonFile("appsettings.json", optional: true);

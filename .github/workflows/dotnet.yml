@@ -38,6 +38,7 @@ jobs:
       
     - name: Test
       env:
-        # O .NET converte '__' (dois underscores) em ':' (dois pontos) automaticamente
+        ASPNETCORE_ENVIRONMENT: "Testing"
+        ASPNETCORE_URLS: "http://localhost" # Força o uso de HTTP
         ConnectionStrings__DefaultConnection: "Server=127.0.0.1;Port=3306;Database=SistemaMatricula_Testes_DB;Uid=root;Pwd=rootpassword;"
       run: dotnet test --no-build --verbosity normal
