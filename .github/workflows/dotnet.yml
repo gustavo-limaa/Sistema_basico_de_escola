@@ -40,4 +40,5 @@ jobs:
       env:
         ASPNETCORE_ENVIRONMENT: "Development"
         ConnectionStrings__DefaultConnection: "Server=127.0.0.1;Port=3306;Database=SistemaMatricula_Testes_DB;Uid=root;Pwd=rootpassword;"
-      run: dotnet test --no-build --verbosity normal
+        
+      run: dotnet test --no-build --verbosity normal --logger "console;verbosity=detailed"
