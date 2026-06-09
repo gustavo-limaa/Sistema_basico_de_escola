@@ -13,27 +13,25 @@ public class SistemaMatriculaFactory : WebApplicationFactory<Program>, IAsyncLif
     {
         builder.ConfigureAppConfiguration((context, config) =>
         {
-            // Adiciona suporte a variáveis de ambiente (essencial para o GitHub Actions)
+            // 1. Limpa fontes de configuração para evitar conflito com arquivos locais
+            config.Sources.Clear();
+
+            // 2. Adiciona variáveis de ambiente (onde o GitHub injeta a string)
             config.AddEnvironmentVariables();
+
+            // 3. Opcional: Adiciona o json apenas se existir
+            config.AddJsonFile("appsettings.json", optional: true);
 
             var settings = config.Build();
 
-            // Tenta buscar "TestConnection" ou cai na "DefaultConnection"
-            var connectionString = settings.GetConnectionString("DefaultConnection");
+            // 4. Força a leitura da string que injetamos
+            var connectionString = settings["ConnectionStrings:DefaultConnection"];
 
-            // Se, mesmo assim, for nulo, significa que algo correu mal no pipeline
             if (string.IsNullOrEmpty(connectionString))
             {
-                throw new Exception("String de conexão não encontrada! Verifique o ambiente.");
+                throw new Exception("CONFIGURAÇÃO FALHOU: ConnectionString está vazia!");
             }
-
-            config.AddInMemoryCollection(new Dictionary<string, string?>
-        {
-            { "ConnectionStrings:DefaultConnection", connectionString }
-        }
-            );
-        }
-        );
+        });
     }
 
     public async Task InitializeAsync()

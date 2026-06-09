@@ -38,7 +38,6 @@ jobs:
       
     - name: Test
       env:
-        ASPNETCORE_ENVIRONMENT: "Development"
+        # O .NET converte '__' (dois underscores) em ':' (dois pontos) automaticamente
         ConnectionStrings__DefaultConnection: "Server=127.0.0.1;Port=3306;Database=SistemaMatricula_Testes_DB;Uid=root;Pwd=rootpassword;"
-        
-      run: dotnet test --no-build --verbosity normal --logger "console;verbosity=detailed"
+      run: dotnet test --no-build --verbosity normal
