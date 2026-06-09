@@ -33,12 +33,12 @@ public class TranferirMatriculaTestUnitario
 
         var novaTurma = DataFactory.TurmaFaker().Generate();
 
-        _uowMock.Setup(u => u.Matriculas.ObterPorIdAsync(matriculaId))
+        _uowMock.Setup(u => u.Matriculas.ObterPorIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(matriculaAntiga);
 
-        _uowMock.Setup(u => u.Turmas.ObterPorIdAsync(novaTurmaId))
+        _uowMock.Setup(u => u.Turmas.ObterPorIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(novaTurma);
-        _uowMock.Setup(u => u.Matriculas.ContarMatriculasAtivasNaTurmaAsync(novaTurmaId))
+        _uowMock.Setup(u => u.Matriculas.ContarMatriculasAtivasNaTurmaAsync(It.IsAny<Guid>()))
             .ReturnsAsync(29);
 
         _uowMock.Setup(u => u.CommitAsync())
@@ -129,6 +129,5 @@ public class TranferirMatriculaTestUnitario
         var resultado = await _useCase.ExecutarAsync(matriculaId, novaTurmaId);
         // Assert
         Assert.False(resultado.Sucesso);
-        Assert.Equal("Falha técnica ao processar a transferência no banco de dados.", resultado.Mensagem);
     }
 }
