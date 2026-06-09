@@ -19,8 +19,7 @@ public class SistemaMatriculaFactory : WebApplicationFactory<Program>, IAsyncLif
             var settings = config.Build();
 
             // Tenta buscar "TestConnection" ou cai na "DefaultConnection"
-            var connectionString = settings.GetConnectionString("TestConnection")
-                                   ?? settings.GetConnectionString("DefaultConnection");
+            var connectionString = settings.GetConnectionString("DefaultConnection");
 
             // Se, mesmo assim, for nulo, significa que algo correu mal no pipeline
             if (string.IsNullOrEmpty(connectionString))
