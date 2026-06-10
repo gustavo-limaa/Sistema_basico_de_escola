@@ -24,26 +24,30 @@ public class TranferirMatriculaTestUnitario
 
     [Fact]
     public async Task ExecutarAsync_Deve_Transferir_Matricula_Com_Sucesso()
-    {
-        // Arrange
+    {// Arrange
         var matriculaId = Guid.NewGuid();
         var novaTurmaId = Guid.NewGuid();
-        var matriculaAntiga = new Matricula(matriculaId
-            , novaTurmaId);
+        var turmaantiga = Guid.NewGuid();
 
+        var matriculaAntiga = new Matricula(matriculaId, turmaantiga);
+
+        // Geramos a turma fake e forçamos o ID dela a ser exatamente o 'novaTurmaId'
         var novaTurma = DataFactory.TurmaFaker().Generate();
+        // Se a sua entidade permitir alterar o Id (ou se passar pelo construtor do Faker), garanta que:
+        // novaTurma.Id = novaTurmaId;
 
-        _uowMock.Setup(u => u.Matriculas.ObterPorIdAsync(It.IsAny<Guid>()))
+        _uowMock.Setup(u => u.Matriculas.ObterPorIdAsync(matriculaId))
             .ReturnsAsync(matriculaAntiga);
 
-        _uowMock.Setup(u => u.Turmas.ObterPorIdAsync(It.IsAny<Guid>()))
+        _uowMock.Setup(u => u.Turmas.ObterPorIdAsync(novaTurmaId)) // Espera o ID correto da nova turma
             .ReturnsAsync(novaTurma);
-        _uowMock.Setup(u => u.Matriculas.ContarMatriculasAtivasNaTurmaAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(29);
+
+        _uowMock.Setup(u => u.Matriculas.ContarMatriculasAtivasNaTurmaAsync(novaTurmaId))
+            .ReturnsAsync(0); // Turma com 0 alunos, espaço de sobra!
 
         _uowMock.Setup(u => u.CommitAsync())
             .ReturnsAsync(true);
-        // Act
+        //ACT
         var resultado = await _useCase.ExecutarAsync(matriculaId, novaTurmaId);
         // Assert
         Assert.True(resultado.Sucesso);
