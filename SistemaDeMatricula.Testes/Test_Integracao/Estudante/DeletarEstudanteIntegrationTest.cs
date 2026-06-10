@@ -15,29 +15,10 @@ using System.Threading.Tasks;
 namespace SistemaDeMatricula.Testes.Test_Integracao.Estudante;
 
 [Collection("ApiMatrix")]
-public class DeletarEstudanteIntegrationTest : IAsyncLifetime
+public class DeletarEstudanteIntegrationTest : IntegrationTestBase, IAsyncLifetime
 {
-    private readonly HttpClient _client;
-    private readonly SistemaMatriculaFactory _factory; // Guardamos a factory para usar depois
-
-    public DeletarEstudanteIntegrationTest(SistemaMatriculaFactory factory)
+    public DeletarEstudanteIntegrationTest(SistemaMatriculaFactory factory) : base(factory)
     {
-        _factory = factory;
-        _client = factory.CreateClient();
-    }
-
-    // 1. ANTES DE CADA TESTE: Não precisamos de nada especial aqui
-    public Task InitializeAsync() => Task.CompletedTask;
-
-    // 2. DEPOIS DE CADA TESTE: Aqui é onde a mágica da limpeza acontece
-    public async Task DisposeAsync()
-    {
-        // Criamos um "escopo" para conseguir pegar o AppDbContext lá de dentro da API
-        using var scope = _factory.Services.CreateScope();
-        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        // Agora sim! O 'contexto' existe aqui e podemos limpar a tabela
-        await contexto.Estudantes.ExecuteDeleteAsync();
     }
 
     [Fact]

@@ -18,39 +18,10 @@ using TurmaEntity = SistemaDeMatricula.Domain.Modelos.Turma;
 namespace SistemaDeMatricula.Testes.Test_Integracao.Matriculas;
 
 [Collection("ApiMatrix")]
-public class DesativarMatriculaIntegrationTest
+public class DesativarMatriculaIntegrationTest : IntegrationTestBase
 {
-    private readonly HttpClient _client;
-    private readonly SistemaMatriculaFactory _factory; // Guardamos a factory para usar depois
-
-    public DesativarMatriculaIntegrationTest(SistemaMatriculaFactory factory)
+    public DesativarMatriculaIntegrationTest(SistemaMatriculaFactory factory) : base(factory)
     {
-        _factory = factory;
-        _client = factory.CreateClient();
-    }
-
-    // 1. ANTES DE CADA TESTE: Não precisamos de nada especial aqui
-    public Task InitializeAsync() => Task.CompletedTask;
-
-    // 2. DEPOIS DE CADA TESTE: Aqui é onde a mágica da limpeza acontece
-    public async Task DisposeAsync()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        // 1. Apague as notas primeiro (elas dependem de Matricula)
-        await contexto.Database.ExecuteSqlRawAsync("DELETE FROM notas");
-
-        // 2. Apague as Matriculas (dependem de Estudante e Turma)
-        await contexto.Matriculas.ExecuteDeleteAsync();
-
-        // 3. Apague as Turmas (dependem de Professor e Disciplina)
-        await contexto.Turmas.ExecuteDeleteAsync();
-
-        // 4. Agora as raízes
-        await contexto.Estudantes.ExecuteDeleteAsync();
-        await contexto.Professores.ExecuteDeleteAsync();
-        await contexto.Disciplinas.ExecuteDeleteAsync();
     }
 
     private async Task<(EstudanteEntity estudante, TurmaEntity turma, MatriculaEntity matricula)> PrepararDadosNoBanco()

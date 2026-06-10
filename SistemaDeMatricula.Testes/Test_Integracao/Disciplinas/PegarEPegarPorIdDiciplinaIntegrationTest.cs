@@ -11,71 +11,86 @@ using System.Net.Http.Json;
 namespace SistemaDeMatricula.Testes.Test_Integracao.Disciplinas;
 
 [Collection("ApiMatrix")]
-public class PegarEPegarPorIdDiciplinaIntegrationTest : IAsyncLifetime
+public class PegarEPegarPorIdDiciplinaIntegrationTest : IntegrationTestBase, IAsyncLifetime
 {
-    private readonly HttpClient _client;
-    private readonly SistemaMatriculaFactory _factory;
-
-    public PegarEPegarPorIdDiciplinaIntegrationTest(SistemaMatriculaFactory factory)
+    public PegarEPegarPorIdDiciplinaIntegrationTest(SistemaMatriculaFactory factory) : base(factory)
     {
-        _factory = factory;
-        _client = factory.CreateClient();
     }
 
     private List<Disciplina> _disciplinasSeed = new();
 
-    public async Task InitializeAsync()
-    {
-        // Criamos um escopo para acessar o banco antes do teste começar
-        using var scope = _factory.Services.CreateScope();
-        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        // 1. Geramos 3 disciplinas fakes
-        _disciplinasSeed = DataFactory.DisciplinaFaker.Generate(3);
-
-        // 2. Salvamos no banco
-        await contexto.Disciplinas.AddRangeAsync(_disciplinasSeed);
-        await contexto.SaveChangesAsync();
-    }
-
-    // A faxina depois de cada GET
-    public async Task DisposeAsync()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        // Limpa a tabela para o próximo teste de GET entrar no banco vazio
-        await contexto.Disciplinas.ExecuteDeleteAsync();
-    }
-
     [Fact]
     public async Task Deve_Retornar_Lista_De_Disciplinas_Ativas()
     {
-        // ACT
-        var response = await _client.GetAsync("/api/Disciplinas");
+        // 1. ARRANGE: Inserir as disciplinas no banco limpo
+        using var scope = _factory.Services.CreateScope();
+        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        // ASSERT
+        // Supondo que você tenha uma fixture ou crie manualmente as entidades
+        var disciplinasFakes = new List<Disciplina>
+    {
+        new Disciplina("Matemática", 60),
+        new Disciplina("História", 40),
+        new Disciplina("Física", 60)
+    };
+
+        await contexto.Disciplinas.AddRangeAsync(disciplinasFakes);
+        await contexto.SaveChangesAsync();
+
+        // 2. ACT
+        var response = await _client.GetAsync("/api/Disciplinas/");
+
+        // 3. ASSERT
+        // Corrigido para OK (200), já que agora injetamos dados!
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-        var lista = await response.Content.ReadFromJsonAsync<List<DisciplinaDtoResponse>>();
 
+        var lista = await response.Content.ReadFromJsonAsync<List<DisciplinaDtoResponse>>();
         lista.Should().NotBeNull();
-        lista!.Count.Should().BeGreaterThanOrEqualTo(3); // Garante que as 3 que criamos estão lá
+        lista!.Count.Should().BeGreaterThanOrEqualTo(3);
     }
 
     [Fact]
     public async Task Deve_Retornar_Disciplina_Por_Id()
     {
-        // ARRANGE
-        var disciplinaExistente = _disciplinasSeed.First();
-        // ACT
+        // 1. ARRANGE: Criar e salvar uma disciplina real no banco para este teste
+        using var scope = _factory.Services.CreateScope();
+        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var disciplinaExistente = new Disciplina("Química", 80);
+        await contexto.Disciplinas.AddAsync(disciplinaExistente);
+        await contexto.SaveChangesAsync();
+
+        // 2. ACT
         var response = await _client.GetAsync($"/api/Disciplinas/{disciplinaExistente.Id}");
-        // ASSERT
+
+        // 3. ASSERT
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         var disciplinaDto = await response.Content.ReadFromJsonAsync<DisciplinaDtoResponse>();
+
         disciplinaDto.Should().NotBeNull();
         disciplinaDto!.DisciplinaId.Should().Be(disciplinaExistente.Id);
         disciplinaDto.Nome.Should().Be(disciplinaExistente.Nome.Valor);
         disciplinaDto.CargaHoraria.Should().Be(disciplinaExistente.CargaHoraria.Valor);
+    }
+
+    [Fact]
+    public async Task Deve_Retornar_NotFound_Para_Id_Desativada()
+    {
+        // 1. ARRANGE: Criar, salvar e desativar a disciplina no banco real
+        using var scope = _factory.Services.CreateScope();
+        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var disciplinaExistente = new Disciplina("Biologia", 40);
+        disciplinaExistente.Desativar(); // Certifique-se de que ela já salve inativa se for o caso
+
+        await contexto.Disciplinas.AddAsync(disciplinaExistente);
+        await contexto.SaveChangesAsync();
+
+        // 2. ACT
+        var response = await _client.GetAsync($"/api/Disciplinas/{disciplinaExistente.Id}");
+
+        // 3. ASSERT
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -85,22 +100,6 @@ public class PegarEPegarPorIdDiciplinaIntegrationTest : IAsyncLifetime
         var idInexistente = Guid.NewGuid();
         // ACT
         var response = await _client.GetAsync($"/api/Disciplinas/{idInexistente}");
-        // ASSERT
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
-    }
-
-    [Fact]
-    public async Task Deve_Retornar_NotFound_Para_Id_Desativada()
-    {
-        // ARRANGE
-        var disciplinaExistente = _disciplinasSeed.First();
-        using var scope = _factory.Services.CreateScope();
-        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        var disciplinaNoBanco = await contexto.Disciplinas.FindAsync(disciplinaExistente.Id);
-        disciplinaNoBanco!.Desativar();
-        await contexto.SaveChangesAsync();
-        // ACT
-        var response = await _client.GetAsync($"/api/Disciplinas/{disciplinaExistente.Id}");
         // ASSERT
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
     }

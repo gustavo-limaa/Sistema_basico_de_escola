@@ -13,33 +13,11 @@ using System.Net.Http.Json;
 namespace SistemaDeMatricula.Testes.Test_Integracao.Turmas;
 
 [Collection("ApiMatrix")]
-public class CriarTurmaTestIntegration : IAsyncLifetime
+public class CriarTurmaTestIntegration : IntegrationTestBase, IAsyncLifetime
 {
-    private readonly HttpClient _client;
-    private readonly SistemaMatriculaFactory _factory; // Guardamos a factory para usar depois
-
     public CriarTurmaTestIntegration(SistemaMatriculaFactory factory)
+    : base(factory)
     {
-        _factory = factory;
-        _client = factory.CreateClient();
-    }
-
-    // 1. ANTES DE CADA TESTE: Não precisamos de nada especial aqui
-    public Task InitializeAsync() => Task.CompletedTask;
-
-    // 2. DEPOIS DE CADA TESTE: Aqui é onde a mágica da limpeza acontece
-    public async Task DisposeAsync()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        // 1. Limpa as Turmas (Filho)
-        await contexto.Turmas.ExecuteDeleteAsync();
-
-        // 2. Limpa os Professores e Disciplinas (Pais)
-        // Se você tiver Matrículas, elas devem ser limpas ANTES das Turmas.
-        await contexto.Professores.ExecuteDeleteAsync();
-        await contexto.Disciplinas.ExecuteDeleteAsync();
     }
 
     private ProfessorDtoCreate CriarDtoValido()

@@ -21,11 +21,23 @@ builder.Services.AddDbContext<AppDbContext>((provider, options) =>
 {
     var config = provider.GetRequiredService<IConfiguration>();
     var connectionString = config.GetConnectionString("DefaultConnection");
-    options.UseMySql(connectionString, serverVersion);
+    options.UseMySql(connectionString, serverVersion, mySqlOptions =>
+    {
+        // Ativa a estratégia de repetição para falhas transientes
+        mySqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(5),
+            errorNumbersToAdd: null);
+    });
 });
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (!app.Environment.IsEnvironment("Testing")) // Ajuste conforme o nome do seu ambiente
+{
+    app.UseHttpsRedirection();
+}
+
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Testing"))
 {
     app.MapOpenApi();
 
@@ -40,7 +52,6 @@ if (app.Environment.IsDevelopment())
 app.MapGet("/api/teste", () => "O servidor está ouvindo!").WithName("Teste");
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
-app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 

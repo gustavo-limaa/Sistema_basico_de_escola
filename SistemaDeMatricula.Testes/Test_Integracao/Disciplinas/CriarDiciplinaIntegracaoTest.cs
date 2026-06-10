@@ -10,28 +10,10 @@ using System.Net.Http.Json;
 namespace SistemaDeMatricula.Testes.Test_Integracao.Disciplinas;
 
 [Collection("ApiMatrix")]
-public class CriarDiciplinaIntegracaoTest : IAsyncLifetime
+public class CriarDiciplinaIntegracaoTest : IntegrationTestBase, IAsyncLifetime
 {
-    private readonly HttpClient _client;
-    private readonly SistemaMatriculaFactory _factory;
-
-    public CriarDiciplinaIntegracaoTest(SistemaMatriculaFactory factory)
+    public CriarDiciplinaIntegracaoTest(SistemaMatriculaFactory factory) : base(factory)
     {
-        _factory = factory;
-        _client = factory.CreateClient();
-    }
-
-    // O que fazer antes de cada teste de GET
-    public Task InitializeAsync() => Task.CompletedTask;
-
-    // A faxina depois de cada GET
-    public async Task DisposeAsync()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        // Limpa a tabela para o próximo teste de GET entrar no banco vazio
-        await contexto.Disciplinas.ExecuteDeleteAsync();
     }
 
     [Fact]

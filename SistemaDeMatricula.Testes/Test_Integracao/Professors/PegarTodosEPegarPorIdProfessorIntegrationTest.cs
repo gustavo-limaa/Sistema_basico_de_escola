@@ -15,54 +15,13 @@ using System.Threading.Tasks;
 namespace SistemaDeMatricula.Testes.Test_Integracao.Professors;
 
 [Collection("ApiMatrix")]
-public class PegarTodosEPegarPorIdProfessorIntegrationTest : IAsyncLifetime
+public class PegarTodosEPegarPorIdProfessorIntegrationTest : IntegrationTestBase, IAsyncLifetime
 {
-    private readonly HttpClient _client;
-    private readonly SistemaMatriculaFactory _factory; // Guardamos a factory para usar depois
-
-    public PegarTodosEPegarPorIdProfessorIntegrationTest(SistemaMatriculaFactory factory)
+    public PegarTodosEPegarPorIdProfessorIntegrationTest(SistemaMatriculaFactory factory) : base(factory)
     {
-        _factory = factory;
-        _client = factory.CreateClient();
     }
 
     // 1. ANTES DE CADA TESTe: Aqui é onde a mágica da preparação acontece
-    public async Task InitializeAsync()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        // 1. Geramos 10 professores usando o seu Bogus
-        var listaProfessores = DataFactory.ProfessorFaker.Generate(10);
-
-        // 2. "Macete": Desativamos 3 professores da lista
-        // Isso serve para testar se o GET ignora os inativos automaticamente
-        listaProfessores[0].Desativar();
-        listaProfessores[1].Desativar();
-        listaProfessores[2].Desativar();
-
-        // 3. Salvamos no banco de teste
-        await contexto.Professores.AddRangeAsync(listaProfessores);
-        await contexto.SaveChangesAsync();
-    }
-
-    // 2. DEPOIS DE CADA TESTE: Aqui é onde a mágica da limpeza acontece
-    public async Task DisposeAsync()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        // 1. Apaga quem depende de todo mundo (A última ponta)
-        await contexto.Matriculas.ExecuteDeleteAsync();
-
-        // 2. Apaga as Turmas (que dependem de Professor e Disciplina)
-        await contexto.Turmas.ExecuteDeleteAsync();
-
-        // 3. Agora o banco deixa apagar as raízes
-        await contexto.Estudantes.ExecuteDeleteAsync();
-        await contexto.Professores.ExecuteDeleteAsync();
-        await contexto.Disciplinas.ExecuteDeleteAsync();
-    }
 
     private ProfessorDtoCreate CriarDtoValido()
     {
@@ -83,19 +42,24 @@ public class PegarTodosEPegarPorIdProfessorIntegrationTest : IAsyncLifetime
     [Fact]
     public async Task Pegar_Todos_Professores_Retorna_Lista_Com_Professores_Ativos()
     {
-        // Arrange
-        using (var scope = _factory.Services.CreateScope())
-        {
-            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            // Se tiver um helper de limpeza
-        }
-        var response = await _client.GetAsync("/api/professores ");
-        var professores = await response.Content.ReadFromJsonAsync<List<ProfessorDtoResponse>>();
+        // 1. ARRANGE: O banco está limpo pelo Respawn, então nós criamos os 7 professores aqui
+        using var scope = _factory.Services.CreateScope();
+        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        // Assert
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-        professores.Should().NotBeNull();
-        professores.Count.Should().Be(7); // 10 - 3 (desativados)
+        // Gerar 7 professores usando Bogus ou criando manualmente
+        var professoresFakes = DataFactory
+            .ProfessorFaker
+            .Generate(7);
+
+        await contexto.Professores.AddRangeAsync(professoresFakes);
+        await contexto.SaveChangesAsync();
+
+        // 2. ACT: Agora sim, chamamos o GET
+        var response = await _client.GetAsync("/api/professores");
+
+        // 3. ASSERT: Agora o banco tem os 7 que criamos para ESTE teste
+        var professores = await response.Content.ReadFromJsonAsync<List<ProfessorDtoResponse>>();
+        professores.Count.Should().Be(7);
     }
 
     [Fact]

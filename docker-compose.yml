@@ -7,8 +7,14 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: '158575Z'
       MYSQL_DATABASE: 'SistemaMatricula_DB'
+      
     ports:
-      - "3307:3306"
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p158575Z"]
+      timeout: 5s
+      retries: 10
+      interval: 3s
 
   api-sistema:
     build:
@@ -21,4 +27,5 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=db-mysql;Port=3306;Database=SistemaMatricula_DB;Uid=root;Pwd=158575Z;
     depends_on:
-      - db-mysql
+      db-mysql:
+        condition: service_healthy
