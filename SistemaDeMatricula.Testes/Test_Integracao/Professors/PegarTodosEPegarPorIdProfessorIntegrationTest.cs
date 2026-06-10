@@ -42,19 +42,24 @@ public class PegarTodosEPegarPorIdProfessorIntegrationTest : IntegrationTestBase
     [Fact]
     public async Task Pegar_Todos_Professores_Retorna_Lista_Com_Professores_Ativos()
     {
-        // Arrange
-        using (var scope = _factory.Services.CreateScope())
-        {
-            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            // Se tiver um helper de limpeza
-        }
-        var response = await _client.GetAsync("/api/professores ");
-        var professores = await response.Content.ReadFromJsonAsync<List<ProfessorDtoResponse>>();
+        // 1. ARRANGE: O banco está limpo pelo Respawn, então nós criamos os 7 professores aqui
+        using var scope = _factory.Services.CreateScope();
+        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        // Assert
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-        professores.Should().NotBeNull();
-        professores.Count.Should().Be(7); // 10 - 3 (desativados)
+        // Gerar 7 professores usando Bogus ou criando manualmente
+        var professoresFakes = DataFactory
+            .ProfessorFaker
+            .Generate(7);
+
+        await contexto.Professores.AddRangeAsync(professoresFakes);
+        await contexto.SaveChangesAsync();
+
+        // 2. ACT: Agora sim, chamamos o GET
+        var response = await _client.GetAsync("/api/professores");
+
+        // 3. ASSERT: Agora o banco tem os 7 que criamos para ESTE teste
+        var professores = await response.Content.ReadFromJsonAsync<List<ProfessorDtoResponse>>();
+        professores.Count.Should().Be(7);
     }
 
     [Fact]

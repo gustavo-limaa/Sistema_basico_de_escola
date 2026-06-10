@@ -21,7 +21,14 @@ builder.Services.AddDbContext<AppDbContext>((provider, options) =>
 {
     var config = provider.GetRequiredService<IConfiguration>();
     var connectionString = config.GetConnectionString("DefaultConnection");
-    options.UseMySql(connectionString, serverVersion);
+    options.UseMySql(connectionString, serverVersion, mySqlOptions =>
+    {
+        // Ativa a estratégia de repetição para falhas transientes
+        mySqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(5),
+            errorNumbersToAdd: null);
+    });
 });
 var app = builder.Build();
 

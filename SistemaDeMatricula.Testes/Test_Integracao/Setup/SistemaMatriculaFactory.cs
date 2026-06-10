@@ -16,27 +16,37 @@ public class SistemaMatriculaFactory : WebApplicationFactory<Program>, IAsyncLif
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        // Configura o ambiente no local correto
         builder.UseEnvironment("Testing");
 
         builder.ConfigureAppConfiguration((context, config) =>
         {
             config.Sources.Clear();
+
+            // 1. Tenta ler as variáveis de ambiente (Crucial para o GitHub Actions)
             config.AddEnvironmentVariables();
-            config.AddJsonFile("appsettings.json", optional: true);
 
             var settings = config.Build();
+            // Pegamos o que veio do ambiente (GitHub usa 'ConnectionStrings:DefaultConnection')
             var connectionString = settings["ConnectionStrings:DefaultConnection"];
 
+            // 2. Se não houver variável de ambiente (significa que você está no seu PC local)
             if (string.IsNullOrEmpty(connectionString))
             {
-                throw new Exception("CONFIGURAÇÃO FALHOU: ConnectionString está vazia!");
+                // Forçamos a string local perfeita com o banco correto
+                connectionString = "Server=localhost;Port=3306;Database=SistemaMatricula_DB;Uid=root;Pwd=158575Z;";
             }
+
+            // 3. Sobrescrevemos a configuração em memória com a string definitiva
+            config.AddInMemoryCollection(new Dictionary<string, string?>
+        {
+            { "ConnectionStrings:DefaultConnection", connectionString }
+        });
         });
     }
 
     private Respawner? _respawner;
     private DbConnection? _dbConnection;
+    private static bool _databaseCreated = false;
 
     public async Task InitializeAsync()
     {
@@ -44,6 +54,12 @@ public class SistemaMatriculaFactory : WebApplicationFactory<Program>, IAsyncLif
         var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
         await contexto.Database.EnsureCreatedAsync();
+        // SÓ CRIA O BANCO SE FOR O PRIMEIRO TESTE DE TODOS
+        if (!_databaseCreated)
+        {
+            await contexto.Database.EnsureCreatedAsync();
+            _databaseCreated = true;
+        }
 
         var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
         var connectionString = configuration.GetConnectionString("DefaultConnection");
