@@ -20,7 +20,7 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
+var app = builder.Build();//asdadwqedq
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
