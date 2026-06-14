@@ -3,17 +3,21 @@ using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
 using SistemaDeMatricula.Domain.Modelos;
+using SistemaDeMatricula.Events;
+using SistemaDeMatricula.Services;
 using Xunit;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
 
 public sealed class MatricularEstudanteUsecase
 {
-    private readonly IUnitOfWork _uow; // Apenas um "segurança" agora
+    private readonly IUnitOfWork _uow;
+    private readonly RabbitMqProducer _rabbitMqProducer;
 
-    public MatricularEstudanteUsecase(IUnitOfWork uow)
+    public MatricularEstudanteUsecase(IUnitOfWork uow, RabbitMqProducer rabbitMqProducer)
     {
         _uow = uow;
+        _rabbitMqProducer = rabbitMqProducer;
     }
 
     public async Task<Result<MatriculaDtoResponse>> ExecutarAsync(MatriculaDtoCreate dto)
@@ -45,6 +49,16 @@ public sealed class MatricularEstudanteUsecase
         {
             return Result<MatriculaDtoResponse>.Falha("Ocorreu um erro ao persistir a matrícula no banco de dados.");
         }
+
+        var evento = new MatriculaSolicitadaEvent
+        {
+            AlunoId = dto.EstudanteId,
+            TurmaId = dto.TurmaId,
+            UsuarioId = "SistemaDeMatricula.API",
+            Origem = "SistemaDeMatricula.API"
+        };
+
+        await _rabbitMqProducer.EnviarMensagemAsync(evento, "escola_matriculas_exchange");
 
         return Result<MatriculaDtoResponse>.Ok(novaMatricula.ToMatriculaDtoResponse());
     }

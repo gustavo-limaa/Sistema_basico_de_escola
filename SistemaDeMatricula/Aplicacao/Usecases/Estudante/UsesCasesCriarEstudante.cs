@@ -33,6 +33,7 @@ public sealed class UsesCasesCriarEstudante
                 return Result<EstudanteDtoResponse>.Falha("Falha ao salvar no banco de dados.");
 
             var respostaDto = novoEstudante.ToEstudanteDtoResponse();
+
             return Result<EstudanteDtoResponse>.Ok(respostaDto);
         }
         catch (Exception ex)

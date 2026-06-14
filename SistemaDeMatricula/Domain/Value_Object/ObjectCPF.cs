@@ -39,44 +39,40 @@
             if (cpfLimpo.Length != 11 || TodosNumerosIguais(cpfLimpo))
                 return (null, "CPF deve conter 11 dígitos válidos.");
 
+            // COLOCANDO A CHAMADA DO VALIDADOR AQUI!
             if (!ValidarDigitos(cpfLimpo))
                 return (null, "CPF matematicamente inválido.");
 
             return (new ObjectCPF(cpfLimpo, true), string.Empty);
         }
-
         private static bool TodosNumerosIguais(string cpf) =>
             cpf.All(c => c == cpf[0]);
 
         private static bool ValidarDigitos(string cpf)
         {
-            // Algoritmo simplificado de validação de CPF
             int[] multiplicador1 = [10, 9, 8, 7, 6, 5, 4, 3, 2];
             int[] multiplicador2 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
 
-            string tempCpf = cpf[..9];
+            // Primeiro dígito
             int soma = 0;
-
             for (int i = 0; i < 9; i++)
-                soma += int.Parse(tempCpf[i].ToString()) * multiplicador1[i];
+                soma += (cpf[i] - '0') * multiplicador1[i];
 
             int resto = soma % 11;
-            resto = resto < 2 ? 0 : 11 - resto;
+            int digito1 = resto < 2 ? 0 : 11 - resto;
 
-            string digito = resto.ToString();
-            tempCpf += digito;
+            // Segundo dígito (Agora englobando o digito1 no loop perfeitamente)
             soma = 0;
+            for (int i = 0; i < 9; i++)
+                soma += (cpf[i] - '0') * multiplicador2[i];
 
-            for (int i = 0; i < 10; i++)
-                soma += int.Parse(tempCpf[i].ToString()) * multiplicador2[i];
+            soma += digito1 * multiplicador2[9]; // Peso 2
 
             resto = soma % 11;
-            resto = resto < 2 ? 0 : 11 - resto;
-            digito += resto.ToString();
+            int digito2 = resto < 2 ? 0 : 11 - resto;
 
-            return cpf.EndsWith(digito);
+            return (cpf[9] - '0') == digito1 && (cpf[10] - '0') == digito2;
         }
-
         public string Formatar() =>
             long.Parse(Valor).ToString(@"000\.000\.000\-00");
     }

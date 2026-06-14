@@ -9,7 +9,7 @@ services:
       MYSQL_DATABASE: 'SistemaMatricula_DB'
       
     ports:
-      - "3306:3306"
+      - "3307:3306"
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p158575Z"]
       timeout: 5s
@@ -25,7 +25,7 @@ services:
       - "8080:8080" 
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Server=db-mysql;Port=3306;Database=SistemaMatricula_DB;Uid=root;Pwd=158575Z;
+      - ConnectionStrings__DefaultConnection=Server=db-mysql;Port=3307;Database=SistemaMatricula_DB;Uid=root;Pwd=158575Z;
     depends_on:
       db-mysql:
         condition: service_healthy
