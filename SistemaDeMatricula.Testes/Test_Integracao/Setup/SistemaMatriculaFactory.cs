@@ -22,25 +22,30 @@ public class SistemaMatriculaFactory : WebApplicationFactory<Program>, IAsyncLif
         {
             config.Sources.Clear();
 
-            // 1. Tenta ler as variáveis de ambiente (Crucial para o GitHub Actions)
+            // 1. Tenta ler as variáveis de ambiente (Útil para o GitHub Actions)
             config.AddEnvironmentVariables();
 
-            var settings = config.Build();
-            // Pegamos o que veio do ambiente (GitHub usa 'ConnectionStrings:DefaultConnection')
-            var connectionString = settings["ConnectionStrings:DefaultConnection"];
+            // 2. Faz a Factory enxergar os User Secrets do seu projeto de TESTES
+            // O typeof(SistemaMatriculaFactory).Assembly diz para o .NET buscar os segredos vinculados a este projeto de testes
+            config.AddUserSecrets(typeof(SistemaMatriculaFactory).Assembly, optional: true);
 
-            // 2. Se não houver variável de ambiente (significa que você está no seu PC local)
+            var settings = config.Build();
+
+            // 3. Tenta pegar do ambiente ou do secrets.json local (procurando primeiro pela chave de teste)
+            var connectionString = settings["ConnectionStrings:TestConnection"]
+                                   ?? settings["ConnectionStrings:DefaultConnection"];
+
+            // 4. Se mesmo assim não achar nada (ex: fallback de segurança), deixamos uma string genérica sem credenciais
             if (string.IsNullOrEmpty(connectionString))
             {
-                // Forçamos a string local perfeita com o banco correto
-                connectionString = "Server=localhost;Port=3306;Database=SistemaMatricula_DB;Uid=root;Pwd=158575Z;";
+                connectionString = "Server=localhost;Port=3307;Database=SistemaMatricula_Testes_DB;Uid=root;Pwd=;";
             }
 
-            // 3. Sobrescrevemos a configuração em memória com a string definitiva
+            // 5. Sobrescrevemos a configuração em memória com a string definitiva para a API usar
             config.AddInMemoryCollection(new Dictionary<string, string?>
-        {
-            { "ConnectionStrings:DefaultConnection", connectionString }
-        });
+    {
+        { "ConnectionStrings:DefaultConnection", connectionString }
+    });
         });
     }
 

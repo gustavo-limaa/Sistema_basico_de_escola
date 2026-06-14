@@ -7,6 +7,7 @@ using SistemaDeMatricula.Aplicacao.Usecases.Turmas;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Infraestrutura.Data;
 using SistemaDeMatricula.Infraestrutura.Repositorios;
+using SistemaDeMatricula.Services;
 
 namespace SistemaDeMatricula.Infraestrutura
 {
@@ -51,6 +52,7 @@ namespace SistemaDeMatricula.Infraestrutura
             // Use Case
 
             // Repositório
+            services.AddScoped<RabbitMqProducer>();
             services.AddScoped<IRepositorioEstudante, RepositorioEstudante>();
             services.AddScoped<IRepositorioProfessor, RepositorioProfessor>();
             services.AddScoped<IDisciplinaRepositorio, DisciplinaRepositorio>();

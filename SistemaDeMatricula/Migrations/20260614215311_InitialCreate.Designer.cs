@@ -13,7 +13,7 @@ using SistemaDeMatricula.Infraestrutura.Data;
 namespace SistemaDeMatricula.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260521032338_InitialCreate")]
+    [Migration("20260614215311_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

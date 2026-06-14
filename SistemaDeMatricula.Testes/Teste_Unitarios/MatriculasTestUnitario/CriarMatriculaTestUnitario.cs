@@ -5,6 +5,7 @@ using SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Modelos;
 using SistemaDeMatricula.Domain.Value_Object;
+using SistemaDeMatricula.Services;
 
 namespace SistemaDeMatricula.Testes.Teste_Unitarios.MatriculasTestUnitario;
 
@@ -16,7 +17,18 @@ public class CriarMatriculaTestUnitario
     public CriarMatriculaTestUnitario()
     {
         _uowMock = new Mock<IUnitOfWork> { DefaultValue = DefaultValue.Mock };
-        _useCase = new MatricularEstudanteUsecase(_uowMock.Object);
+
+        // 1. Criamos o Mock do IConfiguration que o seu Producer agora exige
+        var configMock = new Mock<Microsoft.Extensions.Configuration.IConfiguration>();
+
+        // 2. Simulamos que quando ele pedir o HostName, retorna "localhost"
+        configMock.Setup(c => c["RabbitMqHost"]).Returns("localhost");
+
+        // 3. Instanciamos o Producer passando o nosso Mock de configuração
+        var rabbitMqProducer = new RabbitMqProducer(configMock.Object);
+
+        // 4. Repassamos o produtor ajustado para o construtor do UseCase
+        _useCase = new MatricularEstudanteUsecase(_uowMock.Object, rabbitMqProducer);
     }
 
     [Fact]
