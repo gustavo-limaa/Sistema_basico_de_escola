@@ -29,3 +29,12 @@ services:
     depends_on:
       db-mysql:
         condition: service_healthy
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: escola_rabbitmq
+    ports:
+      - "5672:5672"   # Porta para o C# enviar/receber mensagens
+      - "15672:15672" # Porta para você abrir o painel no navegador
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest      
