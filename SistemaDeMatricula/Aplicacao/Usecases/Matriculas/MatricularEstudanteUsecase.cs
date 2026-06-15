@@ -12,9 +12,9 @@ namespace SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
 public sealed class MatricularEstudanteUsecase
 {
     private readonly IUnitOfWork _uow;
-    private readonly RabbitMqProducer _rabbitMqProducer;
+    private readonly IRabbitMqProducer _rabbitMqProducer;
 
-    public MatricularEstudanteUsecase(IUnitOfWork uow, RabbitMqProducer rabbitMqProducer)
+    public MatricularEstudanteUsecase(IUnitOfWork uow, IRabbitMqProducer rabbitMqProducer)
     {
         _uow = uow;
         _rabbitMqProducer = rabbitMqProducer;

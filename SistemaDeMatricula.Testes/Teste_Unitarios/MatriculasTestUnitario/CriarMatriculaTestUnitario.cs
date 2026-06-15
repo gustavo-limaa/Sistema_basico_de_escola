@@ -12,21 +12,21 @@ namespace SistemaDeMatricula.Testes.Teste_Unitarios.MatriculasTestUnitario;
 public class CriarMatriculaTestUnitario
 {
     private readonly Mock<IUnitOfWork> _uowMock;
-    private readonly Mock<RabbitMqProducer> _rabbitMock;
+    private readonly Mock<IRabbitMqProducer> _rabbitMock;
     private readonly MatricularEstudanteUsecase _useCase;
 
     public CriarMatriculaTestUnitario()
     {
         _uowMock = new Mock<IUnitOfWork> { DefaultValue = DefaultValue.Mock };
 
-        // 1. Criamos o mock da INTERFACE do produtor (Troque pelo nome exato da sua interface)
-        _rabbitMock = new Mock<RabbitMqProducer> { DefaultValue = DefaultValue.Mock };
+        // 2. Instancia o Mock usando a INTERFACE
+        _rabbitMock = new Mock<IRabbitMqProducer> { DefaultValue = DefaultValue.Mock };
 
-        // 2. Configuramos o mock para apenas fingir que executou com sucesso (Task completada)
-        _rabbitMock.Setup(x => x.EnviarMensagemAsync(It.IsAny<object>(), It.IsAny<string>()))
+        // 3. Usa a marcação genérica aberta do Moq (It.IsAnyType) para interceptar o método genérico da interface
+        _rabbitMock.Setup(x => x.EnviarMensagemAsync(It.IsAny<It.IsAnyType>(), It.IsAny<string>()))
                    .Returns(Task.CompletedTask);
 
-        // 3. Injetamos o .Object do mock no UseCase. Agora ele está 100% isolado da rede!
+        // 4. Injeta o .Object do mock. O seu UseCase aceita a interface, então o C# vai compilar feliz!
         _useCase = new MatricularEstudanteUsecase(_uowMock.Object, _rabbitMock.Object);
     }
 
