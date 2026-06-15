@@ -12,23 +12,22 @@ namespace SistemaDeMatricula.Testes.Teste_Unitarios.MatriculasTestUnitario;
 public class CriarMatriculaTestUnitario
 {
     private readonly Mock<IUnitOfWork> _uowMock;
+    private readonly Mock<RabbitMqProducer> _rabbitMock;
     private readonly MatricularEstudanteUsecase _useCase;
 
     public CriarMatriculaTestUnitario()
     {
         _uowMock = new Mock<IUnitOfWork> { DefaultValue = DefaultValue.Mock };
 
-        // 1. Criamos o Mock do IConfiguration que o seu Producer agora exige
-        var configMock = new Mock<Microsoft.Extensions.Configuration.IConfiguration>();
+        // 1. Criamos o mock da INTERFACE do produtor (Troque pelo nome exato da sua interface)
+        _rabbitMock = new Mock<RabbitMqProducer>();
 
-        // 2. Simulamos que quando ele pedir o HostName, retorna "localhost"
-        configMock.Setup(c => c["RabbitMqHost"]).Returns("localhost");
+        // 2. Configuramos o mock para apenas fingir que executou com sucesso (Task completada)
+        _rabbitMock.Setup(x => x.EnviarMensagemAsync(It.IsAny<object>(), It.IsAny<string>()))
+                   .Returns(Task.CompletedTask);
 
-        // 3. Instanciamos o Producer passando o nosso Mock de configuração
-        var rabbitMqProducer = new RabbitMqProducer(configMock.Object);
-
-        // 4. Repassamos o produtor ajustado para o construtor do UseCase
-        _useCase = new MatricularEstudanteUsecase(_uowMock.Object, rabbitMqProducer);
+        // 3. Injetamos o .Object do mock no UseCase. Agora ele está 100% isolado da rede!
+        _useCase = new MatricularEstudanteUsecase(_uowMock.Object, _rabbitMock.Object);
     }
 
     [Fact]
