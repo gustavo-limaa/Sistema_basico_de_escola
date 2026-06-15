@@ -12,7 +12,7 @@ namespace SistemaDeMatricula.Testes.Teste_Unitarios.MatriculasTestUnitario;
 public class CriarMatriculaTestUnitario
 {
     private readonly Mock<IUnitOfWork> _uowMock;
-    private readonly Mock<RabbitMqProducer> _rabbitMock;
+    private readonly Mock<IRabbitMqProducer> _rabbitMock;
     private readonly MatricularEstudanteUsecase _useCase;
 
     public CriarMatriculaTestUnitario()
@@ -20,7 +20,7 @@ public class CriarMatriculaTestUnitario
         _uowMock = new Mock<IUnitOfWork> { DefaultValue = DefaultValue.Mock };
 
         // 1. Criamos o mock da INTERFACE do produtor (Troque pelo nome exato da sua interface)
-        _rabbitMock = new Mock<RabbitMqProducer>();
+        _rabbitMock = new Mock<IRabbitMqProducer> { DefaultValue = DefaultValue.Mock };
 
         // 2. Configuramos o mock para apenas fingir que executou com sucesso (Task completada)
         _rabbitMock.Setup(x => x.EnviarMensagemAsync(It.IsAny<object>(), It.IsAny<string>()))

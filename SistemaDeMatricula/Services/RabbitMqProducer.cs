@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace SistemaDeMatricula.Services;
 
-public class RabbitMqProducer
+public class RabbitMqProducer : IRabbitMqProducer
 {
     private readonly ConnectionFactory _factory;
 

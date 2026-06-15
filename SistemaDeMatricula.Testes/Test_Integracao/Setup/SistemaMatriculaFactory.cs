@@ -53,7 +53,7 @@ public class SistemaMatriculaFactory : WebApplicationFactory<Program>, IAsyncLif
         {
             // 1. Remove o registro original do seu RabbitMqProducer
             var descriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(RabbitMqProducer)); // Use a sua interface aqui
+                d => d.ServiceType == typeof(IRabbitMqProducer)); // Use a sua interface aqui
 
             if (descriptor != null)
             {
@@ -61,7 +61,7 @@ public class SistemaMatriculaFactory : WebApplicationFactory<Program>, IAsyncLif
             }
 
             // 2. Cria um Mock que não faz nada (finge que envia a mensagem)
-            var rabbitMock = new Mock<RabbitMqProducer>();
+            var rabbitMock = new Mock<IRabbitMqProducer>();
             rabbitMock.Setup(x => x.EnviarMensagemAsync(It.IsAny<object>(), It.IsAny<string>()))
                       .Returns(Task.CompletedTask);
 
