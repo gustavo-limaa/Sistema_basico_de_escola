@@ -52,7 +52,7 @@ namespace SistemaDeMatricula.Infraestrutura
             // Use Case
 
             // Repositório
-            services.AddScoped<RabbitMqProducer>();
+            services.AddScoped<IRabbitMqProducer, RabbitMqProducer>();
             services.AddScoped<IRepositorioEstudante, RepositorioEstudante>();
             services.AddScoped<IRepositorioProfessor, RepositorioProfessor>();
             services.AddScoped<IDisciplinaRepositorio, DisciplinaRepositorio>();

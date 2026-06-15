@@ -4,9 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Respawn;
 using Respawn.Graph;
 using SistemaDeMatricula.Infraestrutura.Data;
+using SistemaDeMatricula.Services;
 using System.Collections.Generic;
 using System.Data.Common;
 
@@ -46,6 +48,25 @@ public class SistemaMatriculaFactory : WebApplicationFactory<Program>, IAsyncLif
     {
         { "ConnectionStrings:DefaultConnection", connectionString }
     });
+        });
+        builder.ConfigureServices(services =>
+        {
+            // 1. Remove o registro original do seu RabbitMqProducer
+            var descriptor = services.SingleOrDefault(
+                d => d.ServiceType == typeof(IRabbitMqProducer)); // Use a sua interface aqui
+
+            if (descriptor != null)
+            {
+                services.Remove(descriptor);
+            }
+
+            // 2. Cria um Mock que não faz nada (finge que envia a mensagem)
+            var rabbitMock = new Mock<IRabbitMqProducer>();
+            rabbitMock.Setup(x => x.EnviarMensagemAsync(It.IsAny<object>(), It.IsAny<string>()))
+                      .Returns(Task.CompletedTask);
+
+            // 3. Injeta o Mock no lugar do produtor real para os testes de integração
+            services.AddSingleton(rabbitMock.Object);
         });
     }
 
