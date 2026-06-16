@@ -22,8 +22,6 @@ public abstract class IntegrationTestBase : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        // Aqui dentro tu podes usar o Respawn (ou o teu código de delete atual)
-        // Se quiseres manter o teu código atual, basta escrever ele aqui uma vez.
         await _factory.ResetDatabaseAsync();
     }
 }

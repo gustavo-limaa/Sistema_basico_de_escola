@@ -11,7 +11,6 @@ public class EstudanteConfiguration : IEntityTypeConfiguration<Estudante>
         builder.ToTable("Estudantes");
         builder.HasKey(x => x.Id);
 
-        // 1. Primeiro, configuramos TODAS as propriedades complexas
         builder.ComplexProperty(x => x.DataNascimento,
             p => p.Property(v => v.Valor).HasColumnName("DataNascimento").IsRequired());
 
