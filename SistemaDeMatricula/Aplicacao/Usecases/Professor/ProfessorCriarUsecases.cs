@@ -24,8 +24,14 @@ public sealed class ProfessorCriarUsecases
 
             var professorExistenteCpf = await _repositorioProfessor.ObterPorCpfAsync(dto.Cpf);
             if (professorExistenteCpf != null)
-                return Result<ProfessorDtoResponse>.Conflito("Já existe um professor cadastrado com este CPF.");
+            {
+                if (professorExistenteCpf.Ativo)
+                {
+                    return Result<ProfessorDtoResponse>.Conflito("Já existe um professor ativo cadastrado com este CPF.");
+                }
 
+                return Result<ProfessorDtoResponse>.Conflito("Este CPF pertence a um professor inativo/arquivado no sistema. Caso pretenda recontratá-lo, contacte o suporte ou a secretaria.");
+            }
             var professorExistenteEmail = await _repositorioProfessor.ObterPorEmailAsync(dto.Email);
             if (professorExistenteEmail != null)
                 return Result<ProfessorDtoResponse>.Conflito("Já existe um professor cadastrado com este e-mail.");
