@@ -28,6 +28,7 @@ public class RepositorioProfessor : IRepositorioProfessor
     public async Task<Professor?> ObterPorCpfAsync(string cpf)
     {
         return await _context.Professores
+            .IgnoreQueryFilters() // 🔥 O refinamento supremo contra o Soft Delete!
             .AsNoTracking()
             .FirstOrDefaultAsync(p => p.Cpf.Valor == cpf);
     }

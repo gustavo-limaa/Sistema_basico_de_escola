@@ -49,7 +49,9 @@ public class RepositorioEstudante : IRepositorioEstudante
 
     public async Task<bool> ExisteCpfAsync(string cpf)
     {
-        return await _context.Estudantes.AnyAsync(e => e.Cpf.Valor == cpf);
+        return await _context.Estudantes
+        .IgnoreQueryFilters() // 🔥 Adicionando isso aqui!
+        .AnyAsync(e => e.Cpf.Valor == cpf);
     }
 
     public async Task<bool> ExisteMatriculaAsync(Guid estudanteId)

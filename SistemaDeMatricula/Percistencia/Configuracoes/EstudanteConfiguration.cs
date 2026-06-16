@@ -11,6 +11,7 @@ public class EstudanteConfiguration : IEntityTypeConfiguration<Estudante>
         builder.ToTable("Estudantes");
         builder.HasKey(x => x.Id);
 
+        // 1. Primeiro, configuramos TODAS as propriedades complexas
         builder.ComplexProperty(x => x.DataNascimento,
             p => p.Property(v => v.Valor).HasColumnName("DataNascimento").IsRequired());
 
@@ -27,5 +28,9 @@ public class EstudanteConfiguration : IEntityTypeConfiguration<Estudante>
             p.Property(v => v.Valor).HasColumnName("Telefone").HasMaxLength(11));
 
         builder.HasQueryFilter(x => x.Ativo);
+
+        //builder.HasIndex(x => x.Cpf.Valor)
+        //       .IsUnique()
+        //       .HasDatabaseName("IX_Estudante_Cpf");
     }
 }
