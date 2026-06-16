@@ -11,7 +11,6 @@ public enum TipoErro
     Inesperado
 }
 
-[DebuggerDisplay("{Sucesso ? \"✅ OK\" : \"❌ Falha\"}: {Mensagem}")]
 public class Result<T>
 {
     [MemberNotNullWhen(true, nameof(Dados))]

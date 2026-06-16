@@ -5,13 +5,12 @@ services:
     image: mysql:8.0
     container_name: mysql-matricula
     environment:
-      MYSQL_ROOT_PASSWORD: '158575Z'
-      MYSQL_DATABASE: 'SistemaMatricula_DB'
-      
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     ports:
-      - "3307:3306"
+      - "${MYSQL_PORT}:3306" 
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p158575Z"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
       timeout: 5s
       retries: 10
       interval: 3s
@@ -25,16 +24,17 @@ services:
       - "8080:8080" 
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Server=db-mysql;Port=3307;Database=SistemaMatricula_DB;Uid=root;Pwd=158575Z;
+      - ConnectionStrings__DefaultConnection=Server=db-mysql;Port=3306;Database=${MYSQL_DATABASE};Uid=root;Pwd=${MYSQL_ROOT_PASSWORD};
     depends_on:
       db-mysql:
         condition: service_healthy
+
   rabbitmq:
     image: rabbitmq:4-management
     container_name: escola_rabbitmq
     ports:
-      - "5672:5672"   # Porta para o C# enviar/receber mensagens
-      - "15672:15672" # Porta para você abrir o painel no navegador
+      - "5672:5672"   
+      - "15672:15672" 
     environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest      
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}

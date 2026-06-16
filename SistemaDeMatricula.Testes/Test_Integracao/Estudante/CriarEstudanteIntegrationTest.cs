@@ -227,7 +227,7 @@ public class CriarEstudanteIntegrationTest : IntegrationTestBase, IAsyncLifetime
         // Agora, tentamos criar outro estudante com o mesmo CPF
         var response2 = await _client.PostAsJsonAsync("/api/Estudante", dtoCreate);
         var respostaDaApi = await response2.Content.ReadAsStringAsync();
-        Assert.False(response2.IsSuccessStatusCode, $"A API aceitou um estudante com CPF duplicado! Resposta: {respostaDaApi}");// Em vez de Assert.False(response2.IsSuccessStatusCode)
+        Assert.False(response2.IsSuccessStatusCode, $"A API aceitou um estudante com CPF duplicado! Resposta: {respostaDaApi}");
         response2.StatusCode.Should().Be(System.Net.HttpStatusCode.Conflict);
         // Ou BadRequest, se a sua API estiver configurada assim.
     }
