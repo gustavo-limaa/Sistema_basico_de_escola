@@ -28,14 +28,9 @@ public class CriarEstudanteIntegrationTest : IntegrationTestBase, IAsyncLifetime
             estudanteFake.Telefone.Valor
         );
 
-        // ATENÇÃO: Verifique se essa é a rota real da sua Controller!
-        // Mude de "/api/estudantes" para "/api/Estudante"
         var response = await _client.PostAsJsonAsync("/api/Estudante", dtoCreate);
-        // 3. LÊ A FOFOCA INTEIRA DA API
         var respostaDaApi = await response.Content.ReadAsStringAsync();
 
-        // 4. ASSERT COM MENSAGEM CUSTOMIZADA
-        // Se o status não for sucesso (200-299), o teste quebra e joga a mensagem real na sua cara!
         Assert.True(response.IsSuccessStatusCode, $"A API recusou o estudante! Motivo: {respostaDaApi}");
     }
 
@@ -44,7 +39,7 @@ public class CriarEstudanteIntegrationTest : IntegrationTestBase, IAsyncLifetime
     {
         var estudanteFake = DataFactory.EstudanteFaker.Generate();
         var dtoCreate = new EstudanteDtoCreate(
-            "", // NOME VAZIO (INVÁLIDO)
+            "",
             estudanteFake.Email.Valor,
             estudanteFake.DataNascimento.Valor,
             estudanteFake.Cpf.Valor,
@@ -61,7 +56,7 @@ public class CriarEstudanteIntegrationTest : IntegrationTestBase, IAsyncLifetime
         var estudanteFake = DataFactory.EstudanteFaker.Generate();
         var dtoCreate = new EstudanteDtoCreate(
             estudanteFake.NomeCompleto.Valor,
-            "email-invalido", // EMAIL INVÁLIDO
+            "email-invalido",
             estudanteFake.DataNascimento.Valor,
             estudanteFake.Cpf.Valor,
             estudanteFake.Telefone.Valor
@@ -79,7 +74,7 @@ public class CriarEstudanteIntegrationTest : IntegrationTestBase, IAsyncLifetime
             estudanteFake.NomeCompleto.Valor,
             estudanteFake.Email.Valor,
             estudanteFake.DataNascimento.Valor,
-            "12345678900", // CPF INVÁLIDO
+            "12345678900",
             estudanteFake.Telefone.Valor
         );
         var response = await _client.PostAsJsonAsync("/api/Estudante", dtoCreate);
@@ -96,7 +91,7 @@ public class CriarEstudanteIntegrationTest : IntegrationTestBase, IAsyncLifetime
             estudanteFake.Email.Valor,
             estudanteFake.DataNascimento.Valor,
             estudanteFake.Cpf.Valor,
-            "12345" // TELEFONE INVÁLIDO
+            "12345"
         );
         var response = await _client.PostAsJsonAsync("/api/Estudante", dtoCreate);
         var respostaDaApi = await response.Content.ReadAsStringAsync();
@@ -108,13 +103,12 @@ public class CriarEstudanteIntegrationTest : IntegrationTestBase, IAsyncLifetime
     {
         var estudanteFake = DataFactory.EstudanteFaker.Generate();
 
-        // Pega o dia de amanhã direto do relógio, sem conversão de texto
         var amanha = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));
 
         var dtoCreate = new EstudanteDtoCreate(
             estudanteFake.NomeCompleto.Valor,
             estudanteFake.Email.Valor,
-            amanha, // Passa o objeto DateOnly puro
+            amanha,
             estudanteFake.Cpf.Valor,
             estudanteFake.Telefone.Valor
         );
@@ -129,9 +123,9 @@ public class CriarEstudanteIntegrationTest : IntegrationTestBase, IAsyncLifetime
     public async Task Deve_Retornar_Erro_Quando_Criar_Estudante_Com_Nome_Excessivamente_Longo()
     {
         var estudanteFake = DataFactory.EstudanteFaker.Generate();
-        var nomeMuitoLongo = new string('A', 256); // Supondo que o limite seja 255 caracteres
+        var nomeMuitoLongo = new string('A', 256);
         var dtoCreate = new EstudanteDtoCreate(
-            nomeMuitoLongo, // NOME EXCESSIVAMENTE LONGO
+            nomeMuitoLongo,
             estudanteFake.Email.Valor,
             estudanteFake.DataNascimento.Valor,
             estudanteFake.Cpf.Valor,
@@ -146,10 +140,10 @@ public class CriarEstudanteIntegrationTest : IntegrationTestBase, IAsyncLifetime
     public async Task Deve_Retornar_Erro_Quando_Criar_Estudante_Com_Email_Excessivamente_Longo()
     {
         var estudanteFake = DataFactory.EstudanteFaker.Generate();
-        var emailMuitoLongo = new string('A', 256) + "@exemplo.com"; // Supondo que o limite seja 255 caracteres
+        var emailMuitoLongo = new string('A', 256) + "@exemplo.com";
         var dtoCreate = new EstudanteDtoCreate(
             estudanteFake.NomeCompleto.Valor,
-            emailMuitoLongo, // EMAIL EXCESSIVAMENTE LONGO
+            emailMuitoLongo,
             estudanteFake.DataNascimento.Valor,
             estudanteFake.Cpf.Valor,
             estudanteFake.Telefone.Valor
@@ -163,12 +157,12 @@ public class CriarEstudanteIntegrationTest : IntegrationTestBase, IAsyncLifetime
     public async Task Deve_Retornar_Erro_Quando_Criar_Estudante_Com_CPF_Excessivamente_Longo()
     {
         var estudanteFake = DataFactory.EstudanteFaker.Generate();
-        var cpfMuitoLongo = new string('1', 12); // Supondo que o limite seja 11 caracteres
+        var cpfMuitoLongo = new string('1', 12);
         var dtoCreate = new EstudanteDtoCreate(
             estudanteFake.NomeCompleto.Valor,
             estudanteFake.Email.Valor,
             estudanteFake.DataNascimento.Valor,
-            cpfMuitoLongo, // CPF EXCESSIVAMENTE LONGO
+            cpfMuitoLongo,
             estudanteFake.Telefone.Valor
         );
         var response = await _client.PostAsJsonAsync("/api/Estudante", dtoCreate);
@@ -180,13 +174,13 @@ public class CriarEstudanteIntegrationTest : IntegrationTestBase, IAsyncLifetime
     public async Task Deve_Retornar_Erro_Quando_Criar_Estudante_Com_Telefone_Excessivamente_Longo()
     {
         var estudanteFake = DataFactory.EstudanteFaker.Generate();
-        var telefoneMuitoLongo = new string('1', 16); // Supondo que o limite seja 15 caracteres
+        var telefoneMuitoLongo = new string('1', 16);
         var dtoCreate = new EstudanteDtoCreate(
             estudanteFake.NomeCompleto.Valor,
             estudanteFake.Email.Valor,
             estudanteFake.DataNascimento.Valor,
             estudanteFake.Cpf.Valor,
-            telefoneMuitoLongo // TELEFONE EXCESSIVAMENTE LONGO
+            telefoneMuitoLongo
         );
         var response = await _client.PostAsJsonAsync("/api/Estudante", dtoCreate);
         var respostaDaApi = await response.Content.ReadAsStringAsync();
@@ -197,11 +191,11 @@ public class CriarEstudanteIntegrationTest : IntegrationTestBase, IAsyncLifetime
     public async Task Deve_Retornar_Erro_Quando_Criar_Estudante_Com_DataNascimento_Excessivamente_Antiga()
     {
         var estudanteFake = DataFactory.EstudanteFaker.Generate();
-        var dataNascimentoMuitoAntiga = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-150)); // Supondo que o limite seja 120 anos atrás
+        var dataNascimentoMuitoAntiga = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-150));
         var dtoCreate = new EstudanteDtoCreate(
             estudanteFake.NomeCompleto.Valor,
             estudanteFake.Email.Valor,
-            dataNascimentoMuitoAntiga, // DATA DE NASCIMENTO EXCESSIVAMENTE ANTIGA
+            dataNascimentoMuitoAntiga,
             estudanteFake.Cpf.Valor,
             estudanteFake.Telefone.Valor
         );
@@ -221,14 +215,11 @@ public class CriarEstudanteIntegrationTest : IntegrationTestBase, IAsyncLifetime
             estudanteFake.Cpf.Valor,
             estudanteFake.Telefone.Valor
         );
-        // Primeiro, criamos um estudante normalmente
         var response1 = await _client.PostAsJsonAsync("/api/Estudante", dtoCreate);
         Assert.True(response1.IsSuccessStatusCode, "A API recusou o primeiro estudante! Algo está muito errado.");
-        // Agora, tentamos criar outro estudante com o mesmo CPF
         var response2 = await _client.PostAsJsonAsync("/api/Estudante", dtoCreate);
         var respostaDaApi = await response2.Content.ReadAsStringAsync();
         Assert.False(response2.IsSuccessStatusCode, $"A API aceitou um estudante com CPF duplicado! Resposta: {respostaDaApi}");
         response2.StatusCode.Should().Be(System.Net.HttpStatusCode.Conflict);
-        // Ou BadRequest, se a sua API estiver configurada assim.
     }
 }

@@ -10,10 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(ProfessorController).Assembly)
-    //.AddApplicationPart(typeof(EstudanteController).Assembly)
     .AddApplicationPart(typeof(DisciplinaController).Assembly);
 builder.Services.AddOpenApi();
 builder.Services.AddApplication();
+builder.Services.AddSecurityConfiguration(builder.Configuration);
 
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 32));
 
