@@ -5,7 +5,9 @@ using SistemaDeMatricula.Infraestrutura;
 using SistemaDeMatricula.Infraestrutura.Data;
 using SistemaDeMatricula.Percistencia.Controllers;
 using SistemaDeMatricula.Percistencia.Middleware;
+using DotNetEnv;
 
+Env.Load("../.env");
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()

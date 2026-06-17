@@ -18,54 +18,46 @@ public class SistemaMatriculaFactory : WebApplicationFactory<Program>, IAsyncLif
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        Environment.SetEnvironmentVariable("JWT_KEY", "ChaveTotalmenteFakeParaOsTestesDeIntegracaoPassaremSemPerigo2026!");
+
         builder.UseEnvironment("Testing");
 
         builder.ConfigureAppConfiguration((context, config) =>
         {
             config.Sources.Clear();
-
-            // 1. Tenta ler as variáveis de ambiente (Útil para o GitHub Actions)
             config.AddEnvironmentVariables();
-
-            // 2. Faz a Factory enxergar os User Secrets do seu projeto de TESTES
-            // O typeof(SistemaMatriculaFactory).Assembly diz para o .NET buscar os segredos vinculados a este projeto de testes
             config.AddUserSecrets(typeof(SistemaMatriculaFactory).Assembly, optional: true);
 
             var settings = config.Build();
 
-            // 3. Tenta pegar do ambiente ou do secrets.json local (procurando primeiro pela chave de teste)
             var connectionString = settings["ConnectionStrings:TestConnection"]
                                    ?? settings["ConnectionStrings:DefaultConnection"];
 
-            // 4. Se mesmo assim não achar nada (ex: fallback de segurança), deixamos uma string genérica sem credenciais
             if (string.IsNullOrEmpty(connectionString))
             {
                 connectionString = "Server=localhost;Port=3307;Database=SistemaMatricula_Testes_DB;Uid=root;Pwd=;";
             }
 
-            // 5. Sobrescrevemos a configuração em memória com a string definitiva para a API usar
             config.AddInMemoryCollection(new Dictionary<string, string?>
-    {
-        { "ConnectionStrings:DefaultConnection", connectionString }
-    });
+        {
+            { "ConnectionStrings:DefaultConnection", connectionString }
         });
+        });
+
         builder.ConfigureServices(services =>
         {
-            // 1. Remove o registro original do seu RabbitMqProducer
             var descriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(IRabbitMqProducer)); // Use a sua interface aqui
+                d => d.ServiceType == typeof(IRabbitMqProducer));
 
             if (descriptor != null)
             {
                 services.Remove(descriptor);
             }
 
-            // 2. Cria um Mock que não faz nada (finge que envia a mensagem)
             var rabbitMock = new Mock<IRabbitMqProducer>();
             rabbitMock.Setup(x => x.EnviarMensagemAsync(It.IsAny<object>(), It.IsAny<string>()))
                       .Returns(Task.CompletedTask);
 
-            // 3. Injeta o Mock no lugar do produtor real para os testes de integração
             services.AddSingleton(rabbitMock.Object);
         });
     }
