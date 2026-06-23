@@ -22,7 +22,7 @@ public sealed class Estudante : ModeloMain
     public Estudante()
     { }
 
-    public string UsuarioId { get; private set; }
+    public string UsuarioId { get; private set; } = Guid.NewGuid().ToString();
 
     public ObjectNomeCompleto NomeCompleto { get; private set; }
 
