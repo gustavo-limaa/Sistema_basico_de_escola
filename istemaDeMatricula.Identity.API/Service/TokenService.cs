@@ -16,38 +16,39 @@ namespace SistemaDeMatricula.Identity.API.Service
             _configuration = configuration;
         }
 
-        public string GenerateToken(IdentityUser user, IList<string> roles)
+        public async Task<string> GenerateToken(IdentityUser user, IList<string> roles)
         {
-            var chaveSecreta = _configuration["JWT_KEY"]
-                 ?? throw new InvalidOperationException("A chave secreta JWT_KEY não foi configurada!");
-            var emisor = _configuration["JWT_ISSUER"]
-                 ?? throw new InvalidOperationException("O emissor JWT_ISSUER não foi configurado!");
-
-            var audiencia = _configuration["JWT_AUDIENCE"]
-                 ?? throw new InvalidOperationException("A audiência JWT_AUDIENCE não foi configurada!");
-            var claims = new List<System.Security.Claims.Claim>
+            return await Task.Run(() =>
             {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new  Claim(ClaimTypes.NameIdentifier, user.Id)
+                var tokenHandler = new JwtSecurityTokenHandler();
+
+                var key = Encoding.ASCII.GetBytes(_configuration["JWT_KEY"]
+                    ?? throw new InvalidOperationException("A chave secreta do JWT (JWT_KEY) não foi configurada!"));
+
+                var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
+                new Claim(ClaimTypes.Email, user.Email ?? string.Empty)
             };
 
-            foreach (var role in roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
+                foreach (var role in roles)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role));
+                }
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(chaveSecreta));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(claims),
+                    Expires = DateTime.UtcNow.AddHours(2),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                    Issuer = _configuration["JWT_ISSUER"] ?? "SistemaDeMatricula",
+                    Audience = _configuration["JWT_AUDIENCE"] ?? "SistemaDeMatriculaUsers"
+                };
 
-            var token = new JwtSecurityToken(
-                issuer: emisor,
-                audience: audiencia,
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                return tokenHandler.WriteToken(token);
+            });
         }
     }
 }

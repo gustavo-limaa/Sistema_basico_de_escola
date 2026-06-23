@@ -4,6 +4,6 @@ namespace SistemaDeMatricula.Identity.API.Interface
 {
     public interface ITokenService
     {
-        string GenerateToken(IdentityUser user, IList<string> roles);
+        Task<string> GenerateToken(IdentityUser user, IList<string> roles);
     }
 }

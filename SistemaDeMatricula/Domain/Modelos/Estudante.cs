@@ -22,6 +22,8 @@ public sealed class Estudante : ModeloMain
     public Estudante()
     { }
 
+    public string UsuarioId { get; private set; } = Guid.NewGuid().ToString();
+
     public ObjectNomeCompleto NomeCompleto { get; private set; }
 
     public ObjectDataNascimento DataNascimento { get; private set; }
@@ -62,12 +64,14 @@ public sealed class Estudante : ModeloMain
 
     public void RemoverMatricula(Matricula matricula)
     {
-        // Você pode adicionar regras aqui também, se precisar
-        // Ex: "Não pode remover matrícula se já tiver nota lançada"
-
         if (!_matriculas.Contains(matricula))
             throw new DomainException("Esta matrícula não pertence a este estudante.");
 
         _matriculas.Remove(matricula);
+    }
+
+    public void VincularUsuario(string usuarioIdDoToken)
+    {
+        UsuarioId = usuarioIdDoToken;
     }
 }

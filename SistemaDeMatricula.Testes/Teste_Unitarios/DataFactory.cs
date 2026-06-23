@@ -1,36 +1,38 @@
 ﻿//SistemaDeMatricula.Testes\Teste_Unitarios\DataFactory.cs
 using Bogus;
 using Bogus.Extensions.Brazil;
-using SistemaDeMatricula.Domain.Value_Object;
 using SistemaDeMatricula.Aplicacao.Dtos.estudante;
 using SistemaDeMatricula.Domain.Modelos;
 using SistemaDeMatricula.Domain.Uteis;
+using SistemaDeMatricula.Domain.Value_Object;
 
 using SistemaDeMatricula.Domain.Value_Object;
 
 using SistemaDeMatricula.Infraestrutura.Data;
 using SitemaDeMatricula.Domain.Value_Objetc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SistemaDeMatricula.Testes.Teste_Unitarios;
 
 public static class DataFactory
 {
     public static Faker<Estudante> EstudanteFaker => new Faker<Estudante>("pt_BR")
-        .CustomInstantiator(f =>
-        {
-            var dataDateTime = f.Date.Past(20, DateTime.Now.AddYears(-18));
-            var dataNascimentoOnly = DateOnly.FromDateTime(dataDateTime);
-            var id = Guid.NewGuid();
+    .CustomInstantiator(f =>
+    {
+        var dataDateTime = f.Date.Past(20, DateTime.Now.AddYears(-18));
+        var dataNascimentoOnly = DateOnly.FromDateTime(dataDateTime);
+        var id = Guid.NewGuid();
 
-            return new Estudante(
-                id,
-                new ObjectNomeCompleto(f.Person.FullName),
-                new ObjectDataNascimento(dataNascimentoOnly),
-                new ObjectCPF(f.Person.Cpf(false)),
-                new ObjectEmail(f.Internet.Email()),
-                new ObjectTelefone(f.Phone.PhoneNumber("119########"))
-            );
-        });
+        return new Estudante(
+            id,
+            new ObjectNomeCompleto(f.Person.FullName),
+            new ObjectDataNascimento(dataNascimentoOnly),
+            new ObjectCPF(f.Person.Cpf(false)),
+            new ObjectEmail(f.Internet.Email()),
+            new ObjectTelefone(f.Phone.PhoneNumber("119########"))
+        );
+    })
+    .RuleFor(e => e.UsuarioId, f => Guid.NewGuid().ToString());
 
     // No DataFactory.cs
     public static async Task<(Estudante estudante, Turma turma, Matricula matricula)> CriarCenarioDeMatriculaValido(
@@ -81,22 +83,24 @@ public static class DataFactory
         });
 
     public static Faker<Professor> ProfessorFaker => new Faker<Professor>("pt_BR")
-     .CustomInstantiator(f =>
-     {
-         var dataNascimentoOnly = DateOnly.FromDateTime(f.Date.Past(40, DateTime.Now.AddYears(-25)));
+    .CustomInstantiator(f =>
+    {
+        var dataNascimentoOnly = DateOnly.FromDateTime(f.Date.Past(40, DateTime.Now.AddYears(-25)));
 
-         return new Professor(
-             new ObjectNomeCompleto(f.Person.FullName),
-             new ObjectCPF(f.Person.Cpf(false)),
-             new ObjectEmail(f.Internet.Email()),
-             new ValorMonetario(Math.Round(f.Random.Decimal(3000, 15000), 2)),
-             f.PickRandom<CategoriaProfessor>(),
-             new ObjectDataNascimento(dataNascimentoOnly),
-             new ObjectTelefone(f.Phone.PhoneNumber("119########"))
-         );
-     })
-     // O PULO DO GATO: Força o estado ativo após a instância ser criada
-     .RuleFor(p => p.Ativo, true);
+        return new Professor(
+            new ObjectNomeCompleto(f.Person.FullName),
+            new ObjectCPF(f.Person.Cpf(false)),
+            new ObjectEmail(f.Internet.Email()),
+            new ValorMonetario(Math.Round(f.Random.Decimal(3000, 15000), 2)),
+            f.PickRandom<CategoriaProfessor>(),
+            new ObjectDataNascimento(dataNascimentoOnly),
+            new ObjectTelefone(f.Phone.PhoneNumber("119########"))
+        );
+    })
+    // Força o estado ativo após a instância ser criada
+    .RuleFor(p => p.Ativo, true)
+    // 🎯 INJETANDO O ID FAKE DO IDENTITY PARA O PROFESSOR
+    .RuleFor(p => p.UsuarioId, f => Guid.NewGuid().ToString());
 
     public static Faker<EstudanteDtoUpdate> EstudanteDtoUpdateFaker => new Faker<EstudanteDtoUpdate>("pt_BR")
         .CustomInstantiator(f =>

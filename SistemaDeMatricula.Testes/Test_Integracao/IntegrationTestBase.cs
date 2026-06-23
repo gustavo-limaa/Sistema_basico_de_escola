@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,6 +17,7 @@ public abstract class IntegrationTestBase : IAsyncLifetime
     {
         _factory = factory;
         _client = factory.CreateClient();
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("TestScheme");
     }
 
     public Task InitializeAsync() => Task.CompletedTask;

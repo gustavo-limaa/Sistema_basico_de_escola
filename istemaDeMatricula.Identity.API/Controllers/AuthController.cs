@@ -1,68 +1,76 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using SistemaDeMatricula.Identity.API.DTOS;
 using SistemaDeMatricula.Identity.API.Interface;
+using SistemaDeMatricula.Identity.API.utilitario;
 
-namespace SistemaDeMatricula.Identity.API.Controllers
+namespace SistemaDeMatricula.Identity.API.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class AuthController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AuthController : ControllerBase
+    private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly UserManager<IdentityUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly ITokenService _tokenService;
+
+    public AuthController(
+        SignInManager<IdentityUser> signInManager,
+        UserManager<IdentityUser> userManager,
+        RoleManager<IdentityRole> roleManager, ITokenService tokenService)
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly ITokenService _tokenService;
+        _signInManager = signInManager;
+        _userManager = userManager;
+        _roleManager = roleManager;
+        _tokenService = tokenService;
+    }
 
-        // 🎯 Injeção de dependência tripla: gerenciadores do Identity + nosso serviço de token
-        public AuthController(
-            SignInManager<IdentityUser> signInManager,
-            UserManager<IdentityUser> userManager,
-            ITokenService tokenService)
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginRequest request)
+    {
+        var usuario = await _userManager.FindByEmailAsync(request.Email);
+        if (usuario == null)
         {
-            _signInManager = signInManager;
-            _userManager = userManager;
-            _tokenService = tokenService;
+            return Unauthorized(new { mensagem = "Usuário ou senha incorretos!" });
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        var resultado = await _signInManager.CheckPasswordSignInAsync(usuario, request.Password, lockoutOnFailure: false);
+        if (!resultado.Succeeded)
         {
-            // 1. Procuramos se o usuário existe pelo e-mail
-            var usuario = await _userManager.FindByEmailAsync(request.Email);
-            if (usuario == null)
-            {
-                return Unauthorized(new { mensagem = "Usuário ou senha incorretos!" });
-            }
-
-            // 2. O Identity checa se a senha bate de forma segura (sem dar lockout por enquanto)
-            var resultado = await _signInManager.CheckPasswordSignInAsync(usuario, request.Password, lockoutOnFailure: false);
-
-            if (!resultado.Succeeded)
-            {
-                return Unauthorized(new { mensagem = "Usuário ou senha incorretos!" });
-            }
-
-            // 3. Se a senha está certa, buscamos os cargos (Roles) dele no banco
-            var roles = await _userManager.GetRolesAsync(usuario);
-
-            // 4. CHAMA A FÁBRICA! Geramos o token usando a nossa lógica sênior
-            var tokenGerado = _tokenService.GenerateToken(usuario, roles);
-
-            // 5. Retorna o crachá brilhando para o cliente!
-            return Ok(new { token = tokenGerado });
+            return Unauthorized(new { census = "Usuário ou senha incorretos!" });
         }
 
-        [HttpPost("registrar")]
-        public async Task<IActionResult> Registrar([FromBody] RegisterRequest request)
+        var roles = await _userManager.GetRolesAsync(usuario);
+
+        var tokenGerado = await _tokenService.GenerateToken(usuario, roles);
+
+        return Ok(new LoginResponse(usuario.Email!, tokenGerado, roles));
+    }
+
+    [HttpPost("registrar")]
+    public async Task<IActionResult> Registrar([FromBody] RegistroRequest request)
+    {
+        var novoUsuario = new IdentityUser { UserName = request.Email, Email = request.Email };
+
+        var resultado = await _userManager.CreateAsync(novoUsuario, request.Password);
+        if (!resultado.Succeeded) return BadRequest(resultado.Errors);
+
+        var roleDefinida = string.IsNullOrWhiteSpace(request.Role) ? RolesUsuarios.Aluno : request.Role;
+
+        var roleExiste = await _roleManager.RoleExistsAsync(roleDefinida);
+        if (!roleExiste)
         {
-            var novoUsuario = new IdentityUser { UserName = request.Email, Email = request.Email };
-
-            // 🎯 A senha vem dinâmica do Postman/Swagger e o Identity calcula o Hash na hora!
-            var resultado = await _userManager.CreateAsync(novoUsuario, request.Password);
-
-            if (!resultado.Succeeded) return BadRequest(resultado.Errors);
-
-            return Ok(new { mensagem = "Usuário criado com sucesso!" });
+            await _roleManager.CreateAsync(new IdentityRole(roleDefinida));
         }
+
+        var vinculoResultado = await _userManager.AddToRoleAsync(novoUsuario, roleDefinida);
+        if (!vinculoResultado.Succeeded)
+        {
+            return BadRequest(new { mensagem = "Usuário criado, mas falhou ao vincular o cargo.", erros = vinculoResultado.Errors });
+        }
+
+        return Ok(new { mensagem = $"Usuário criado com sucesso e associado ao cargo: {roleDefinida}!" });
     }
 }
