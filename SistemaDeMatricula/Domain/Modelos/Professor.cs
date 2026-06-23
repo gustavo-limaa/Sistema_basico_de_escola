@@ -9,7 +9,13 @@ namespace SistemaDeMatricula.Domain.Modelos;
 
 public sealed class Professor : ModeloMain
 {
-    public Professor(ObjectNomeCompleto nomeCompleto, ObjectCPF cpf, ObjectEmail email, ValorMonetario salario, CategoriaProfessor categoria, ObjectDataNascimento dataNascimento, ObjectTelefone telefone) : base()
+    public Professor(ObjectNomeCompleto nomeCompleto,
+        ObjectCPF cpf,
+        ObjectEmail email,
+        ValorMonetario salario,
+        CategoriaProfessor categoria,
+        ObjectDataNascimento dataNascimento,
+        ObjectTelefone telefone) : base()
     {
         NomeCompleto = nomeCompleto;
         Cpf = cpf;
@@ -23,6 +29,7 @@ public sealed class Professor : ModeloMain
     protected Professor()
     { } // EF Core
 
+    public String UsuarioId { get; private set; }
     public ObjectNomeCompleto NomeCompleto { get; private set; }
 
     public ObjectDataNascimento DataNascimento { get; private set; }
@@ -59,5 +66,10 @@ public sealed class Professor : ModeloMain
         Categoria = novaCategoria;
         DataNascimento = novaDataNasc;
         Telefone = novoTelefone;
+    }
+
+    public void VincularUsuario(string usuarioIdDoToken)
+    {
+        UsuarioId = usuarioIdDoToken;
     }
 }

@@ -9,6 +9,7 @@ using Respawn;
 using Respawn.Graph;
 using SistemaDeMatricula.Infraestrutura.Data;
 using SistemaDeMatricula.Services;
+using SistemaDeMatricula.Testes.Test_Integracao.Setup.Config;
 using System.Collections.Generic;
 using System.Data.Common;
 
@@ -46,12 +47,15 @@ public class SistemaMatriculaFactory : WebApplicationFactory<Program>, IAsyncLif
 
         builder.ConfigureServices(services =>
         {
-            var descriptor = services.SingleOrDefault(
+            // ==========================================
+            // 🧩 PARTE 1: SEU CODIGO ORIGINAL DO RABBITMQ (MANTIDO!)
+            // ==========================================
+            var descriptorRabbit = services.SingleOrDefault(
                 d => d.ServiceType == typeof(IRabbitMqProducer));
 
-            if (descriptor != null)
+            if (descriptorRabbit != null)
             {
-                services.Remove(descriptor);
+                services.Remove(descriptorRabbit);
             }
 
             var rabbitMock = new Mock<IRabbitMqProducer>();
@@ -59,6 +63,45 @@ public class SistemaMatriculaFactory : WebApplicationFactory<Program>, IAsyncLif
                       .Returns(Task.CompletedTask);
 
             services.AddSingleton(rabbitMock.Object);
+
+            var descriptorAuth = services.SingleOrDefault(
+                d => d.ServiceType == typeof(Microsoft.AspNetCore.Authentication.IAuthenticationSchemeProvider));
+
+            if (descriptorAuth != null)
+            {
+                services.Remove(descriptorAuth);
+            }
+
+            var authOptionsDescriptors = services.Where(d =>
+                 d.ServiceType.IsGenericType &&
+                 (d.ServiceType.GetGenericTypeDefinition() == typeof(Microsoft.Extensions.Options.IConfigureOptions<>) ||
+                  d.ServiceType.GetGenericTypeDefinition() == typeof(Microsoft.Extensions.Options.IPostConfigureOptions<>)) &&
+                 d.ServiceType.GetGenericArguments()[0] == typeof(Microsoft.AspNetCore.Authentication.AuthenticationOptions))
+                 .ToList();
+
+            foreach (var descriptor in authOptionsDescriptors)
+            {
+                services.Remove(descriptor);
+            }
+
+            // Também removemos os esquemas específicos do JwtBearer que foram registrados nas opções
+            var jwtBearerOptionsDescriptors = services.Where(d =>
+                d.ServiceType.IsGenericType &&
+                d.ServiceType.GetGenericArguments()[0] == typeof(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerOptions))
+                .ToList();
+
+            foreach (var descriptor in jwtBearerOptionsDescriptors)
+            {
+                services.Remove(descriptor);
+            }
+
+            // Agora injetamos o esquema de testes do zero, sem rastro do Bearer antigo!
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = "TestScheme";
+                options.DefaultChallengeScheme = "TestScheme";
+            })
+            .AddScheme<Microsoft.AspNetCore.Authentication.AuthenticationSchemeOptions, TestAuthHandler>("TestScheme", options => { });
         });
     }
 

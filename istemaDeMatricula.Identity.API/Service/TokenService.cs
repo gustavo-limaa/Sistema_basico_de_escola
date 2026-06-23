@@ -41,7 +41,9 @@ namespace SistemaDeMatricula.Identity.API.Service
                 {
                     Subject = new ClaimsIdentity(claims),
                     Expires = DateTime.UtcNow.AddHours(2),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                    Issuer = _configuration["JWT_ISSUER"] ?? "SistemaDeMatricula",
+                    Audience = _configuration["JWT_AUDIENCE"] ?? "SistemaDeMatriculaUsers"
                 };
 
                 var token = tokenHandler.CreateToken(tokenDescriptor);
