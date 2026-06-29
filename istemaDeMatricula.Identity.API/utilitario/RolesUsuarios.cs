@@ -3,7 +3,7 @@
     public class RolesUsuarios
     {
         public const string Admin = "Admin";
-        public const string Aluno = "Aluno";
+        public const string Aluno = "Estudante";
         public const string Professor = "Professor";
     }
 }

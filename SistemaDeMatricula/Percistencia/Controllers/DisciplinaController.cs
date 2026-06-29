@@ -1,14 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SistemaDeMatricula.Aplicacao.Dtos.Disciplina;
 using SistemaDeMatricula.Aplicacao.Usecases.Disciplinas;
 
 namespace SistemaDeMatricula.Percistencia.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/disciplinas")]
 public sealed class DisciplinaController : ControllerBase
 {
     [HttpPost]
+    [Authorize(Roles = "Admin,Professor")]
     public async Task<IActionResult> Criar([FromBody] DisciplinaDtoCreate dto, [FromServices] CriarUsecaseDisciplina useCase)
     {
         var resultado = await useCase.Executar(dto);
@@ -20,6 +23,7 @@ public sealed class DisciplinaController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin,Professor,Estudante")]
     public async Task<IActionResult> ObterPorId(Guid id, [FromServices] ObterPorIdUsecaseDisciplina useCase)
     {
         var resultado = await useCase.Executar(id);
@@ -27,6 +31,7 @@ public sealed class DisciplinaController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> ObterTodas([FromServices] ObterTodasDisciplinaUseCase useCase)
     {
         var resultado = await useCase.Executar();
@@ -39,6 +44,7 @@ public sealed class DisciplinaController : ControllerBase
             : NoContent();
     }
 
+    [Authorize(Roles = "Admin,Professor")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Atualizar(Guid id, [FromBody] DisciplinaDtoUpdate dto, [FromServices] AtualizarUseCaseDisciplina useCase)
     {
@@ -53,6 +59,7 @@ public sealed class DisciplinaController : ControllerBase
         return Ok(resultado.Dados);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Deletar(Guid id, [FromServices] RemoverUseCaseDisciplina useCase)
     {
@@ -65,6 +72,7 @@ public sealed class DisciplinaController : ControllerBase
             : BadRequest(resultado.Mensagem);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPatch("{id}/restaurar")]
     public async Task<IActionResult> Restaurar(Guid id, [FromServices] RestaurarUseCaseDisciplina useCase)
     {

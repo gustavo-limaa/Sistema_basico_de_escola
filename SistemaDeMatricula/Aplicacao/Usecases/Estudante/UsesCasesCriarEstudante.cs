@@ -2,16 +2,19 @@
 using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
+using SistemaDeMatricula.Services;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Estudante;
 
 public sealed class UsesCasesCriarEstudante
 {
     private readonly IRepositorioEstudante _repositorioEstudante;
+    private readonly IUsuarioLogadoService _usuarioLogadoService;
 
-    public UsesCasesCriarEstudante(IRepositorioEstudante repositorioEstudante)
+    public UsesCasesCriarEstudante(IRepositorioEstudante repositorioEstudante, IUsuarioLogadoService usuarioLogadoService)
     {
         _repositorioEstudante = repositorioEstudante;
+        _usuarioLogadoService = usuarioLogadoService;
     }
 
     public async Task<Result<EstudanteDtoResponse>> ExecuteAsync(EstudanteDtoCreate dto)
@@ -25,6 +28,10 @@ public sealed class UsesCasesCriarEstudante
                 return Result<EstudanteDtoResponse>.Falha("CPF já cadastrado.");
 
             var novoEstudante = dto.ToEstudante();
+
+            var usuarioId = _usuarioLogadoService.ObterUsuarioId();
+
+            novoEstudante.VincularUsuario(usuarioId);
 
             await _repositorioEstudante.AdicionarAsync(novoEstudante);
             var resultRepositorio = await _repositorioEstudante.SalvarAlteracoesAsync();

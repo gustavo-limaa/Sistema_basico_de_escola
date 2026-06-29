@@ -3,6 +3,7 @@ using SistemaDeMatricula.Aplicacao.Dtos.estudante;
 using SistemaDeMatricula.Aplicacao.Usecases.Estudante;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Modelos;
+using SistemaDeMatricula.Services;
 
 namespace SistemaDeMatricula.Testes.Teste_Unitarios.EstudanteTestUnitario;
 
@@ -10,14 +11,19 @@ public class CriarEstudanteUsecaseTests
 {
     private readonly Mock<IRepositorioEstudante> _repositorioMock;
     private readonly UsesCasesCriarEstudante _useCase;
+    private readonly Mock<IUsuarioLogadoService> _usuarioLogadoServiceMock;
 
     public CriarEstudanteUsecaseTests()
     {
         // 1. Criamos o dublê do repositório
         _repositorioMock = new Mock<IRepositorioEstudante>();
+        _usuarioLogadoServiceMock = new Mock<IUsuarioLogadoService>();
+
+        // 🎯 Opcional, mas Sênior: Ensinamos o dublê a devolver um ID falso quando for chamado!
+        _usuarioLogadoServiceMock.Setup(x => x.ObterUsuarioId()).Returns("id-falso-de-teste-123");
 
         // 2. Injetamos o dublê no Use Case
-        _useCase = new UsesCasesCriarEstudante(_repositorioMock.Object);
+        _useCase = new UsesCasesCriarEstudante(_repositorioMock.Object, _usuarioLogadoServiceMock.Object);
     }
 
     [Fact]
@@ -33,7 +39,6 @@ public class CriarEstudanteUsecaseTests
             estudanteFake.Telefone.Valor
         );
 
-        // CONFIGURAÇÃO DO MOCK: Aqui a gente simula que o CPF JÁ EXISTE
         _repositorioMock.Setup(r => r.ExisteCpfAsync(dto.Cpf))
                         .ReturnsAsync(true);
 
@@ -42,13 +47,9 @@ public class CriarEstudanteUsecaseTests
         var resultado = await _useCase.ExecuteAsync(dto);
 
         // Assert
-        Assert.False(resultado.Sucesso); // ✅ Correto, valida que falhou
+        Assert.False(resultado.Sucesso);
 
-        // ❌ Antes: Assert.Contains("CPF já cadastrado", resultado.Mensagem[0].ToString());
-        // ✅ Agora:
-        Assert.Equal("CPF já cadastrado.", resultado.Mensagem); // Ajuste para como você retorna o erro
-
-        // O MAIS IMPORTANTE: Garantir que o Adicionar NUNCA foi chamado
+        Assert.Equal("CPF já cadastrado.", resultado.Mensagem);
         _repositorioMock.Verify(r => r.AdicionarAsync(It.IsAny<Estudante>()), Times.Never);
     }
 

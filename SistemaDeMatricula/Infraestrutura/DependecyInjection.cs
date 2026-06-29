@@ -15,7 +15,8 @@ namespace SistemaDeMatricula.Infraestrutura
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            // Use Cases
+            #region use cases
+
             services.AddScoped<ObterPorIdUsecaseDisciplina>();
             services.AddScoped<ObterTodasDisciplinaUseCase>();
             services.AddScoped<CriarUsecaseDisciplina>();
@@ -49,9 +50,11 @@ namespace SistemaDeMatricula.Infraestrutura
             services.AddScoped<ObterNotaPorIdUseCases>();
             services.AddScoped<AdicionarNotasMatriculaUseCase>();
             services.AddScoped<AtualizarNotaUsecase>();
-            // Use Case
 
-            // Repositório
+            #endregion use cases
+
+            #region repositories
+
             services.AddScoped<IRabbitMqProducer, RabbitMqProducer>();
             services.AddScoped<IRepositorioEstudante, RepositorioEstudante>();
             services.AddScoped<IRepositorioProfessor, RepositorioProfessor>();
@@ -60,7 +63,14 @@ namespace SistemaDeMatricula.Infraestrutura
             services.AddScoped<IRepositorioMatricula, RepositorioMatricula>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IRepositorioNotas, RepositorioNotas>();
-            // Repositório
+
+            #endregion repositories
+
+            #region services
+
+            services.AddScoped<IUsuarioLogadoService, UsuarioLogadoService>();
+
+            #endregion services
 
             return services;
         }

@@ -15,7 +15,7 @@ builder.Services.AddControllers()
 
 builder.Services.AddOpenApi();
 builder.Services.AddApplication();
-
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddSecurityConfiguration(builder.Configuration);
 
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 32));

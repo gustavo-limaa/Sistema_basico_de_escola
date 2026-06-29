@@ -20,6 +20,7 @@ public sealed class EstudanteController : ControllerBase
     }
 
     [HttpGet("{Id}")]
+    [Authorize(Roles = "Admin,Estudante")]
     public async Task<IActionResult> ObterPorId([FromServices] UsesCasesPegarPorIdEstudante useCase, Guid id)
     {
         if (id == Guid.Empty)
@@ -39,6 +40,7 @@ public sealed class EstudanteController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Criar([FromServices] UsesCasesCriarEstudante useCase, [FromBody] EstudanteDtoCreate estudanteDto)
     {
         if (estudanteDto == null)
@@ -58,7 +60,7 @@ public sealed class EstudanteController : ControllerBase
         return CreatedAtAction(nameof(ObterPorId), new { id = result.Dados.EstudanteId }, result.Dados);
     }
 
-    [AllowAnonymous]
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> ObterTodos([FromServices] UsesCasesListarTodosEstudante useCase)
     {
@@ -72,6 +74,7 @@ public sealed class EstudanteController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Atualizar([FromServices] UsesCasesAtualizarEstudante useCase, Guid id, [FromBody] EstudanteDtoUpdate estudanteDto)
     {
         if (id == Guid.Empty)
@@ -98,6 +101,7 @@ public sealed class EstudanteController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Deletar([FromServices] UsesCasesDeletarEstudante useCase, Guid id)
     {
         if (id == Guid.Empty)

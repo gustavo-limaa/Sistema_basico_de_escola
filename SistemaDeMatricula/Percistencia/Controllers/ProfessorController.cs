@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using SistemaDeMatricula.Aplicacao.Dtos.Professor;
 using SistemaDeMatricula.Aplicacao.Usecases.Professor;
@@ -6,6 +7,7 @@ using SistemaDeMatricula.Domain;
 
 namespace SistemaDeMatricula.Percistencia.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/professores")]
 public sealed class ProfessorController : ControllerBase
@@ -24,18 +26,22 @@ public sealed class ProfessorController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin,Professor")]
     public async Task<IActionResult> ObterPorId([FromServices] ProfessorObterPorIdUsecases useCase, Guid id)
         => TratarResultado(await useCase.ExecutarAsync(id));
 
     [HttpGet("cpf/{cpf:length(11)}")]
+    [Authorize(Roles = "Admin,Professor")]
     public async Task<IActionResult> ObterPorCpf([FromServices] ProfessorObterPorCpfUsecases useCase, string cpf)
         => TratarResultado(await useCase.ExecutarAsync(cpf));
 
     [HttpGet]
+    [Authorize(Roles = "Admin,Professor")]
     public async Task<IActionResult> ObterTodos([FromServices] ProfessorObterTodosUsecases useCase)
         => TratarResultado(await useCase.ExecutarAsync());
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Criar([FromServices] ProfessorCriarUsecases useCase, ProfessorDtoCreate professorDto)
     {
         var result = await useCase.ExecutarAsync(professorDto);
@@ -46,6 +52,7 @@ public sealed class ProfessorController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Roles = "Admin,Professor")]
     public async Task<IActionResult> Atualizar([FromServices] ProfessorAtualizarUsecase useCase, ProfessorDtoUpdate professorDto)
     {
         var result = await useCase.ExecutarAsync(professorDto);
@@ -53,6 +60,7 @@ public sealed class ProfessorController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Deletar([FromServices] ProfessorRemoverUsecase useCase, Guid id)
     {
         var result = await useCase.ExecutarAsync(id);
@@ -62,6 +70,7 @@ public sealed class ProfessorController : ControllerBase
     }
 
     [HttpPatch("{id}/restaurar")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Restaurar([FromServices] ProfessorRestaurarUseCase useCase, Guid id)
     => TratarResultado(await useCase.ExecutarAsync(id));
 }

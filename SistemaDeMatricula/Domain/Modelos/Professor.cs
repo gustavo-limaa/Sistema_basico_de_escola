@@ -29,7 +29,7 @@ public sealed class Professor : ModeloMain
     protected Professor()
     { } // EF Core
 
-    public String UsuarioId { get; private set; } = Guid.NewGuid().ToString();
+    public String UsuarioId { get; private set; }
     public ObjectNomeCompleto NomeCompleto { get; private set; }
 
     public ObjectDataNascimento DataNascimento { get; private set; }
