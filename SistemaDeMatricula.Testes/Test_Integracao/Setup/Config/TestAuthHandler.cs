@@ -26,10 +26,12 @@ namespace SistemaDeMatricula.Testes.Test_Integracao.Setup.Config
             // Criamos as claims fictícias que vão enganar as tags [Authorize] nos testes de integração
             var claims = new[]
             {
-            new Claim(ClaimTypes.Name, "UsuarioTeste"),
-            new Claim(ClaimTypes.Role, "Admin") // 👑 Dá poder total (Admin) para os 134 testes passarem direto
-        };
-
+                    new Claim(ClaimTypes.Name, "UsuarioTeste"),
+                    new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
+                    new Claim(ClaimTypes.Role, "Admin"),
+                    new Claim(ClaimTypes.Role, "Estudante"),
+                    new Claim(ClaimTypes.Role, "Professor")
+            };
             var identity = new ClaimsIdentity(claims, "TestScheme");
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, "TestScheme");

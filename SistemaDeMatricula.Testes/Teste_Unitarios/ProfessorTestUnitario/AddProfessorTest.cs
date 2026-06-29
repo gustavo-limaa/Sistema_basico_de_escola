@@ -3,19 +3,24 @@ using SistemaDeMatricula.Aplicacao.Dtos.Professor;
 using SistemaDeMatricula.Aplicacao.Usecases.Professor;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Modelos;
+using SistemaDeMatricula.Services;
 
 namespace SistemaDeMatricula.Testes.Teste_Unitarios.ProfessorTestUnitario
 {
     public class AddProfessorTest
     {
         private readonly Mock<IRepositorioProfessor> _mockRepositorioProfessor;
+        private readonly Mock<IUsuarioLogadoService> _mockUsuarioLogadoService;
 
         private readonly ProfessorCriarUsecases _professorCriarUsecases;
 
         public AddProfessorTest()
         {
             _mockRepositorioProfessor = new Mock<IRepositorioProfessor>();
-            _professorCriarUsecases = new ProfessorCriarUsecases(_mockRepositorioProfessor.Object);
+            _mockUsuarioLogadoService = new Mock<IUsuarioLogadoService>();
+            _mockUsuarioLogadoService.Setup(x => x.ObterUsuarioId()).Returns("id-falso-de-teste-123");
+
+            _professorCriarUsecases = new ProfessorCriarUsecases(_mockRepositorioProfessor.Object, _mockUsuarioLogadoService.Object);
         }
 
         [Fact]

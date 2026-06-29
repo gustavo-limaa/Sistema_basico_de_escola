@@ -2,16 +2,19 @@
 using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
+using SistemaDeMatricula.Services;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Professor;
 
 public sealed class ProfessorCriarUsecases
 {
     private readonly IRepositorioProfessor _repositorioProfessor;
+    private readonly IUsuarioLogadoService _usuarioLogadoService;
 
-    public ProfessorCriarUsecases(IRepositorioProfessor repositorioProfessor)
+    public ProfessorCriarUsecases(IRepositorioProfessor repositorioProfessor, IUsuarioLogadoService usuarioLogadoService)
     {
         _repositorioProfessor = repositorioProfessor;
+        _usuarioLogadoService = usuarioLogadoService;
     }
 
     public async Task<Result<ProfessorDtoResponse>> ExecutarAsync(ProfessorDtoCreate dto)
@@ -21,6 +24,10 @@ public sealed class ProfessorCriarUsecases
         try
         {
             var professor = dto.ToProfessor();
+
+            var usuarioId = _usuarioLogadoService.ObterUsuarioId();
+
+            professor.VincularUsuario(usuarioId);
 
             var professorExistenteCpf = await _repositorioProfessor.ObterPorCpfAsync(dto.Cpf);
             if (professorExistenteCpf != null)
@@ -32,10 +39,12 @@ public sealed class ProfessorCriarUsecases
 
                 return Result<ProfessorDtoResponse>.Conflito("Este CPF pertence a um professor inativo/arquivado no sistema. Caso pretenda recontratá-lo, contacte o suporte ou a secretaria.");
             }
+
             var professorExistenteEmail = await _repositorioProfessor.ObterPorEmailAsync(dto.Email);
             if (professorExistenteEmail != null)
                 return Result<ProfessorDtoResponse>.Conflito("Já existe um professor cadastrado com este e-mail.");
             await _repositorioProfessor.AdicionarAsync(professor);
+
             var sucesso = await _repositorioProfessor.SalvarAlteracoesAsync();
 
             return sucesso

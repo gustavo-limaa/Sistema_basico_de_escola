@@ -13,8 +13,8 @@ using SistemaDeMatricula.Infraestrutura.Data;
 namespace SistemaDeMatricula.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260616014946_AdicionarIndiceUnicoEstudante")]
-    partial class AdicionarIndiceUnicoEstudante
+    [Migration("20260624013339_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,6 +58,10 @@ namespace SistemaDeMatricula.Migrations
 
                     b.Property<bool>("Ativo")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("UsuarioId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.ComplexProperty<Dictionary<string, object>>("Cpf", "SistemaDeMatricula.Domain.Modelos.Estudante.Cpf#ObjectCPF", b1 =>
                         {
@@ -192,6 +196,10 @@ namespace SistemaDeMatricula.Migrations
                     b.Property<int>("Categoria")
                         .HasColumnType("int")
                         .HasColumnName("Categoria");
+
+                    b.Property<string>("UsuarioId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.ComplexProperty<Dictionary<string, object>>("Cpf", "SistemaDeMatricula.Domain.Modelos.Professor.Cpf#ObjectCPF", b1 =>
                         {
