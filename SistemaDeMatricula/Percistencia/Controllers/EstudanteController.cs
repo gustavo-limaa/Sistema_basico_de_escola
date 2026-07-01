@@ -20,7 +20,7 @@ public sealed class EstudanteController : ControllerBase
     }
 
     [HttpGet("{Id}")]
-    [Authorize(Roles = "Admin,Estudante")]
+    [Authorize(Roles = "Admin,Estudante,Professor")]
     public async Task<IActionResult> ObterPorId([FromServices] UsesCasesPegarPorIdEstudante useCase, Guid id)
     {
         if (id == Guid.Empty)
