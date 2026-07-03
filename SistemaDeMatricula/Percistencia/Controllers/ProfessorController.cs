@@ -26,12 +26,12 @@ public sealed class ProfessorController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [Authorize(Roles = "Admin,Professor")]
+    [Authorize(Roles = "Professor,Admin")]
     public async Task<IActionResult> ObterPorId([FromServices] ProfessorObterPorIdUsecases useCase, Guid id)
         => TratarResultado(await useCase.ExecutarAsync(id));
 
     [HttpGet("cpf/{cpf:length(11)}")]
-    [Authorize(Roles = "Admin,Professor")]
+    [Authorize(Roles = "Professor,Admin")]
     public async Task<IActionResult> ObterPorCpf([FromServices] ProfessorObterPorCpfUsecases useCase, string cpf)
         => TratarResultado(await useCase.ExecutarAsync(cpf));
 
