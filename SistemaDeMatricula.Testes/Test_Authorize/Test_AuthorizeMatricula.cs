@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SistemaDeMatricula.Aplicacao.Dtos.Matricola;
+using SistemaDeMatricula.Aplicacao.Dtos.Notas;
+using SistemaDeMatricula.Domain.Uteis;
 using SistemaDeMatricula.Infraestrutura.Data;
 using SistemaDeMatricula.Testes.Test_Integracao;
 using SistemaDeMatricula.Testes.Test_Integracao.Setup;
@@ -17,8 +19,18 @@ namespace SistemaDeMatricula.Testes.Test_Authorize;
 [Collection("ApiMatrix")]
 public class Test_AuthorizeMatricula : IntegrationTestBase, IAsyncLifetime
 {
+    private const string RoleAdmin = "Admin";
+
+    private const string RoleEstudante = "Estudante";
+
     public Test_AuthorizeMatricula(SistemaMatriculaFactory factory) : base(factory)
     {
+    }
+
+    private void SetRole(string role)
+    {
+        _client.DefaultRequestHeaders.Remove("X-Test-Role");
+        _client.DefaultRequestHeaders.Add("X-Test-Role", role);
     }
 
     private async Task<(EstudanteEntity, TurmaEntity, MatriculaEntity)> PrepararDadosNoBanco()
@@ -28,148 +40,137 @@ public class Test_AuthorizeMatricula : IntegrationTestBase, IAsyncLifetime
         return await DataFactory.CriarCenarioDeMatriculaValido(contexto);
     }
 
-    [Fact]
-    public async Task Criar_Matricula_com_Autorizacao_Deve_SER_SUCESSO()
+    private async Task<EstudanteEntity> CriarNovoEstudanteNoBanco()
     {
-        //ARRANGE
-
-        _client.DefaultRequestHeaders.Remove("X-Test-Role");
-        _client.DefaultRequestHeaders.Add("X-Test-Role", "Admin");
-
-        var (_, turma, _) = await PrepararDadosNoBanco(); // Ignora o estudante que já vem matriculado
-
-        // Cria um NOVO estudante que ainda não está na turma
         var novoEstudante = DataFactory.EstudanteFaker.Generate();
-
-        // Salva ele no banco (precisa do scope aqui se não moveu para o construtor)
         using var scope = _factory.Services.CreateScope();
         var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         await contexto.Estudantes.AddAsync(novoEstudante);
         await contexto.SaveChangesAsync();
+        return novoEstudante;
+    }
 
+    [Fact]
+    public async Task Criar_Matricula_com_Autorizacao_Deve_SER_SUCESSO()
+    {
+        // ARRANGE
+        SetRole(RoleAdmin);
+        var (_, turma, _) = await PrepararDadosNoBanco(); // Ignora o estudante que já vem matriculado
+        var novoEstudante = await CriarNovoEstudanteNoBanco();
         var dto = new MatriculaDtoCreate(novoEstudante.Id, turma.Id);
+
+        // ACT
         var postResponse = await _client.PostAsJsonAsync("/api/matriculas", dto);
 
-        postResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.OK); // Ou 201 Created
+        // ASSERT
+        postResponse.StatusCode.Should().Be(HttpStatusCode.OK); // Ou 201 Created
     }
 
     [Fact]
     public async Task Criar_Matricula_Sem_Autorizacao_Deve_SER_Falha()
     {
-        //ARRANGE
-
-        _client.DefaultRequestHeaders.Remove("X-Test-Role");
-        _client.DefaultRequestHeaders.Add("X-Test-Role", "Estudante");
-
-        var (_, turma, _) = await PrepararDadosNoBanco(); // Ignora o estudante que já vem matriculado
-
-        // Cria um NOVO estudante que ainda não está na turma
-        var novoEstudante = DataFactory.EstudanteFaker.Generate();
-
-        // Salva ele no banco (precisa do scope aqui se não moveu para o construtor)
-        using var scope = _factory.Services.CreateScope();
-        var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        await contexto.Estudantes.AddAsync(novoEstudante);
-        await contexto.SaveChangesAsync();
-
+        // ARRANGE
+        SetRole(RoleEstudante);
+        var (_, turma, _) = await PrepararDadosNoBanco();
+        var novoEstudante = await CriarNovoEstudanteNoBanco();
         var dto = new MatriculaDtoCreate(novoEstudante.Id, turma.Id);
+
+        // ACT
         var postResponse = await _client.PostAsJsonAsync("/api/matriculas", dto);
 
-        postResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden); // Ou 403 Forbidden
+        // ASSERT
+        postResponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     [Fact]
     public async Task Obterporid_Matricula_com_Autorizacao_Deve_SER_SUCESSO()
     {
-        //ARRANGE
+        // ARRANGE
+        SetRole(RoleAdmin);
+        var (_, _, matricula) = await PrepararDadosNoBanco();
 
-        _client.DefaultRequestHeaders.Remove("X-Test-Role");
-        _client.DefaultRequestHeaders.Add("X-Test-Role", "Admin");
-
-        var (estudante, turma, matricula) = await PrepararDadosNoBanco(); // Ignora o estudante que já vem matriculado
-
+        // ACT
         var getResponse = await _client.GetAsync($"/api/matriculas/{matricula.Id}");
 
-        getResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.OK); // Ou 200 OK
+        // ASSERT
+        getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [Fact]
     public async Task Obterporid_Matricula_sem_Autorizacao_Deve_SER_falha()
     {
-        //ARRANGE
+        // ARRANGE
+        SetRole(RoleEstudante);
+        var (_, _, matricula) = await PrepararDadosNoBanco();
 
-        _client.DefaultRequestHeaders.Remove("X-Test-Role");
-        _client.DefaultRequestHeaders.Add("X-Test-Role", "estudante");
-
-        var (estudante, turma, matricula) = await PrepararDadosNoBanco(); // Ignora o estudante que já vem matriculado
-
+        // ACT
         var getResponse = await _client.GetAsync($"/api/matriculas/{matricula.Id}");
 
-        getResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden); // Ou 200 OK
+        // ASSERT
+        getResponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     [Fact]
     public async Task Obtertodos_Matricula_com_Autorizacao_Deve_SER_SUCESSO()
     {
-        //ARRANGE
+        // ARRANGE
+        SetRole(RoleAdmin);
+        await PrepararDadosNoBanco();
 
-        _client.DefaultRequestHeaders.Remove("X-Test-Role");
-        _client.DefaultRequestHeaders.Add("X-Test-Role", "Admin");
+        // ACT
+        var getResponse = await _client.GetAsync("/api/matriculas/");
 
-        var (estudante, turma, matricula) = await PrepararDadosNoBanco(); // Ignora o estudante que já vem matriculado
-
-        var getResponse = await _client.GetAsync($"/api/matriculas/");
-
-        getResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.OK); // Ou 200 OK
+        // ASSERT
+        getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [Fact]
     public async Task Obtertodos_Matricula_sem_Autorizacao_Deve_SER_falha()
     {
-        //ARRANGE
+        // ARRANGE
+        SetRole(RoleEstudante);
+        await PrepararDadosNoBanco();
 
-        _client.DefaultRequestHeaders.Remove("X-Test-Role");
-        _client.DefaultRequestHeaders.Add("X-Test-Role", "estudante");
+        // ACT
+        var getResponse = await _client.GetAsync("/api/matriculas/");
 
-        var (estudante, turma, matricula) = await PrepararDadosNoBanco(); // Ignora o estudante que já vem matriculado
-
-        var getResponse = await _client.GetAsync($"/api/matriculas/");
-
-        getResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden); // Ou 200 OK
+        // ASSERT
+        getResponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     [Fact]
     public async Task Delete_Matricula_com_Autorizacao_Deve_SER_SUCESSO()
     {
-        //ARRANGE
-        _client.DefaultRequestHeaders.Remove("X-Test-Role");
-        _client.DefaultRequestHeaders.Add("X-Test-Role", "Admin");
-        var (estudante, turma, matricula) = await PrepararDadosNoBanco();
-        //act
+        // ARRANGE
+        SetRole(RoleAdmin);
+        var (_, _, matricula) = await PrepararDadosNoBanco();
+
+        // ACT
         var deleteResponse = await _client.DeleteAsync($"/api/matriculas/{matricula.Id}");
-        // assert
-        deleteResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.OK); // Ou 200 OK
+
+        // ASSERT
+        deleteResponse.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [Fact]
     public async Task Delete_Matricula_sem_Autorizacao_Deve_SER_falha()
     {
-        //ARRANGE
-        _client.DefaultRequestHeaders.Remove("X-Test-Role");
-        _client.DefaultRequestHeaders.Add("X-Test-Role", "Estudante");
-        var (estudante, turma, matricula) = await PrepararDadosNoBanco();
-        //act
+        // ARRANGE
+        SetRole(RoleEstudante);
+        var (_, _, matricula) = await PrepararDadosNoBanco();
+
+        // ACT
         var deleteResponse = await _client.DeleteAsync($"/api/matriculas/{matricula.Id}");
-        // assert
-        deleteResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden); // Ou 403 Forbidden
+
+        // ASSERT
+        deleteResponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     [Fact]
-    public async Task Test_AuthorizeMatricula_Transferir_DeveSerSucesso_QuandoUsuarioForAdmin()
+    public async Task Transferir_Matricula_DeveSerSucesso_QuandoUsuarioForAdmin()
     {
-        // 1. ARRANGE
-        // Prepara o cenário de banco padrão
-        var (estudante, turmaOriginal, matriculaOriginal) = await PrepararDadosNoBanco();
+        // ARRANGE
+        var (_, turmaOriginal, matriculaOriginal) = await PrepararDadosNoBanco();
 
         var novaTurma = DataFactory.TurmaFaker(turmaOriginal.ProfessorId, turmaOriginal.DisciplinaId).Generate();
         using (var scope = _factory.Services.CreateScope())
@@ -179,31 +180,29 @@ public class Test_AuthorizeMatricula : IntegrationTestBase, IAsyncLifetime
             await contexto.SaveChangesAsync();
         }
 
-        // 🎯 O PULO DO GATO: Define que a requisição de transferência será feita por um Admin
-        _client.DefaultRequestHeaders.Remove("X-Test-Role");
-        _client.DefaultRequestHeaders.Add("X-Test-Role", "Admin");
+        SetRole(RoleAdmin);
 
-        // 2. ACT
+        // ACT
         var response = await _client.PatchAsJsonAsync($"/api/matriculas/{matriculaOriginal.Id}/transferir", novaTurma.Id);
 
-        // 3. ASSERT
-        // O foco aqui é garantir que o segurança da API DEIXOU PASSAR
-        response.StatusCode.Should().Be(HttpStatusCode.OK); // ou HttpStatusCode.NoContent dependendo da sua API
+        // ASSERT
+        response.StatusCode.Should().Be(HttpStatusCode.OK); // ou HttpStatusCode.NoContent dependendo da API
 
-        // Mantém a sua validação de banco original para garantir que a regra de negócio rodou!
+        // Confirma que a regra de negócio (desativar matrícula antiga) realmente rodou
         using (var scope = _factory.Services.CreateScope())
         {
             var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            var matriculaAntigaNoBanco = await contexto.Matriculas.AsNoTracking().FirstOrDefaultAsync(m => m.Id == matriculaOriginal.Id);
+            var matriculaAntigaNoBanco = await contexto.Matriculas.AsNoTracking()
+                .FirstOrDefaultAsync(m => m.Id == matriculaOriginal.Id);
             matriculaAntigaNoBanco!.Ativo.Should().BeFalse();
         }
     }
 
     [Fact]
-    public async Task Test_AuthorizeMatricula_Transferir_DeveSerFalha_QuandoUsuarioForEstudante()
+    public async Task Transferir_Matricula_DeveSerFalha_QuandoUsuarioForEstudante()
     {
-        // 1. ARRANGE
-        var (estudante, turmaOriginal, matriculaOriginal) = await PrepararDadosNoBanco();
+        // ARRANGE
+        var (_, turmaOriginal, matriculaOriginal) = await PrepararDadosNoBanco();
 
         var novaTurma = DataFactory.TurmaFaker(turmaOriginal.ProfessorId, turmaOriginal.DisciplinaId).Generate();
         using (var scope = _factory.Services.CreateScope())
@@ -213,19 +212,144 @@ public class Test_AuthorizeMatricula : IntegrationTestBase, IAsyncLifetime
             await contexto.SaveChangesAsync();
         }
 
-        _client.DefaultRequestHeaders.Remove("X-Test-Role");
-        _client.DefaultRequestHeaders.Add("X-Test-Role", "Estudante");
+        SetRole(RoleEstudante);
 
-        // 2. ACT
+        // ACT
         var response = await _client.PatchAsJsonAsync($"/api/matriculas/{matriculaOriginal.Id}/transferir", novaTurma.Id);
 
-        // 3. ASSERT
+        // ASSERT
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
 
+        // Confirma que a matrícula original NÃO foi alterada, já que a operação foi barrada
         using (var scope = _factory.Services.CreateScope())
         {
             var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            var matriculaAntigaNoBanco = await contexto.Matriculas.AsNoTracking().FirstOrDefaultAsync(m => m.Id == matriculaOriginal.Id);
+            var matriculaAntigaNoBanco = await contexto.Matriculas.AsNoTracking()
+                .FirstOrDefaultAsync(m => m.Id == matriculaOriginal.Id);
+            matriculaAntigaNoBanco!.Ativo.Should().BeTrue();
         }
+    }
+
+    [Fact]
+    public async Task Criar_Nota_DeveSerSucesso_QuandoUsuarioForAdmin()
+    {
+        // ARRANGE
+        var (_, _, matricula) = await PrepararDadosNoBanco();
+        SetRole(RoleAdmin);
+        var notaDtoCreate = new NotaDtoCreate(9.5, "Excelente desempenho", TipoImportancia.Alta, CategoriaAvaliacao.Apresentacao);
+
+        // ACT
+        var response = await _client.PostAsJsonAsync($"/api/matriculas/{matricula.Id}/notas", notaDtoCreate);
+
+        // ASSERT
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+    }
+
+    [Fact]
+    public async Task Criar_Nota_DeveSerFalha_QuandoUsuarioForEstudante()
+    {
+        // ARRANGE
+        var (_, _, matricula) = await PrepararDadosNoBanco();
+        SetRole(RoleEstudante);
+        var notaDtoCreate = new NotaDtoCreate(9.5, "Excelente desempenho", TipoImportancia.Alta, CategoriaAvaliacao.Apresentacao);
+
+        // ACT
+        var response = await _client.PostAsJsonAsync($"/api/matriculas/{matricula.Id}/notas", notaDtoCreate);
+
+        // ASSERT
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
+
+    [Fact]
+    public async Task Listar_Notas_DeveSerSucesso_QuandoUsuarioForAdmin()
+    {
+        // ARRANGE
+        var (_, _, matricula) = await PrepararDadosNoBanco();
+        SetRole(RoleAdmin);
+        var notaDtoCreate = new NotaDtoCreate(9.5, "Excelente desempenho", TipoImportancia.Alta, CategoriaAvaliacao.Apresentacao);
+        await _client.PostAsJsonAsync($"/api/matriculas/{matricula.Id}/notas", notaDtoCreate);
+
+        // ACT
+        var getResponse = await _client.GetAsync($"/api/matriculas/{matricula.Id}/notas");
+
+        // ASSERT
+        getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task Listar_Notas_DeveSerFalha_QuandoUsuarioForEstudante()
+    {
+        // ARRANGE
+        var (_, _, matricula) = await PrepararDadosNoBanco();
+        SetRole(RoleAdmin);
+        var notaDtoCreate = new NotaDtoCreate(9.5, "Excelente desempenho", TipoImportancia.Alta, CategoriaAvaliacao.Apresentacao);
+        await _client.PostAsJsonAsync($"/api/matriculas/{matricula.Id}/notas", notaDtoCreate);
+
+        _client.DefaultRequestHeaders.Remove("X-Test-Role");
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "estudante");
+        // ACT
+        var getResponse = await _client.GetAsync($"/api/matriculas/{matricula.Id}/notas");
+
+        // ASSERT
+        getResponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
+
+    [Fact]
+    public async Task Obterporid_Nota_DeveSerSucesso_QuandoUsuarioForAdmin()
+    {
+        // ARRANGE
+        var (_, _, matricula) = await PrepararDadosNoBanco();
+        SetRole(RoleAdmin);
+        var notaDtoCreate = new NotaDtoCreate(9.5, "Excelente desempenho", TipoImportancia.Alta, CategoriaAvaliacao.Apresentacao);
+        var post = await _client.PostAsJsonAsync($"/api/matriculas/{matricula.Id}/notas", notaDtoCreate);
+        var notaCriada = await post.Content.ReadFromJsonAsync<NotaDtoResponse>();
+        notaCriada.Should().NotBeNull();
+
+        // ACT
+        var getResponse = await _client.GetAsync($"/api/matriculas/{matricula.Id}/notas/{notaCriada!.Id}");
+
+        // ASSERT
+        getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task Atualizar_Nota_DeveSerSucesso_QuandoUsuarioForAdmin()
+    {
+        // ARRANGE
+        var (_, _, matricula) = await PrepararDadosNoBanco();
+        SetRole(RoleAdmin);
+        var notaDtoCreate = new NotaDtoCreate(9.5, "Excelente desempenho", TipoImportancia.Alta, CategoriaAvaliacao.Apresentacao);
+        var post = await _client.PostAsJsonAsync($"/api/matriculas/{matricula.Id}/notas", notaDtoCreate);
+        var notaCriada = await post.Content.ReadFromJsonAsync<NotaDtoResponse>();
+        notaCriada.Should().NotBeNull();
+
+        var notaAtualizada = new NotaDtoUpdate(9.5, "Atualizado", TipoImportancia.Media, CategoriaAvaliacao.Seminario);
+
+        // ACT
+        var putResponse = await _client.PutAsJsonAsync($"/api/matriculas/{matricula.Id}/notas/{notaCriada!.Id}", notaAtualizada);
+
+        // ASSERT
+        putResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task Atualizar_Nota_DeveSerFalha_QuandoUsuarioForEstudante()
+    {
+        // ARRANGE
+        var (_, _, matricula) = await PrepararDadosNoBanco();
+        SetRole(RoleAdmin);
+        var notaDtoCreate = new NotaDtoCreate(9.5, "Excelente desempenho", TipoImportancia.Alta, CategoriaAvaliacao.Apresentacao);
+        var post = await _client.PostAsJsonAsync($"/api/matriculas/{matricula.Id}/notas", notaDtoCreate);
+        var notaCriada = await post.Content.ReadFromJsonAsync<NotaDtoResponse>();
+        notaCriada.Should().NotBeNull();
+
+        SetRole(RoleEstudante);
+        var notaAtualizada = new NotaDtoUpdate(9.5, "Atualizado", TipoImportancia.Media, CategoriaAvaliacao.Seminario);
+
+        // ACT
+        var putResponse = await _client.PutAsJsonAsync($"/api/matriculas/{matricula.Id}/notas/{notaCriada!.Id}", notaAtualizada);
+
+        // ASSERT
+        putResponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 }

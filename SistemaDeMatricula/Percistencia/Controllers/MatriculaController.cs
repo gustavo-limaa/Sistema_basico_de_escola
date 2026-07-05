@@ -5,6 +5,7 @@ using SistemaDeMatricula.Aplicacao.Dtos.Notas;
 using SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
 using SistemaDeMatricula.Aplicacao.Usecases.Notas;
 using SistemaDeMatricula.Percistencia.Controllers;
+using System.Security.Claims;
 
 [Authorize]
 [Route("api/matriculas")]
@@ -52,12 +53,12 @@ public sealed class MatriculaController : MainController
     }
 
     [HttpGet("{id:guid}/notas")]
-    [Authorize(Roles = "Admin,Professor")]
+    [Authorize(Roles = "Admin,Professor,Estudante")]
     public async Task<IActionResult> PegarNotas(Guid id, [FromServices] ListarTodasAsNotasUsecase usecase) =>
         CustomResponse(await usecase.ExecuteAsAsync(id));
 
     [HttpGet("{id:guid}/notas/{notaId:guid}")]
-    [Authorize(Roles = "Admin,Professor")]
+    [Authorize(Roles = "Admin,Professor,Estudante")]
     public async Task<IActionResult> PegarNotaPorId(Guid id, Guid notaId, [FromServices] ObterNotaPorIdUseCases usecase) =>
         CustomResponse(await usecase.ExecuteAsAsync(id, notaId));
 
@@ -66,8 +67,12 @@ public sealed class MatriculaController : MainController
     public async Task<IActionResult> AtualizarNota(Guid id, Guid notaId, [FromBody] NotaDtoUpdate notaDtoUpdate, [FromServices] AtualizarNotaUsecase usecase) =>
         CustomResponse(await usecase.ExecuteAsAsync(id, notaId, notaDtoUpdate));
 
+    // Exemplo temporário de debug no controller
     [HttpGet("{matriculaId}/notas")]
     [Authorize(Roles = "Admin,Professor")]
-    public async Task<IActionResult> ListarNotas(Guid matriculaId, [FromServices] ObterNotasPorMatricula useCase) =>
-        CustomResponse(await useCase.ExecuteAsAsync(matriculaId));
+    public async Task<IActionResult> ListarNotas(Guid matriculaId, [FromServices] ObterNotasPorMatricula useCase)
+    {
+        var roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToArray();
+        return Ok(new { roles, allClaims = User.Claims.Select(c => new { c.Type, c.Value }) });
+    }
 }
