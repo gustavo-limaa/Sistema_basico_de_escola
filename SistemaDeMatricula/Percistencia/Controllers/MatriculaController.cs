@@ -5,6 +5,7 @@ using SistemaDeMatricula.Aplicacao.Dtos.Notas;
 using SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
 using SistemaDeMatricula.Aplicacao.Usecases.Notas;
 using SistemaDeMatricula.Percistencia.Controllers;
+using System.Net.WebSockets;
 using System.Security.Claims;
 
 [Authorize]
@@ -72,7 +73,7 @@ public sealed class MatriculaController : MainController
     [Authorize(Roles = "Admin,Professor")]
     public async Task<IActionResult> ListarNotas(Guid matriculaId, [FromServices] ObterNotasPorMatricula useCase)
     {
-        var roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToArray();
-        return Ok(new { roles, allClaims = User.Claims.Select(c => new { c.Type, c.Value }) });
+        var result = await useCase.ExecuteAsAsync(matriculaId);
+        return CustomResponse(result);
     }
 }

@@ -19,15 +19,8 @@ public sealed class RestaurarTurmaUseCase
         if (turma == null)
             return Result<bool>.Falha("Turma não encontrada ou já está ativa.");
 
-        if (turma.Ativo)
-            return Result<bool>.Ok(true);
-
-        turma.Ativar();
-
-        var sucesso = await _turmaRepo.AtualizarAsync(turma);
-
-        return sucesso
-            ? Result<bool>.Ok(true)
-            : Result<bool>.Falha("Erro ao tentar restaurar a turma.");
+        // Chama o método específico de restauração que ativa a turma e salva as alterações
+        var sucesso = await _turmaRepo.RestaurarAsync(id);
+        return sucesso ? Result<bool>.Ok(true) : Result<bool>.Falha("Erro ao tentar restaurar a turma.");
     }
-}
+}// mapeamento de erros para código HTTP
