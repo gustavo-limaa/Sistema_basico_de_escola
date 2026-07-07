@@ -123,9 +123,6 @@ public class AtualizarTurmaIntegrationTest : IntegrationTestBase
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         var profNoBanco = await db.Professores.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.Id == profId);
 
-        Console.WriteLine($"Professor no Banco: {profNoBanco.NomeCompleto} | Ativo: {profNoBanco.Ativo}");
-        // 2. Criar a turma passando os IDs que acabamos de gerar
-        // (Ajuste o método CriarTurmaAsync para aceitar esses parâmetros)
         var turmaCriada = await CriarTurmaAsync(profId, discId);
         var idDaTurma = turmaCriada.Id;
 

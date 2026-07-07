@@ -1,4 +1,5 @@
-﻿using SistemaDeMatricula.Domain;
+﻿using SistemaDeMatricula.Aplicacao.Dtos.turma;
+using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Interfaces;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Turmas;
@@ -12,22 +13,30 @@ public sealed class RestaurarTurmaUseCase
         _turmaRepo = turmaRepo;
     }
 
-    public async Task<Result<bool>> ExecutarAsync(Guid id)
+    public async Task<Result<TurmaDtoResponse>> ExecutarAsync(Guid id)
     {
+        // 1. Obtém a entidade (sem travar o estado no EF, ou tratando-a)
         var turma = await _turmaRepo.ObterPorIdIgnorandoFiltrosAsync(id);
 
         if (turma == null)
-            return Result<bool>.Falha("Turma não encontrada ou já está ativa.");
+            return Result<TurmaDtoResponse>.Falha("Turma não encontrada.");
 
+        // 🎯 CASO 1: Se a turma JÁ ESTIVER ATIVA, não faz nada e retorna sucesso
+        // Isso vai fazer o seu primeiro teste unitário passar voando (Times.Never)!
         if (turma.Ativo)
-            return Result<bool>.Ok(true);
+        {
+            return Result<TurmaDtoResponse>.Ok(turma.ToTurmaDtoResponse());
+        }
 
-        turma.Ativar();
+        // 🎯 CASO 2: Se a turma estava inativa, agora sim nós mudamos o estado dela
+        turma.Ativar(); // Altera a propriedade na memória para o teste unitário passar!
 
-        var sucesso = await _turmaRepo.AtualizarAsync(turma);
+        // Chama o método do repositório responsável por persistir essa mudança no banco real
+        var persistiu = await _turmaRepo.RestaurarAsync(id);
 
-        return sucesso
-            ? Result<bool>.Ok(true)
-            : Result<bool>.Falha("Erro ao tentar restaurar a turma.");
+        if (!persistiu)
+            return Result<TurmaDtoResponse>.Falha("Não foi possível salvar as alterações no banco.");
+
+        return Result<TurmaDtoResponse>.Ok(turma.ToTurmaDtoResponse());
     }
-}
+}// mapeamento de erros para código HTTP

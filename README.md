@@ -51,13 +51,13 @@ A suíte de testes do projeto foi expandida para cobrir de forma holística tant
 
 ## 📈 Road Map
 
-- [x] CRUDs e Domínio de Professores, Disciplinas, Estudantes e Turmas.
+
 - [x] Arquitetura e Configuração do Serviço de Autenticação (Identity + JWT).
 - [x] Centralização de Configurações Dinâmicas com `.env` e variáveis de ambiente.
-- [x] Cobertura de 280+ Testes (Unitários e Integração com Respawn).
+- [x] Cobertura de 300+ Testes (Unitários e Integração com Respawn).
 - [x] Finalização das Regras de Negócio do Módulo de Matrícula.
-- [ ] Implementação de Controle de Acesso por Roles/Claims (Em progresso).
-- [ ] Configuração de CI/CD via GitHub Actions.
+- [x] Implementação de Controle de Acesso por Roles/Claims (Em progresso).
+- [x] Configuração de CI/CD via GitHub Actions.
 
 ---
 

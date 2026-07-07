@@ -48,7 +48,7 @@ public class ResturarTurmaUsecaseTestUNI
         _mock.Setup(t => t.ObterPorIdIgnorandoFiltrosAsync(turmaInativa.Id))
              .ReturnsAsync(turmaInativa);
 
-        _mock.Setup(t => t.AtualizarAsync(turmaInativa))
+        _mock.Setup(t => t.RestaurarAsync(turmaInativa.Id))
              .ReturnsAsync(true);
 
         // Act
@@ -58,7 +58,7 @@ public class ResturarTurmaUsecaseTestUNI
         resultado.Sucesso.Should().BeTrue();
         turmaInativa.Ativo.Should().BeTrue(); // Garante que o UseCase realmente ativou ela
 
-        _mock.Verify(t => t.AtualizarAsync(turmaInativa), Times.Once);
+        _mock.Verify(t => t.RestaurarAsync(turmaInativa.Id), Times.Once);
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public class ResturarTurmaUsecaseTestUNI
         resultado.Sucesso.Should().BeFalse
             ();
 
-        resultado.Mensagem.Should().Be("Turma não encontrada ou já está ativa.");
+        resultado.Mensagem.Should().Be("Turma não encontrada.");
     }
 
     [Fact]
@@ -91,6 +91,6 @@ public class ResturarTurmaUsecaseTestUNI
         resultado.Sucesso.Should().BeTrue();
         // Importante: O repositório NÃO deve ser chamado para atualizar,
         // pois não houve mudança de estado!
-        _mock.Verify(t => t.AtualizarAsync(It.IsAny<Turma>()), Times.Never);
+        _mock.Verify(t => t.RestaurarAsync(turmaJaAtiva.Id), Times.Never);
     }
 }

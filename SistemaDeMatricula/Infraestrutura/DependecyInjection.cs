@@ -17,6 +17,7 @@ namespace SistemaDeMatricula.Infraestrutura
         {
             #region use cases
 
+            services.AddScoped<RestaurarTurmaUseCase>();
             services.AddScoped<ObterPorIdUsecaseDisciplina>();
             services.AddScoped<ObterTodasDisciplinaUseCase>();
             services.AddScoped<CriarUsecaseDisciplina>();

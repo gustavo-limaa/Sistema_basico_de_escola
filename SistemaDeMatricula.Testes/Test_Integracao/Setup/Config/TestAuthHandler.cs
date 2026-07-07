@@ -22,21 +22,32 @@ namespace SistemaDeMatricula.Testes.Test_Integracao.Setup.Config
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            // 🎯 AQUI ESTÁ A MÁGICA DA SUA ROLE MASTER!
-            // Criamos as claims fictícias que vão enganar as tags [Authorize] nos testes de integração
-            var claims = new[]
+            // 1. Criamos uma lista base de claims com o ID que já corrigimos
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.Name, "UsuarioTeste"),
+        new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString())
+    };
+
+            // 2. Olhamos se a requisição de teste enviou o cabeçalho mandando usar uma Role específica
+            if (Context.Request.Headers.TryGetValue("X-Test-Role", out var roleCustomizada))
             {
-                    new Claim(ClaimTypes.Name, "UsuarioTeste"),
-                    new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
-                    new Claim(ClaimTypes.Role, "Admin"),
-                    new Claim(ClaimTypes.Role, "Estudante"),
-                    new Claim(ClaimTypes.Role, "Professor")
-            };
+                // Se enviou (ex: "Estudante"), adicionamos APENAS essa role no crachá!
+                claims.Add(new Claim(ClaimTypes.Role, roleCustomizada.ToString()));
+            }
+            else
+            {
+                // Se NÃO enviou o cabeçalho, mantém o comportamento antigo (Superpoderes)
+                // para não quebrar nenhum dos seus 271 testes antigos!
+                claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+                claims.Add(new Claim(ClaimTypes.Role, "Estudante"));
+                claims.Add(new Claim(ClaimTypes.Role, "Professor"));
+            }
+
             var identity = new ClaimsIdentity(claims, "TestScheme");
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, "TestScheme");
 
-            // Retorna o crachá com sucesso para o ciclo de vida do .NET de teste
             return Task.FromResult(AuthenticateResult.Success(ticket));
         }
     }

@@ -122,9 +122,6 @@ public static class DataFactory
         {
             var profId = professorId ?? Guid.NewGuid();
             var discId = disciplinaId ?? Guid.NewGuid();
-
-            // Se 'capacidadeForçada' tiver valor (vinda do teste), usa ela.
-            // Se for null, sorteia o aleatório (mantém compatibilidade com outros testes).
             var capacidade = capacidadeForçada ?? f.Random.Int(10, 100);
 
             var codigo = new CodigoTurma(
