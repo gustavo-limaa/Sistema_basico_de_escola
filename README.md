@@ -15,7 +15,7 @@ O núcleo de gestão escolar e o módulo de autenticação estão implementados 
 ### 🖥️ Ecossistema Core & APIs
 * **Linguagem & Framework:** C# e .NET (Minimal APIs / Controllers).
 * **Arquitetura:** Clean Architecture / Domain-Driven Design (DDD).
-* **Mensageria:** RabbitMQ para comunicação assíncrona entre serviços.
+
 
 ### 🔐 Segurança & Autenticação (Novo!)
 * **ASP.NET Core Identity:** Gerenciamento nativo de usuários, hashes de senha e segurança de credenciais.

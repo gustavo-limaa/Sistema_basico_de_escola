@@ -7,6 +7,12 @@
     <File Path="docs/testes-sucesso.png" />
     <File Path="README.md" />
   </Folder>
+  <Folder Name="/Testes/">
+    <Project Path="Teste.Autorizaçao.Permicao/Teste.Autorizaçao.Permicao.csproj" Id="aee683b0-3d5a-480c-9a61-5b1d1a59bc33" />
+    <Project Path="Teste.Integraçao/Teste.Integraçao.csproj" Id="f2929913-f748-4aed-ad85-998a382462be" />
+    <Project Path="Teste.Perfomance.Pressao/Teste.Perfomance.Pressao.csproj" Id="b3f699c7-88cb-4ed3-be81-df59418a7249" />
+    <Project Path="Teste.Unitario/Teste.Unitario.csproj" Id="2d12df50-2d2c-40ed-a68b-44de03b39aa1" />
+  </Folder>
   <Project Path="istemaDeMatricula.Identity.API/SistemaDeMatricula.Identity.API.csproj" Id="b9e01020-6871-4600-980b-446e4e71f75d" />
   <Project Path="SistemaDeMatricula.Testes/SistemaDeMatricula.Testes.csproj" Id="b855c5e9-43ae-4c33-a127-9209f4d2962d" />
   <Project Path="SistemaDeMatricula/SistemaDeMatricula.csproj" />

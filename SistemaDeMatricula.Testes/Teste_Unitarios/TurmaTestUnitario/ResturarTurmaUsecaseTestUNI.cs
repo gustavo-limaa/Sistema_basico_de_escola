@@ -43,7 +43,7 @@ public class ResturarTurmaUsecaseTestUNI
     {
         // Arrange
         var turmaInativa = DataFactory.TurmaFaker().Generate();
-        turmaInativa.Desativar(); // Ela começa "morta"
+        turmaInativa.Desativar();
 
         _mock.Setup(t => t.ObterPorIdIgnorandoFiltrosAsync(turmaInativa.Id))
              .ReturnsAsync(turmaInativa);
@@ -56,7 +56,7 @@ public class ResturarTurmaUsecaseTestUNI
 
         // Assert
         resultado.Sucesso.Should().BeTrue();
-        turmaInativa.Ativo.Should().BeTrue(); // Garante que o UseCase realmente ativou ela
+        turmaInativa.Ativo.Should().BeTrue();
 
         _mock.Verify(t => t.RestaurarAsync(turmaInativa.Id), Times.Once);
     }
@@ -79,7 +79,7 @@ public class ResturarTurmaUsecaseTestUNI
     {
         // Arrange
         var turmaJaAtiva = DataFactory.TurmaFaker().Generate();
-        turmaJaAtiva.Ativar(); // Ela já nasce ativa no teste
+        turmaJaAtiva.Ativar();
 
         _mock.Setup(t => t.ObterPorIdIgnorandoFiltrosAsync(turmaJaAtiva.Id))
              .ReturnsAsync(turmaJaAtiva);
@@ -89,8 +89,7 @@ public class ResturarTurmaUsecaseTestUNI
 
         // Assert
         resultado.Sucesso.Should().BeTrue();
-        // Importante: O repositório NÃO deve ser chamado para atualizar,
-        // pois não houve mudança de estado!
+
         _mock.Verify(t => t.RestaurarAsync(turmaJaAtiva.Id), Times.Never);
     }
 }
