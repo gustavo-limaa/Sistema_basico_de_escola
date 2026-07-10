@@ -1,5 +1,6 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.Matricola;
 using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
 
@@ -17,12 +18,12 @@ public sealed class ObterMatriculaPorIdUsecase
     public async Task<Result<MatriculaDtoResponse>> ExecutarAsync(Guid id)
     {
         if (id == Guid.Empty)
-            return Result<MatriculaDtoResponse>.Falha("O identificador da matrícula é obrigatório.");
+            return Result<MatriculaDtoResponse>.Falha(MensagensMatricula.MatriculaNaoEncontrada);
 
         var matricula = await _uow.Matriculas.ObterPorIdAsync(id);
 
         if (matricula is null)
-            return Result<MatriculaDtoResponse>.NaoEncontrado("Matrícula não encontrada.");
+            return Result<MatriculaDtoResponse>.NaoEncontrado(MensagensMatricula.MatriculaNaoEncontrada);
 
         return Result<MatriculaDtoResponse>.Ok(matricula.ToMatriculaDtoResponse());
     }

@@ -1,5 +1,6 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.turma;
 using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Value_Object;
 
@@ -23,7 +24,7 @@ public sealed class AtualizarTurmaUseCase
         var turmaParaEditar = await _turmaRepo.ObterPorIdIgnorandoFiltrosAsync(turmaId);
 
         if (turmaParaEditar == null)
-            return Result<TurmaDtoResponse>.Falha("Turma não encontrada para atualização.");
+            return Result<TurmaDtoResponse>.Falha(MensagensTurma.Invalida);
 
         var resultadoVO = CodigoTurma.Criar(dto.Sigla, dto.AnoLetivo, dto.Semestre, dto.Numero);
         if (!resultadoVO.Sucesso)
@@ -34,19 +35,19 @@ public sealed class AtualizarTurmaUseCase
         var turmaComMesmoCodigo = await _turmaRepo.ObterPorCodigoIgnorandoFiltrosAsync(codigoValidado.ValorFormatado);
 
         if (turmaComMesmoCodigo != null && turmaComMesmoCodigo.Id != turmaId)
-            return Result<TurmaDtoResponse>.Conflito("Este código já está sendo usado por outra turma."); // 👈 Tem que ser .Conflito!
+            return Result<TurmaDtoResponse>.Conflito(MensagensTurma.TurmaJaExistente);
 
         var professor = await _profRepo.ObterPorIdAsync(dto.ProfessorId);
         if (professor == null)
-            return Result<TurmaDtoResponse>.Falha("Professor não encontrado ou inativo.");
+            return Result<TurmaDtoResponse>.Falha(MensagensProfessor.ProfessorNaoEncontrado);
         if (!professor.Ativo)
-            return Result<TurmaDtoResponse>.Conflito("Professor nao encontrado por está inativo.");
+            return Result<TurmaDtoResponse>.Conflito(MensagensProfessor.ProfessorNaoEncontrado);
 
         var disciplina = await _disciplinaRepo.ObterPorIdAsync(dto.DisciplinaId);
         if (disciplina == null)
-            return Result<TurmaDtoResponse>.Falha("Disciplina não encontrada ou inativa.");
+            return Result<TurmaDtoResponse>.Falha(MensagensTurma.DisciplinaNaoEncontrada);
         if (!disciplina.Ativo)
-            return Result<TurmaDtoResponse>.Falha("Disciplina não encontrada por está inativa.");
+            return Result<TurmaDtoResponse>.Falha(MensagensTurma.DisciplinaNaoEncontrada);
 
         turmaParaEditar.AtualizarDados(codigoValidado, dto.ProfessorId, dto.DisciplinaId, dto.novaCapacidade);
 

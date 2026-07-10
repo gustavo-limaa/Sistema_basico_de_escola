@@ -1,5 +1,6 @@
 ﻿using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Interfaces;
+using SistemaDeMatricula.Domain.Erros;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Turmas;
 
@@ -20,14 +21,14 @@ public sealed class RemoverTurmaUseCase
     {
         var turma = await _turmaRepo.ObterPorIdAsync(id);
 
-        if (turma == null) return Result<object?>.NaoEncontrado("Turma não encontrada.");
+        if (turma == null) return Result<object?>.NaoEncontrado(MensagensTurma.TurmaNaoEncontrada);
 
         if (!turma.Ativo) return Result<object?>.Ok(null);
 
         var temAlunosAtivos = await _turmaMatriculaRepo.ExisteQualquerMatriculaAtivaParaTurmaAsync(id);
         if (temAlunosAtivos)
         {
-            return Result<object?>.Falha("Não é possível desativar uma turma com alunos matriculados.");
+            return Result<object?>.Falha(MensagensTurma.TurmaComAlunosMatriculados);
         }
 
         turma.Desativar();

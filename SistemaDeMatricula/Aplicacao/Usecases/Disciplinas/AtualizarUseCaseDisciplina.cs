@@ -1,5 +1,6 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.Disciplina;
 using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
 
@@ -18,12 +19,12 @@ public sealed class AtualizarUseCaseDisciplina
     {
         var disciplina = await _disciplinaRepositorio.ObterPorIdAsync(id);
         if (disciplina == null)
-            return Result<DisciplinaDtoResponse>.Falha("Disciplina não encontrada.");
+            return Result<DisciplinaDtoResponse>.Falha(MensagensDisciplina.DisciplinaNaoEncontrada);
 
         if (dto.Nome.Trim().ToLower() != disciplina.Nome.Valor.ToLower())
         {
             if (await _disciplinaRepositorio.ExisteDisciplinaComMesmoNomeAsync(dto.Nome))
-                return Result<DisciplinaDtoResponse>.Falha("Já existe outra disciplina com esse nome.");
+                return Result<DisciplinaDtoResponse>.Falha(MensagensDisciplina.DisciplinaJaExiste);
         }
 
         disciplina.ToAtualizarDisciplina(dto);
@@ -32,7 +33,7 @@ public sealed class AtualizarUseCaseDisciplina
         var salvou = await _disciplinaRepositorio.SalvarAlteracoesAsync();
 
         if (!salvou)
-            return Result<DisciplinaDtoResponse>.Falha("Erro ao persistir os dados.");
+            return Result<DisciplinaDtoResponse>.Falha(MensagensDisciplina.ErroDoBancoDeDados);
 
         return Result<DisciplinaDtoResponse>.Ok(disciplina.ToResponse());
     }

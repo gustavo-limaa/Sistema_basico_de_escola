@@ -2,6 +2,7 @@
 using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
+using SistemaDeMatricula.Domain.Erros;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Professor;
 
@@ -18,17 +19,17 @@ public sealed class ProfessorRestaurarUseCase
     public async Task<Result<ProfessorDtoResponse>> ExecutarAsync(Guid professorId)
     {
         if (professorId == Guid.Empty)
-            return Result<ProfessorDtoResponse>.Falha("ID do professor é inválido.");
+            return Result<ProfessorDtoResponse>.Falha(MensagensProfessor.ProfessorInvalido);
 
         try
         {
             var professor = await _repositorioProfessor.ObterPorIdIgnorandoFiltrosAsync(professorId);
 
             if (professor == null)
-                return Result<ProfessorDtoResponse>.Falha("Professor não encontrado.");
+                return Result<ProfessorDtoResponse>.Falha(MensagensProfessor.ProfessorNaoEncontrado);
 
             if (professor.Ativo)
-                return Result<ProfessorDtoResponse>.Conflito("Este professor já está ativo e não precisa ser restaurado.");
+                return Result<ProfessorDtoResponse>.Conflito(MensagensProfessor.ProfessorJaAtivo);
 
             professor.Ativar();
             _repositorioProfessor.Atualizar(professor);
@@ -37,7 +38,7 @@ public sealed class ProfessorRestaurarUseCase
 
             return sucesso
                 ? Result<ProfessorDtoResponse>.Ok(professor.ToProfessorDtoResponse())
-                : Result<ProfessorDtoResponse>.Falha("Erro ao persistir os dados no banco.");
+                : Result<ProfessorDtoResponse>.Falha(MensagensProfessor.FalhaAoPersistirDados);
         }
         catch (Exception ex)
         {

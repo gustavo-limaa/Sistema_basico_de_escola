@@ -10,7 +10,7 @@ namespace SistemaDeMatricula.Percistencia.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public sealed class EstudanteController : ControllerBase
+public sealed class EstudanteController : MainController
 {
     private readonly IRepositorioEstudante _repositorioEstudante;
 
@@ -23,9 +23,6 @@ public sealed class EstudanteController : ControllerBase
     [Authorize(Roles = "Admin,Estudante,Professor")]
     public async Task<IActionResult> ObterPorId([FromServices] UsesCasesPegarPorIdEstudante useCase, Guid id)
     {
-        if (id == Guid.Empty)
-            return BadRequest("O ID do estudante deve ser informado.");
-
         var result = await useCase.ExecuteAsync(id);
 
         if (!result.Sucesso)
@@ -43,13 +40,6 @@ public sealed class EstudanteController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Criar([FromServices] UsesCasesCriarEstudante useCase, [FromBody] EstudanteDtoCreate estudanteDto)
     {
-        if (estudanteDto == null)
-            return BadRequest("Os dados do estudante devem ser informados.");
-        if (await _repositorioEstudante.ExisteCpfAsync(estudanteDto.Cpf))
-        {
-            return Conflict("Já existe um estudante cadastrado com este CPF.");
-        }
-
         var result = await useCase.ExecuteAsync(estudanteDto);
 
         if (!result.Sucesso)
@@ -77,19 +67,6 @@ public sealed class EstudanteController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Atualizar([FromServices] UsesCasesAtualizarEstudante useCase, Guid id, [FromBody] EstudanteDtoUpdate estudanteDto)
     {
-        if (id == Guid.Empty)
-            return BadRequest("O ID do estudante deve ser informado.");
-        if (estudanteDto == null)
-            return BadRequest("Os dados do estudante devem ser informados.");
-        if (!await _repositorioEstudante.ExisteMatriculaAsync(id))
-        {
-            return NotFound("Estudante não encontrado para o ID fornecido.");
-        }
-        if (estudanteDto.Email != null && await _repositorioEstudante.ExisteEmailAsync(estudanteDto.Email, id))
-        {
-            return Conflict("Já existe um estudante cadastrado com este e-mail.");
-        }
-
         var result = await useCase.ExecuteAsync(id, estudanteDto);
 
         if (!result.Sucesso)
@@ -104,13 +81,6 @@ public sealed class EstudanteController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Deletar([FromServices] UsesCasesDeletarEstudante useCase, Guid id)
     {
-        if (id == Guid.Empty)
-            return NotFound("O ID do estudante deve ser informado.");
-        if (!await _repositorioEstudante.ExisteMatriculaAsync(id))
-        {
-            return NotFound("Estudante não encontrado para o ID fornecido.");
-        }
-
         var result = await useCase.ExecuteAsync(id);
 
         if (!result.Sucesso)

@@ -1,5 +1,6 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.estudante;
 using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
 using SistemaDeMatricula.Services;
@@ -22,10 +23,10 @@ public sealed class UsesCasesCriarEstudante
         try
         {
             if (dto is null)
-                return Result<EstudanteDtoResponse>.Falha("Dados de estudante são obrigatórios.");
+                return Result<EstudanteDtoResponse>.Falha(MensagensEstudante.ErroEstudanteInvalido);
 
             if (await _repositorioEstudante.ExisteCpfAsync(dto.Cpf))
-                return Result<EstudanteDtoResponse>.Falha("CPF já cadastrado.");
+                return Result<EstudanteDtoResponse>.Falha(MensagensEstudante.EstudanteJaExiste);
 
             var novoEstudante = dto.ToEstudante();
 
@@ -37,7 +38,7 @@ public sealed class UsesCasesCriarEstudante
             var resultRepositorio = await _repositorioEstudante.SalvarAlteracoesAsync();
 
             if (!resultRepositorio)
-                return Result<EstudanteDtoResponse>.Falha("Falha ao salvar no banco de dados.");
+                return Result<EstudanteDtoResponse>.Falha(MensagensEstudante.ErroEstudanteInvalido);
 
             var respostaDto = novoEstudante.ToEstudanteDtoResponse();
 

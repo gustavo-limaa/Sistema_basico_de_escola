@@ -1,5 +1,6 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.Notas;
 using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
 
@@ -19,11 +20,10 @@ namespace SistemaDeMatricula.Aplicacao.Usecases.Notas
             var nota = await _uow.Notas.ObterPorId(notaId);
 
             if (nota is null)
-                return Result<NotaDtoResponse>.NaoEncontrado("Nota não encontrada.");
+                return Result<NotaDtoResponse>.NaoEncontrado(MensagensNotas.NotaNaoEncontrada);
 
-            // 3. Validação de dono (Só acessa o MatriculaId SE a nota não for nula)
             if (nota.MatriculaId != matriculaId)
-                return Result<NotaDtoResponse>.NaoEncontrado("Nota não encontrada para esta matrícula.");
+                return Result<NotaDtoResponse>.NaoEncontrado(MensagensNotas.NotaNaoEncontrada);
             return Result<NotaDtoResponse>.Ok(nota.ToNotaDtoResponse());
         }
     }

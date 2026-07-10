@@ -18,7 +18,6 @@ public sealed class Disciplina : ModeloMain
 
     public ICollection<Turma> Turmas { get; private set; } = new List<Turma>();
 
-    // Construtor para o EF (sempre protegido/privado)
     protected Disciplina()
     { }
 

@@ -1,19 +1,13 @@
 ﻿using Bogus;
 using Bogus.Extensions.Brazil;
-using SistemaDeMatricula.Aplicacao.Dtos.estudante;
 using SistemaDeMatricula.Domain.Modelos;
 using SistemaDeMatricula.Domain.Uteis;
 using SistemaDeMatricula.Domain.Value_Object;
-
-using SistemaDeMatricula.Domain.Value_Object;
-
-using SistemaDeMatricula.Infraestrutura.Data;
 using SitemaDeMatricula.Domain.Value_Objetc;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace SistemaDeMatricula.Testes.Teste_Unitarios;
+namespace SistemaDeMatricula.Test.Shared;
 
-public static class DataFactory
+public class Data_Factory
 {
     public static Faker<Estudante> EstudanteFaker => new Faker<Estudante>("pt_BR")
     .CustomInstantiator(f =>
@@ -30,44 +24,7 @@ public static class DataFactory
             new ObjectEmail(f.Internet.Email()),
             new ObjectTelefone(f.Phone.PhoneNumber("119########"))
         );
-    })
-    .RuleFor(e => e.UsuarioId, f => Guid.NewGuid().ToString());
-
-    // No DataFactory.cs
-    public static async Task<(Estudante estudante, Turma turma, Matricula matricula)> CriarCenarioDeMatriculaValido(
-    AppDbContext contexto,
-    int capacidade = 50) // <-- Adicione esse parâmetro opcional
-    {
-        var disciplina = DisciplinaFaker.Generate();
-        var professor = ProfessorFaker.Generate();
-        var estudante = EstudanteFaker.Generate();
-        estudante.ativar();
-        professor.ativar();
-        disciplina.ativar();
-
-        await contexto.Disciplinas.AddAsync(disciplina);
-        await contexto.Professores.AddAsync(professor);
-        await contexto.Estudantes.AddAsync(estudante);
-
-        await contexto.SaveChangesAsync();
-
-        // Agora passamos a 'capacidade' que recebemos no argumento
-        var turma = TurmaFaker(professor.Id, disciplina.Id, capacidade).Generate();
-        turma.ativar();
-
-        if (!turma.Ativo || !estudante.Ativo)
-            throw new Exception("Cenário criado com entidades inativas!");
-
-        await contexto.Turmas.AddAsync(turma);
-
-        // IMPORTANTE: Para a turma estar lotada, precisamos matricular esse primeiro estudante
-        var matricula = new Matricula(estudante.Id, turma.Id);
-        matricula.ativar();
-        await contexto.Matriculas.AddAsync(matricula);
-        await contexto.SaveChangesAsync();
-
-        return (estudante, turma, matricula);
-    }
+    }).RuleFor(e => e.UsuarioId, f => Guid.NewGuid().ToString());
 
     public static Faker<Disciplina> DisciplinaFaker => new Faker<Disciplina>()
         .CustomInstantiator(f =>
@@ -77,7 +34,7 @@ public static class DataFactory
 
             return new Disciplina(
                 nomeSorteado,
-                f.Random.Int(1, 200) // Disciplinas geralmente têm mais horas que 1-30
+                f.Random.Int(1, 200)
             );
         });
 
@@ -96,9 +53,7 @@ public static class DataFactory
             new ObjectTelefone(f.Phone.PhoneNumber("119########"))
         );
     })
-    // Força o estado ativo após a instância ser criada
     .RuleFor(p => p.Ativo, true)
-    // 🎯 INJETANDO O ID FAKE DO IDENTITY PARA O PROFESSOR
     .RuleFor(p => p.UsuarioId, f => Guid.NewGuid().ToString());
 
     public static Faker<Turma> TurmaFaker(Guid? professorId = null, Guid? disciplinaId = null, int? capacidadeForçada = null)
@@ -130,4 +85,5 @@ public static class DataFactory
             // Cria uma matrícula com IDs aleatórios em memória
             return new Matricula(Guid.NewGuid(), Guid.NewGuid());
         });
+}
 }

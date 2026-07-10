@@ -1,5 +1,6 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.Professor;
 using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
 using SistemaDeMatricula.Services;
@@ -19,7 +20,7 @@ public sealed class ProfessorCriarUsecases
 
     public async Task<Result<ProfessorDtoResponse>> ExecutarAsync(ProfessorDtoCreate dto)
     {
-        if (dto == null) return Result<ProfessorDtoResponse>.Falha("Dados não fornecidos.");
+        if (dto == null) return Result<ProfessorDtoResponse>.Falha(MensagensProfessor.ProfessorInvalido);
 
         try
         {
@@ -34,22 +35,22 @@ public sealed class ProfessorCriarUsecases
             {
                 if (professorExistenteCpf.Ativo)
                 {
-                    return Result<ProfessorDtoResponse>.Conflito("Já existe um professor ativo cadastrado com este CPF.");
+                    return Result<ProfessorDtoResponse>.Conflito(MensagensProfessor.ProfessorJaExiste);
                 }
 
-                return Result<ProfessorDtoResponse>.Conflito("Este CPF pertence a um professor inativo/arquivado no sistema. Caso pretenda recontratá-lo, contacte o suporte ou a secretaria.");
+                return Result<ProfessorDtoResponse>.Conflito(MensagensProfessor.ProfessorNaoPodeSerAdicionado);
             }
 
             var professorExistenteEmail = await _repositorioProfessor.ObterPorEmailAsync(dto.Email);
             if (professorExistenteEmail != null)
-                return Result<ProfessorDtoResponse>.Conflito("Já existe um professor cadastrado com este e-mail.");
+                return Result<ProfessorDtoResponse>.Conflito(MensagensProfessor.ProfessorNaoPodeTerEmailInvalido);
             await _repositorioProfessor.AdicionarAsync(professor);
 
             var sucesso = await _repositorioProfessor.SalvarAlteracoesAsync();
 
             return sucesso
                 ? Result<ProfessorDtoResponse>.Ok(professor.ToProfessorDtoResponse())
-                : Result<ProfessorDtoResponse>.Falha("Erro ao persistir os dados no banco.");
+                : Result<ProfessorDtoResponse>.Falha(MensagensProfessor.ProfessorNaoPodeSerAdicionado);
         }
         catch (ArgumentException ex)
         {

@@ -6,9 +6,8 @@ using SistemaDeMatricula.Aplicacao.Usecases.Disciplinas;
 namespace SistemaDeMatricula.Percistencia.Controllers;
 
 [Authorize]
-[ApiController]
 [Route("api/disciplinas")]
-public sealed class DisciplinaController : ControllerBase
+public sealed class DisciplinaController : MainController
 {
     [HttpPost]
     [Authorize(Roles = "Admin,Professor")]

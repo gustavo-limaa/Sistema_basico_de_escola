@@ -1,5 +1,6 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.Disciplina;
 using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
 
@@ -18,10 +19,10 @@ public sealed class CriarUsecaseDisciplina
     public async Task<Result<DisciplinaDtoResponse>> Executar(DisciplinaDtoCreate dto)
     {
         if (dto is null)
-            return Result<DisciplinaDtoResponse>.Falha("Dados da disciplina são obrigatórios.");
+            return Result<DisciplinaDtoResponse>.Falha(MensagensDisciplina.DisciplinaInvalida);
 
         if (await _disciplinaRepositorio.ExisteDisciplinaComMesmoNomeAsync(dto.Nome))
-            return Result<DisciplinaDtoResponse>.Conflito("Já existe uma disciplina com esse nome.");
+            return Result<DisciplinaDtoResponse>.Conflito(MensagensDisciplina.DisciplinaJaExiste);
 
         var novaDisciplina = new Domain.Modelos.Disciplina(dto.Nome, dto.CargaHoraria);
 

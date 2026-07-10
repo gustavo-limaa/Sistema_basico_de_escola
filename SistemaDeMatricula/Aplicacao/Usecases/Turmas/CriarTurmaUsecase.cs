@@ -2,6 +2,7 @@
 using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Modelos;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Value_Object;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Turmas;
@@ -34,21 +35,21 @@ public sealed class CriarTurmaUseCase
         var codigoVO = resultadoVO.Dados;
         var professor = await _profRepo.ObterPorIdAsync(dto.ProfessorId);
         if (professor == null)
-            return Result<TurmaDtoResponse>.Falha("Professor não encontrado.");
+            return Result<TurmaDtoResponse>.Falha(MensagensProfessor.ProfessorNaoEncontrado);
         if (!professor.Ativo)
-            return Result<TurmaDtoResponse>.Conflito("Não é possível vincular um Professor inativo a uma nova turma.");
+            return Result<TurmaDtoResponse>.Conflito(MensagensProfessor.ProfessorNaoEncontrado);
 
         var turmaExistente = await _turmaRepo.ObterPorCodigoAsync(codigoVO.ValorFormatado);
 
         if (turmaExistente != null)
-            return Result<TurmaDtoResponse>.Conflito("Já existe uma turma ativa com este código.");
+            return Result<TurmaDtoResponse>.Conflito(MensagensTurma.TurmaJaExistente);
 
         var disciplina = await _discRepo.ObterPorIdAsync(dto.DisciplinaId);
         if (disciplina == null)
-            return Result<TurmaDtoResponse>.NaoEncontrado("Disciplina não encontrada."); // Agora retorna 404
+            return Result<TurmaDtoResponse>.NaoEncontrado(MensagensTurma.DisciplinaNaoEncontrada);
 
         if (!disciplina.Ativo)
-            return Result<TurmaDtoResponse>.Conflito("Não é possível vincular uma disciplina inativa a uma nova turma."); // Retorna 400
+            return Result<TurmaDtoResponse>.Conflito(MensagensTurma.DisciplinaNaoEncontrada);
 
         var novaTurma = new Turma(codigoVO, dto.ProfessorId, dto.DisciplinaId, dto.CapacidadeMaxima
             );
