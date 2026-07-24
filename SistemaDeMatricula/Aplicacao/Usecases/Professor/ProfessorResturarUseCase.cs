@@ -1,8 +1,8 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.Professor;
 using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
-using SistemaDeMatricula.Domain.Erros;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Professor;
 
@@ -29,7 +29,7 @@ public sealed class ProfessorRestaurarUseCase
                 return Result<ProfessorDtoResponse>.Falha(MensagensProfessor.ProfessorNaoEncontrado);
 
             if (professor.Ativo)
-                return Result<ProfessorDtoResponse>.Conflito(MensagensProfessor.ProfessorJaAtivo);
+                return Result<ProfessorDtoResponse>.Conflito(MensagensProfessor.ErroInativo_ou_Ativo);
 
             professor.Ativar();
             _repositorioProfessor.Atualizar(professor);

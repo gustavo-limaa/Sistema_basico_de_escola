@@ -5,8 +5,6 @@ using SistemaDeMatricula.Aplicacao.Dtos.Notas;
 using SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
 using SistemaDeMatricula.Aplicacao.Usecases.Notas;
 using SistemaDeMatricula.Percistencia.Controllers;
-using System.Net.WebSockets;
-using System.Security.Claims;
 
 [Authorize]
 [Route("api/matriculas")]

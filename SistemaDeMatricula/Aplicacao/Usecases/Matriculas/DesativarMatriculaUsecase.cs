@@ -1,8 +1,6 @@
-﻿using SistemaDeMatricula.Aplicacao.Dtos.Matricola;
-using SistemaDeMatricula.Domain;
-using SistemaDeMatricula.Domain.Interfaces;
-using SistemaDeMatricula.Infraestrutura.Data;
+﻿using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Erros;
+using SistemaDeMatricula.Domain.Interfaces;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
 
@@ -41,8 +39,6 @@ public sealed class DesativarMatriculaUsecase
         }
         catch (Exception ex)
         {
-            // LOGUE O ERRO REAL AQUI
-            // Exemplo: ex.InnerException?.Message traz a causa raiz (ex: violação de FK)
             return Result<bool>.Falha($"Erro técnico: {ex.Message} | {ex.InnerException?.Message}");
         }
     }

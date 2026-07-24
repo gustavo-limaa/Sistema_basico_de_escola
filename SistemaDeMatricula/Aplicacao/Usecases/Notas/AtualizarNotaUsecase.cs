@@ -3,7 +3,6 @@ using SistemaDeMatricula.Domain;
 using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
-using SistemaDeMatricula.Domain.Uteis;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Notas;
 

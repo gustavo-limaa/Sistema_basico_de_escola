@@ -1,11 +1,9 @@
 using DotNetEnv;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SistemaDeMatricula.Identity.API.Data;
 using SistemaDeMatricula.Identity.API.Interface;
 using SistemaDeMatricula.Identity.API.Service;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 Env.Load("../.env");
 

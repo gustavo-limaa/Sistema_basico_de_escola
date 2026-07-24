@@ -27,7 +27,7 @@ namespace SistemaDeMatricula.Aplicacao.Usecases.Disciplinas
 
             var resultado = await _disciplinaRepositorio.SalvarAlteracoesAsync();
 
-            return Result<DisciplinaDtoResponse>.SemConteudo(MensagensDisciplina.desativarDisciplina);
+            return Result<DisciplinaDtoResponse>.SemConteudo(MensagensDisciplina.Removido);
         }
     }
 }

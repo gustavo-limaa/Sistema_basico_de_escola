@@ -34,23 +34,19 @@ public sealed class ProfessorCriarUsecases
             if (professorExistenteCpf != null)
             {
                 if (professorExistenteCpf.Ativo)
-                {
-                    return Result<ProfessorDtoResponse>.Conflito(MensagensProfessor.ProfessorJaExiste);
-                }
-
-                return Result<ProfessorDtoResponse>.Conflito(MensagensProfessor.ProfessorNaoPodeSerAdicionado);
+                    return Result<ProfessorDtoResponse>.Conflito(MensagensProfessor.ProfessorJaExiste); // "Professor já existe."
             }
-
             var professorExistenteEmail = await _repositorioProfessor.ObterPorEmailAsync(dto.Email);
             if (professorExistenteEmail != null)
-                return Result<ProfessorDtoResponse>.Conflito(MensagensProfessor.ProfessorNaoPodeTerEmailInvalido);
+                return Result<ProfessorDtoResponse>.Conflito(MensagensProfessor.ErroDeDuplicidade);
+
             await _repositorioProfessor.AdicionarAsync(professor);
 
             var sucesso = await _repositorioProfessor.SalvarAlteracoesAsync();
 
             return sucesso
                 ? Result<ProfessorDtoResponse>.Ok(professor.ToProfessorDtoResponse())
-                : Result<ProfessorDtoResponse>.Falha(MensagensProfessor.ProfessorNaoPodeSerAdicionado);
+                : Result<ProfessorDtoResponse>.Falha(MensagensProfessor.ProfessorInvalido);
         }
         catch (ArgumentException ex)
         {
@@ -58,7 +54,7 @@ public sealed class ProfessorCriarUsecases
         }
         catch (Exception ex)
         {
-            return Result<ProfessorDtoResponse>.Falha($"Erro inesperado: {ex.Message}");
+            return Result<ProfessorDtoResponse>.Falha(MensagensProfessor.FalhaAoPersistirDados);
         }
     }
 }

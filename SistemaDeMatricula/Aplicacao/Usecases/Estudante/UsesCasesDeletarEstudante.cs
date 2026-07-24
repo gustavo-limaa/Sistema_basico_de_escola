@@ -19,12 +19,14 @@ public sealed class UsesCasesDeletarEstudante
         {
             var result = await _repositorioEstudante.ObterPorIdAsync(id);
             if (result is null)
-                return Result<bool>.Falha(MensagensEstudante.ErroEstudanteNaoEncontrado);
+                return Result<bool>.NaoEncontrado
+                    (MensagensEstudante.ErroEstudanteNaoEncontrado);
 
-            _repositorioEstudante.Remover(result);
+            _repositorioEstudante.Remover
+                (result);
             var deleteResult = await _repositorioEstudante.SalvarAlteracoesAsync();
             if (!deleteResult)
-                return Result<bool>.Falha(MensagensEstudante.ErroEstudanteInvalido);
+                return Result<bool>.Falha(MensagensEstudante.ErroBanco);
             return Result<bool>.Ok(true);
         }
         catch (Exception ex)

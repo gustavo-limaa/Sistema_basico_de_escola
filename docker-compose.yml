@@ -10,7 +10,7 @@ services:
     ports:
       - "${MYSQL_PORT}:3306" 
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$${MYSQL_ROOT_PASSWORD}"] # 🎯 Dica sênior: Duplo $$ para o compose não confundir com variável externa
       timeout: 5s
       retries: 10
       interval: 3s
@@ -31,7 +31,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:4-management
-    container_name: escola_rabbitmq
+    container_name: school_rabbitmq
     ports:
       - "5672:5672"   
       - "15672:15672" 

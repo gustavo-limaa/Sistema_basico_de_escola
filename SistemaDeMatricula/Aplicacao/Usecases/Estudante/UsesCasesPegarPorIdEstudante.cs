@@ -30,7 +30,7 @@ public sealed class UsesCasesPegarPorIdEstudante
         }
         catch (Exception ex)
         {
-            return Result<EstudanteDtoResponse>.Falha($"Erro ao obter estudante por ID: {ex.Message}");
+            return Result<EstudanteDtoResponse>.Falha(MensagensEstudante.ErroBanco);
         }
     }
 }

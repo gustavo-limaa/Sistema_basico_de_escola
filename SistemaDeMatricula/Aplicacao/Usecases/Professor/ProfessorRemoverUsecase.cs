@@ -1,6 +1,6 @@
 ﻿using SistemaDeMatricula.Domain;
-using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Erros;
+using SistemaDeMatricula.Domain.Interfaces;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Professor;
 
@@ -23,7 +23,7 @@ public sealed class ProfessorRemoverUsecase
         if (professorExistente == null)
             return Result<bool>.Falha(MensagensProfessor.ProfessorNaoEncontrado);
         if (!professorExistente.Ativo)
-            return Result<bool>.Falha(MensagensProfessor.ProfessorJaDesativado);
+            return Result<bool>.Falha(MensagensProfessor.ErroInativo_ou_Ativo);
 
         professorExistente.Desativar();
 
@@ -33,6 +33,7 @@ public sealed class ProfessorRemoverUsecase
 
         return sucesso
             ? Result<bool>.Ok(true)
-            : Result<bool>.Falha("Erro ao desativar o professor no banco de dados.");
+            : Result<bool>.Falha(MensagensProfessor.ErroSemAutoridade
+            );
     }
 }

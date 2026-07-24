@@ -38,16 +38,16 @@ public sealed class AtualizarTurmaUseCase
             return Result<TurmaDtoResponse>.Conflito(MensagensTurma.TurmaJaExistente);
 
         var professor = await _profRepo.ObterPorIdAsync(dto.ProfessorId);
-        if (professor == null)
+        if (professor is null)
             return Result<TurmaDtoResponse>.Falha(MensagensProfessor.ProfessorNaoEncontrado);
         if (!professor.Ativo)
             return Result<TurmaDtoResponse>.Conflito(MensagensProfessor.ProfessorNaoEncontrado);
 
         var disciplina = await _disciplinaRepo.ObterPorIdAsync(dto.DisciplinaId);
         if (disciplina == null)
-            return Result<TurmaDtoResponse>.Falha(MensagensTurma.DisciplinaNaoEncontrada);
+            return Result<TurmaDtoResponse>.Falha(MensagensDisciplina.DisciplinaNaoEncontrada);
         if (!disciplina.Ativo)
-            return Result<TurmaDtoResponse>.Falha(MensagensTurma.DisciplinaNaoEncontrada);
+            return Result<TurmaDtoResponse>.Falha(MensagensDisciplina.DisciplinaNaoEncontrada);
 
         turmaParaEditar.AtualizarDados(codigoValidado, dto.ProfessorId, dto.DisciplinaId, dto.novaCapacidade);
 

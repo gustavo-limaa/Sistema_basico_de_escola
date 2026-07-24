@@ -1,6 +1,4 @@
-﻿using SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
-
-namespace SistemaDeMatricula.Domain.Modelos
+﻿namespace SistemaDeMatricula.Domain.Modelos
 {
     public abstract class ModeloMain
     {

@@ -7,8 +7,6 @@ using SistemaDeMatricula.Domain.Modelos;
 using SistemaDeMatricula.Events;
 using SistemaDeMatricula.Services;
 
-using SistemaDeMatricula.Domain.Erros;
-
 namespace SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
 
 public sealed class MatricularEstudanteUsecase
@@ -25,7 +23,8 @@ public sealed class MatricularEstudanteUsecase
     public async Task<Result<MatriculaDtoResponse>> ExecutarAsync(MatriculaDtoCreate dto)
     {
         var estudante = await _uow.Estudantes.ObterPorIdAsync(dto.EstudanteId);
-        if (estudante == null) return Result<MatriculaDtoResponse>.Falha(MensagensEstudante.ErroEstudanteIdInvalido);
+        if (estudante == null) return Result<MatriculaDtoResponse>.Falha(MensagensEstudante.ErroEstudanteNaoEncontrado
+            );
 
         var turma = await _uow.Turmas.ObterPorIdAsync(dto.TurmaId);
         if (turma == null) return Result<MatriculaDtoResponse>.Falha(MensagensTurma.TurmaNaoEncontrada);

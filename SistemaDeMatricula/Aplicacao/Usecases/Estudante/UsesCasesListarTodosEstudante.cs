@@ -33,7 +33,7 @@ public sealed class UsesCasesListarTodosEstudante
         }
         catch (Exception ex)
         {
-            return Result<List<EstudanteDtoResponse>>.Falha($"Erro ao listar estudantes: {ex.Message}");
+            return Result<List<EstudanteDtoResponse>>.Falha(MensagensEstudante.ErroBanco);
         }
     }
 }

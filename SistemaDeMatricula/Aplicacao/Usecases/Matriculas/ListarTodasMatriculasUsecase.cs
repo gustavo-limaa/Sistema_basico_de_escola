@@ -1,8 +1,8 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.Matricola;
 using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
-using SistemaDeMatricula.Domain.Modelos;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
 
@@ -31,7 +31,7 @@ public sealed class ListarTodasMatriculasUsecase
         catch (Exception ex)
         {
             // Agora sim o Use Case trata o erro e devolve uma falha amigável!
-            return Result<IEnumerable<MatriculaDtoResponse>>.Falha($"Ocorreu um erro ao listar as matrículas: {ex.Message}");
+            return Result<IEnumerable<MatriculaDtoResponse>>.Falha(MensagensMatricula.ErroPersistenciaBanco);
         }
     }
 }

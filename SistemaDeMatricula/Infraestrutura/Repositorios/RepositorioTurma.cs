@@ -108,14 +108,8 @@ namespace SistemaDeMatricula.Infraestrutura.Repositorios
 
             if (turmaInativa == null) return false;
 
-            // Se já estiver ativa, não faz nada (idempotente)
-            if (turmaInativa.Ativo)
-                return true;
-
-            // Ativa a entidade antes de persistir a alteração
-            turmaInativa.Ativar();
-
-            return await SalvarAlteracoesAsync();
+            await SalvarAlteracoesAsync();
+            return true;
         }
     }
 }

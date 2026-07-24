@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SistemaDeMatricula.Domain.Interfaces;
-using SistemaDeMatricula.Infraestrutura.Data;
 using SistemaDeMatricula.Infraestrutura.Repositorios;
 
 namespace SistemaDeMatricula.Infraestrutura.Data;

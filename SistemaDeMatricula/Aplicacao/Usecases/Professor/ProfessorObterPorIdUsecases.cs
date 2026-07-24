@@ -1,7 +1,7 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.Professor;
 using SistemaDeMatricula.Domain;
-using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Erros;
+using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Professor;

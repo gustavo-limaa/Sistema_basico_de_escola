@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SistemaDeMatricula.Aplicacao.Dtos.estudante;
 using SistemaDeMatricula.Aplicacao.Usecases.Estudante;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 
 namespace SistemaDeMatricula.Percistencia.Controllers;
@@ -41,10 +41,15 @@ public sealed class EstudanteController : MainController
     public async Task<IActionResult> Criar([FromServices] UsesCasesCriarEstudante useCase, [FromBody] EstudanteDtoCreate estudanteDto)
     {
         var result = await useCase.ExecuteAsync(estudanteDto);
-
         if (!result.Sucesso)
         {
-            return BadRequest(result.Mensagem);
+            // 🎯 O PULO DO GATO: Avalia a mensagem para disparar o Status HTTP correto!
+            return result.Mensagem switch
+            {
+                MensagensEstudante.ErroDeDuplicidade => Conflict(result.Mensagem),
+                MensagensEstudante.ErroEstudanteNaoEncontrado => NotFound(result.Mensagem),
+                _ => BadRequest(result.Mensagem)
+            };
         }
 
         return CreatedAtAction(nameof(ObterPorId), new { id = result.Dados.EstudanteId }, result.Dados);
@@ -60,6 +65,7 @@ public sealed class EstudanteController : MainController
         {
             return BadRequest(result.Mensagem);
         }
+
         return Ok(result.Dados);
     }
 
@@ -71,6 +77,12 @@ public sealed class EstudanteController : MainController
 
         if (!result.Sucesso)
         {
+            if (result.Mensagem == MensagensEstudante.ErroEstudanteNaoEncontrado)
+                return NotFound(result.Mensagem);
+
+            if (result.Mensagem == MensagensEstudante.ErroDeDuplicidade)
+                return Conflict(result.Mensagem);
+
             return BadRequest(result.Mensagem);
         }
 
@@ -85,6 +97,9 @@ public sealed class EstudanteController : MainController
 
         if (!result.Sucesso)
         {
+            if (result.Mensagem == MensagensEstudante.ErroEstudanteNaoEncontrado)
+                return NotFound(result.Mensagem);
+
             return BadRequest(result.Mensagem);
         }
 

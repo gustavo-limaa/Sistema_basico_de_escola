@@ -15,6 +15,5 @@
     <Project Path="Teste.Unitario/SistemaDeMatricula.Teste.Unit.csproj" Id="2d12df50-2d2c-40ed-a68b-44de03b39aa1" />
   </Folder>
   <Project Path="istemaDeMatricula.Identity.API/SistemaDeMatricula.Identity.API.csproj" Id="b9e01020-6871-4600-980b-446e4e71f75d" />
-  <Project Path="SistemaDeMatricula.Testes/SistemaDeMatricula.Testes.csproj" Id="b855c5e9-43ae-4c33-a127-9209f4d2962d" />
   <Project Path="SistemaDeMatricula/SistemaDeMatricula.csproj" />
 </Solution>

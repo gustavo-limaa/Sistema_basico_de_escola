@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SistemaDeMatricula.Domain.Modelos;
-using SistemaDeMatricula.Domain.Value_Object;
-using SitemaDeMatricula.Domain.Value_Objetc;
 
 namespace SistemaDeMatricula.Infraestrutura.Data;
 

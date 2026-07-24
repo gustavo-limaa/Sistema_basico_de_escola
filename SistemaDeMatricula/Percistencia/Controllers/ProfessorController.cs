@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using SistemaDeMatricula.Aplicacao.Dtos.Professor;
 using SistemaDeMatricula.Aplicacao.Usecases.Professor;
 using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 
 namespace SistemaDeMatricula.Percistencia.Controllers;
 
@@ -16,11 +16,15 @@ public sealed class ProfessorController : ControllerBase
     {
         if (result.Sucesso) return Ok(result.Dados);
 
-        if (result.Mensagem.Contains("não encontrado", StringComparison.OrdinalIgnoreCase))
+        if (result.Mensagem == MensagensProfessor.ProfessorNaoEncontrado)
             return NotFound(new { mensagem = result.Mensagem });
 
-        if (result.Mensagem.Contains("já existe", StringComparison.OrdinalIgnoreCase))
+        if (result.Mensagem == MensagensProfessor.ProfessorJaExiste ||
+            result.Mensagem == MensagensProfessor.ErroDeDuplicidade)
             return Conflict(new { mensagem = result.Mensagem });
+
+        if (result.Mensagem == MensagensProfessor.ErroSemAutoridade)
+            return StatusCode(StatusCodes.Status403Forbidden, new { mensagem = result.Mensagem });
 
         return BadRequest(new { mensagem = result.Mensagem });
     }
@@ -47,8 +51,9 @@ public sealed class ProfessorController : ControllerBase
         var result = await useCase.ExecutarAsync(professorDto);
 
         if (!result.Sucesso)
-            return TratarResultado(result);
-        return CreatedAtAction(nameof(ObterPorId), new { id = result.Dados.ProfessorId }, result.Dados);
+            return TratarResultado(result); // reaproveita a lógica de erro (Conflict/NotFound/BadRequest)
+
+        return CreatedAtAction(nameof(ObterPorId), new { id = result.Dados!.ProfessorId }, result.Dados);
     }
 
     [HttpPut]
@@ -56,7 +61,21 @@ public sealed class ProfessorController : ControllerBase
     public async Task<IActionResult> Atualizar([FromServices] ProfessorAtualizarUsecase useCase, ProfessorDtoUpdate professorDto)
     {
         var result = await useCase.ExecutarAsync(professorDto);
-        return TratarResultado(result);
+        if (!result.Sucesso)
+        {
+            return result.Mensagem switch
+            {
+                MensagensProfessor.ErroDeDuplicidade => Conflict(result.Mensagem),
+
+                MensagensProfessor.ProfessorNaoEncontrado => NotFound(result.Mensagem),
+
+                _ => BadRequest(result.Mensagem)
+            };
+        }
+        if (result.Mensagem == MensagensProfessor.ErroSemAutoridade)
+            return StatusCode(StatusCodes.Status403Forbidden, result.Mensagem);
+
+        return Ok(result.Dados);
     }
 
     [HttpDelete("{id}")]

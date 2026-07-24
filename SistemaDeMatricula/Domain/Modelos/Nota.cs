@@ -1,7 +1,4 @@
-﻿using SistemaDeMatricula.Aplicacao.Dtos.Notas;
-using SistemaDeMatricula.Domain.Uteis;
-using SistemaDeMatricula.Domain.Value_Object;
-using System.Reflection.PortableExecutable;
+﻿using SistemaDeMatricula.Domain.Uteis;
 
 namespace SistemaDeMatricula.Domain.Modelos
 {
