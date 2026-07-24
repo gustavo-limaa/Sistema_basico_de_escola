@@ -1,5 +1,6 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.estudante;
 using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
 
@@ -21,7 +22,7 @@ public sealed class UsesCasesListarTodosEstudante
             var result = await _repositorioEstudante.ObterTodosAsync();
 
             if (result is null)
-                return Result<List<EstudanteDtoResponse>>.Falha("Erro ao acessar o repositório de estudantes.");
+                return Result<List<EstudanteDtoResponse>>.Falha(MensagensEstudante.ErroEstudanteNaoEncontrado);
 
             var estudantesDto = result
                 .Select(e => e.ToEstudanteDtoResponse())
@@ -32,7 +33,7 @@ public sealed class UsesCasesListarTodosEstudante
         }
         catch (Exception ex)
         {
-            return Result<List<EstudanteDtoResponse>>.Falha($"Erro ao listar estudantes: {ex.Message}");
+            return Result<List<EstudanteDtoResponse>>.Falha(MensagensEstudante.ErroBanco);
         }
     }
 }

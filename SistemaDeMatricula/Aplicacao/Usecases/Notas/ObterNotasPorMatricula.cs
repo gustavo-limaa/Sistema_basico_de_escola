@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SistemaDeMatricula.Aplicacao.Dtos.Notas;
 using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
-using SistemaDeMatricula.Domain.Modelos;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Notas
 {
@@ -19,7 +19,7 @@ namespace SistemaDeMatricula.Aplicacao.Usecases.Notas
         public async Task<Result<IEnumerable<NotaDtoResponse>>> ExecuteAsAsync(Guid matriculaId)
         {
             if (!await _uow.Matriculas.ExisteAsync(matriculaId))
-                return Result<IEnumerable<NotaDtoResponse>>.NaoEncontrado("Matrícula não encontrada.");
+                return Result<IEnumerable<NotaDtoResponse>>.NaoEncontrado(MensagensMatricula.MatriculaNaoEncontrada);
 
             var notas = await _uow.Notas.ObterNotasporMatricula(matriculaId).ToListAsync();
 

@@ -2,13 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using SistemaDeMatricula.Aplicacao.Dtos.Disciplina;
 using SistemaDeMatricula.Aplicacao.Usecases.Disciplinas;
+using SistemaDeMatricula.Domain.Erros;
 
 namespace SistemaDeMatricula.Percistencia.Controllers;
 
 [Authorize]
-[ApiController]
 [Route("api/disciplinas")]
-public sealed class DisciplinaController : ControllerBase
+public sealed class DisciplinaController : MainController
 {
     [HttpPost]
     [Authorize(Roles = "Admin,Professor")]
@@ -65,11 +65,13 @@ public sealed class DisciplinaController : ControllerBase
     {
         var resultado = await useCase.Executar(id);
 
-        if (resultado.Sucesso) return NoContent();
+        if (resultado.Sucesso)
+            return NoContent();
 
-        return resultado.Mensagem.Contains("não encontrada")
-            ? NotFound(resultado.Mensagem)
-            : BadRequest(resultado.Mensagem);
+        if (resultado.Mensagem == MensagensDisciplina.DisciplinaNaoEncontrada)
+            return NotFound(resultado.Mensagem);
+
+        return BadRequest(resultado.Mensagem); // fallback pra qualquer falha futura
     }
 
     [Authorize(Roles = "Admin")]
@@ -81,10 +83,10 @@ public sealed class DisciplinaController : ControllerBase
         if (resultado.Sucesso)
             return Ok(resultado.Dados);
 
-        if (resultado.Mensagem.Contains("Esta disciplina já está ativa e não precisa ser restaurada."))
+        if (resultado.Mensagem == MensagensDisciplina.DisciplinaAtiva)
             return Conflict(resultado.Mensagem);
 
-        if (resultado.Mensagem.Contains("Disciplina desativada não encontrada."))
+        if (resultado.Mensagem == MensagensDisciplina.DisciplinaNaoEncontrada)
             return NotFound(resultado.Mensagem);
 
         return BadRequest(resultado.Mensagem);

@@ -1,14 +1,36 @@
 name: .NET CI
-# Triggering pipeline fix
+
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "Test/FeatNewModelProjectsTest" ]
   pull_request:
     branches: [ "main" ]
 
 jobs:
-  build-and-test:
+  # 🧪 JOB 1: Testes Unitários (Sem banco, rápido)
+  testes-rapidos:
     runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+
+    - name: Restore & Build
+      run: |
+        dotnet restore
+        dotnet build --no-restore
+
+    - name: Executar Testes Unitários
+      run: dotnet test Teste.Unitario/SistemaDeMatricula.Teste.Unit.csproj --no-build --verbosity normal
+
+  # 🔐 JOB 2: Testes Complexos (Integração e Permissões com MySQL)
+  testes-complexos:
+    runs-on: ubuntu-latest
+    needs: testes-rapidos
+
     services:
       mysql:
         image: mysql:8.0
@@ -17,28 +39,38 @@ jobs:
           MYSQL_DATABASE: SistemaMatricula_Testes_DB
         ports:
           - 3306:3306
-        # Aumentamos o tempo de espera e adicionamos um comando de espera mais robusto
-        options: --health-cmd="mysqladmin ping -h localhost -uroot -prootpassword" --health-interval=10s --health-timeout=5s --health-retries=10
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -uroot -prootpassword"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
-        
-    - name: Restore dependencies
-      run: dotnet restore
-      
-    - name: Build
-      run: dotnet build --no-restore
-      
+
+    - name: Restore & Build
+      run: |
+        dotnet restore
+        dotnet build --no-restore
+
     - name: Wait for MySQL
       run: sleep 20s
-      
-    - name: Test
+
+    # Roda a integração com o banco
+    - name: Executar Testes de Integração
       env:
         ASPNETCORE_ENVIRONMENT: "Testing"
-        ASPNETCORE_URLS: "http://localhost" # Força o uso de HTTP
         ConnectionStrings__DefaultConnection: "Server=127.0.0.1;Port=3306;Database=SistemaMatricula_Testes_DB;Uid=root;Pwd=rootpassword;"
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test "Teste.Integraçao/SistemaDeMatricula.Teste.Integracao.csproj" --no-build --verbosity normal
+
+    # Roda as permissões com o banco
+    - name: Executar Testes de Autorização e Permissão
+      env:
+        ASPNETCORE_ENVIRONMENT: "Testing"
+        ConnectionStrings__DefaultConnection: "Server=127.0.0.1;Port=3306;Database=SistemaMatricula_Testes_DB;Uid=root;Pwd=rootpassword;"
+      run: dotnet test "Teste.Autorizaçao.Permicao/SistemaDeMatricula.Teste.Autorizacao.Permissao.csproj" --no-build --verbosity normal

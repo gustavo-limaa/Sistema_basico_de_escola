@@ -1,5 +1,4 @@
-﻿using SistemaDeMatricula.Domain;
-using SistemaDeMatricula.Domain.Uteis;
+﻿using SistemaDeMatricula.Domain.Uteis;
 
 namespace SistemaDeMatricula.Domain.Value_Object;
 

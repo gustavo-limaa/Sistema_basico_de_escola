@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace SistemaDeMatricula.Aplicacao.Dtos.Matricola;
+﻿namespace SistemaDeMatricula.Aplicacao.Dtos.Matricola;
 
 public sealed record MatriculaDtoResponse
 (

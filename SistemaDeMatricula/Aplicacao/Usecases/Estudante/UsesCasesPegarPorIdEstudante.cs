@@ -1,5 +1,6 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.estudante;
 using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
 
@@ -21,7 +22,7 @@ public sealed class UsesCasesPegarPorIdEstudante
             var estudante = await _repositorioEstudante.ObterPorIdAsync(id);
 
             if (estudante is null)
-                return Result<EstudanteDtoResponse>.Falha("Estudante não encontrado.");
+                return Result<EstudanteDtoResponse>.Falha(MensagensEstudante.ErroEstudanteNaoEncontrado);
 
             var estudanteDto = estudante.ToEstudanteDtoResponse();
 
@@ -29,7 +30,7 @@ public sealed class UsesCasesPegarPorIdEstudante
         }
         catch (Exception ex)
         {
-            return Result<EstudanteDtoResponse>.Falha($"Erro ao obter estudante por ID: {ex.Message}");
+            return Result<EstudanteDtoResponse>.Falha(MensagensEstudante.ErroBanco);
         }
     }
 }

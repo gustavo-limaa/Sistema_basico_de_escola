@@ -1,5 +1,6 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.Professor;
 using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
 
@@ -17,10 +18,10 @@ public sealed class ProfessorObterPorCpfUsecases
     public async Task<Result<ProfessorDtoResponse>> ExecutarAsync(string cpf)
     {
         if (string.IsNullOrWhiteSpace(cpf))
-            return Result<ProfessorDtoResponse>.Falha("CPF é obrigatório.");
+            return Result<ProfessorDtoResponse>.Falha(MensagensProfessor.ProfessorInvalido);
         var professor = await _repositorioProfessor.ObterPorCpfAsync(cpf);
         if (professor == null)
-            return Result<ProfessorDtoResponse>.Falha("Professor não encontrado.");
+            return Result<ProfessorDtoResponse>.Falha(MensagensProfessor.ProfessorNaoEncontrado);
         return Result<ProfessorDtoResponse>.Ok(professor.ToProfessorDtoResponse());
     }
 }

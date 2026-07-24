@@ -1,10 +1,6 @@
 ﻿namespace SistemaDeMatricula.Domain.Modelos
 {
-    using Microsoft.AspNetCore.Components.Web;
-    using SistemaDeMatricula.Aplicacao.Dtos.Notas;
     using SistemaDeMatricula.Domain.Uteis;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
 
     public sealed class Matricula : ModeloMain
     {

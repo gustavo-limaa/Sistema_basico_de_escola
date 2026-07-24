@@ -1,4 +1,5 @@
 ﻿using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Professor;
@@ -15,14 +16,14 @@ public sealed class ProfessorRemoverUsecase
     public async Task<Result<bool>> ExecutarAsync(Guid professorId)
     {
         if (professorId == Guid.Empty)
-            return Result<bool>.Falha("ID do professor é inválido.");
+            return Result<bool>.Falha(MensagensProfessor.ProfessorInvalido);
 
         var professorExistente = await _repositorioProfessor.ObterPorIdAsync(professorId);
 
         if (professorExistente == null)
-            return Result<bool>.Falha("Professor não encontrado.");
+            return Result<bool>.Falha(MensagensProfessor.ProfessorNaoEncontrado);
         if (!professorExistente.Ativo)
-            return Result<bool>.Falha("Professor já está desativado.");
+            return Result<bool>.Falha(MensagensProfessor.ErroInativo_ou_Ativo);
 
         professorExistente.Desativar();
 
@@ -32,6 +33,7 @@ public sealed class ProfessorRemoverUsecase
 
         return sucesso
             ? Result<bool>.Ok(true)
-            : Result<bool>.Falha("Erro ao desativar o professor no banco de dados.");
+            : Result<bool>.Falha(MensagensProfessor.ErroSemAutoridade
+            );
     }
 }

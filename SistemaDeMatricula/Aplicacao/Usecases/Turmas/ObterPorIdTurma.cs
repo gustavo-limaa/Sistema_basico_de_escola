@@ -1,5 +1,6 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.turma;
 using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Turmas
@@ -16,15 +17,15 @@ namespace SistemaDeMatricula.Aplicacao.Usecases.Turmas
         public async Task<Result<TurmaDtoResponse>> ExecutarAsync(Guid id)
         {
             if (id == Guid.Empty)
-                return Result<TurmaDtoResponse>.Falha("ID inválido.");
+                return Result<TurmaDtoResponse>.NaoEncontrado(MensagensTurma.TurmaNaoEncontrada);
 
             var turma = await _turmaRepo.ObterPorIdIgnorandoFiltrosAsync(id);
 
             if (turma is null)
-                return Result<TurmaDtoResponse>.Falha("Turma não encontrada no sistema.");
+                return Result<TurmaDtoResponse>.NaoEncontrado(MensagensTurma.TurmaNaoEncontrada);
 
             if (!turma.Ativo)
-                return Result<TurmaDtoResponse>.Falha("Esta turma está desativada e não pode receber novas matrículas.");
+                return Result<TurmaDtoResponse>.Falha(MensagensTurma.TurmaJaDesativada);
 
             return Result<TurmaDtoResponse>.Ok(turma.ToTurmaDtoResponse());
         }

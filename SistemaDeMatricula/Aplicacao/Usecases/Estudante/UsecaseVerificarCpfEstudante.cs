@@ -1,10 +1,6 @@
 ﻿using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Estudante;
 
@@ -25,9 +21,9 @@ public sealed class UsecaseVerificarCpfEstudante
 
         if (!existe)
         {
-            return Result<bool>.Falha("Estudante não encontrado.");
+            return Result<bool>.Falha(MensagensEstudante.ErroEstudanteNaoEncontrado);
         }
 
-        return Result<bool>.Ok(true, "Estudante Localizado.");
+        return Result<bool>.Ok(true, MensagensEstudante.EstudanteJaExiste);
     }
 };

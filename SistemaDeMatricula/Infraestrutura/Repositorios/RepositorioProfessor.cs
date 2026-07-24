@@ -2,7 +2,6 @@
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Modelos;
 using SistemaDeMatricula.Infraestrutura.Data;
-using SitemaDeMatricula.Domain;
 
 namespace SistemaDeMatricula.Infraestrutura.Repositorios;
 

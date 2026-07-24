@@ -1,5 +1,6 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.Professor;
 using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
 
@@ -17,12 +18,12 @@ public sealed class ProfessorObterPorIdUsecases
     public async Task<Result<ProfessorDtoResponse>> ExecutarAsync(Guid professorId)
     {
         if (professorId == Guid.Empty)
-            return Result<ProfessorDtoResponse>.Falha("ID do professor é inválido.");
+            return Result<ProfessorDtoResponse>.Falha(MensagensProfessor.ProfessorInvalido);
 
         var professor = await _repositorioProfessor.ObterPorIdAsync(professorId);
 
         if (professor == null)
-            return Result<ProfessorDtoResponse>.NaoEncontrado("Professor não encontrado.");
+            return Result<ProfessorDtoResponse>.NaoEncontrado(MensagensProfessor.ProfessorNaoEncontrado);
         return Result<ProfessorDtoResponse>.Ok(professor.ToProfessorDtoResponse());
     }
 }

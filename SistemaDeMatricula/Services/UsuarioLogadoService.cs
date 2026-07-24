@@ -11,6 +11,15 @@ public class UsuarioLogadoService : IUsuarioLogadoService
         _httpContextAccessor = httpContextAccessor;
     }
 
+    public bool Ehadmin()
+    {
+        var estaAutenticado = _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;
+        if (!estaAutenticado)
+            return false;
+
+        return _httpContextAccessor.HttpContext!.User.IsInRole("Admin");
+    }
+
     public string ObterUsuarioId()
     {
         var estaAutenticado = _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;

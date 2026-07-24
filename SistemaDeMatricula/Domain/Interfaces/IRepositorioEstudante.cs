@@ -10,6 +10,8 @@ public interface IRepositorioEstudante
 
     Task<bool> ExisteCpfAsync(string cpf);
 
+    Task<Estudante?> ObterPorCpfAsync(string cpf);
+
     Task<IEnumerable<Estudante>> ObterTodosAsync();
 
     Task<Estudante?> ObterPorIdAsync(Guid estudanteId);

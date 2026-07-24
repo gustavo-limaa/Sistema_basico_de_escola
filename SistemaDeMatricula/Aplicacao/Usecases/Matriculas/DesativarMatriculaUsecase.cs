@@ -1,7 +1,6 @@
-﻿using SistemaDeMatricula.Aplicacao.Dtos.Matricola;
-using SistemaDeMatricula.Domain;
+﻿using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
-using SistemaDeMatricula.Infraestrutura.Data;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
 
@@ -17,15 +16,15 @@ public sealed class DesativarMatriculaUsecase
     public async Task<Result<bool>> ExecutarAsync(Guid id)
     {
         if (id == Guid.Empty)
-            return Result<bool>.Falha("O identificador da matrícula é obrigatório.");
+            return Result<bool>.Falha(MensagensMatricula.MatriculaNaoEncontrada);
 
         var matricula = await _uow.Matriculas.ObterPorIdAsync(id);
 
         if (matricula == null)
-            return Result<bool>.NaoEncontrado("Matrícula não encontrada.");
+            return Result<bool>.NaoEncontrado(MensagensMatricula.MatriculaNaoEncontrada);
 
         if (!matricula.Ativo)
-            return Result<bool>.Falha("Matrícula já está desativada.");
+            return Result<bool>.Falha(MensagensMatricula.MatriculaJaDesativada);
 
         matricula.Desativar();
 
@@ -34,14 +33,12 @@ public sealed class DesativarMatriculaUsecase
         {
             var sucesso = await _uow.CommitAsync();
             if (!sucesso)
-                return Result<bool>.Falha("Ocorreu um erro ao desativar a matrícula no banco de dados.");
+                return Result<bool>.Falha(MensagensMatricula.ErroPersistenciaBanco);
 
             return Result<bool>.Ok(true);
         }
         catch (Exception ex)
         {
-            // LOGUE O ERRO REAL AQUI
-            // Exemplo: ex.InnerException?.Message traz a causa raiz (ex: violação de FK)
             return Result<bool>.Falha($"Erro técnico: {ex.Message} | {ex.InnerException?.Message}");
         }
     }

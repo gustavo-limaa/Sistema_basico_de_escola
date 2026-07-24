@@ -2,6 +2,7 @@
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Modelos;
 using SistemaDeMatricula.Infraestrutura.Data;
+using SitemaDeMatricula.Domain.Value_Objetc;
 
 namespace SistemaDeMatricula.Infraestrutura.Repositorios;
 
@@ -39,7 +40,15 @@ public class RepositorioEstudante : IRepositorioEstudante
 
     public void Remover(Estudante estudante)
     {
-        _context.Estudantes.Remove(estudante);
+        var estudanteNoBanco = _context.Estudantes
+            .FirstOrDefault(e => e.Id == estudante.Id);
+
+        if (estudanteNoBanco == null || !estudanteNoBanco.Ativo)
+            return;
+
+        estudanteNoBanco.DesativarEstudante();
+
+        _context.Estudantes.Update(estudanteNoBanco);
     }
 
     public async Task<bool> SalvarAlteracoesAsync()
@@ -62,5 +71,14 @@ public class RepositorioEstudante : IRepositorioEstudante
     public Task<bool> ExisteEmailAsync(string email, Guid id)
     {
         return _context.Estudantes.AnyAsync(e => e.Email.Valor == email && e.Id != id);
+    }
+
+    public async Task<Estudante?> ObterPorCpfAsync(string cpf)
+    {
+        // 🎯 O PULO DO GATO: await + FirstOrDefaultAsync
+        return await _context.Estudantes
+            .IgnoreQueryFilters()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e => e.Cpf.Valor == cpf);
     }
 }

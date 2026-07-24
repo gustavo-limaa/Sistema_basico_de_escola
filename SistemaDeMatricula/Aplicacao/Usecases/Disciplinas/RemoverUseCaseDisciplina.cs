@@ -1,5 +1,6 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.Disciplina;
 using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Disciplinas
@@ -18,7 +19,7 @@ namespace SistemaDeMatricula.Aplicacao.Usecases.Disciplinas
             var disciplina = await _disciplinaRepositorio.ObterPorIdAsync(id);
 
             if (disciplina == null)
-                return Result<DisciplinaDtoResponse>.Falha("Disciplina não encontrada.");
+                return Result<DisciplinaDtoResponse>.Falha(MensagensDisciplina.DisciplinaNaoEncontrada);
 
             disciplina.Desativar();
 
@@ -26,7 +27,7 @@ namespace SistemaDeMatricula.Aplicacao.Usecases.Disciplinas
 
             var resultado = await _disciplinaRepositorio.SalvarAlteracoesAsync();
 
-            return Result<DisciplinaDtoResponse>.SemConteudo("Disciplina desativada com sucesso!");
+            return Result<DisciplinaDtoResponse>.SemConteudo(MensagensDisciplina.Removido);
         }
     }
 }

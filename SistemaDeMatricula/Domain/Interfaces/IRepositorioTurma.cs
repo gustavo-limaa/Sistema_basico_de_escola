@@ -1,5 +1,4 @@
 ﻿using SistemaDeMatricula.Domain.Modelos;
-using SitemaDeMatricula.Domain.Value_Objetc;
 
 namespace SistemaDeMatricula.Domain.Interfaces
 {

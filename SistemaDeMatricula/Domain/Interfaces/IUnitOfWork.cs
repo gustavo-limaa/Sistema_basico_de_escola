@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace SistemaDeMatricula.Domain.Interfaces;
+﻿namespace SistemaDeMatricula.Domain.Interfaces;
 
 public interface IUnitOfWork : IDisposable
 {

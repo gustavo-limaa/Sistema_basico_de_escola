@@ -1,11 +1,11 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.Matricola;
 using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
 using SistemaDeMatricula.Domain.Modelos;
 using SistemaDeMatricula.Events;
 using SistemaDeMatricula.Services;
-using Xunit;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
 
@@ -23,21 +23,22 @@ public sealed class MatricularEstudanteUsecase
     public async Task<Result<MatriculaDtoResponse>> ExecutarAsync(MatriculaDtoCreate dto)
     {
         var estudante = await _uow.Estudantes.ObterPorIdAsync(dto.EstudanteId);
-        if (estudante == null) return Result<MatriculaDtoResponse>.Falha("Estudante não encontrado.");
+        if (estudante == null) return Result<MatriculaDtoResponse>.Falha(MensagensEstudante.ErroEstudanteNaoEncontrado
+            );
 
         var turma = await _uow.Turmas.ObterPorIdAsync(dto.TurmaId);
-        if (turma == null) return Result<MatriculaDtoResponse>.Falha("Turma não encontrada.");
+        if (turma == null) return Result<MatriculaDtoResponse>.Falha(MensagensTurma.TurmaNaoEncontrada);
 
         if (await _uow.Matriculas.ExisteMatriculaAtivaAsync(dto.EstudanteId, dto.TurmaId))
         {
-            return Result<MatriculaDtoResponse>.Falha("Este estudante já está matriculado nesta turma.");
+            return Result<MatriculaDtoResponse>.Falha(MensagensMatricula.MatriculaJaExistente);
         }
 
         var totalMatriculados = await _uow.Matriculas.ContarMatriculasAtivasNaTurmaAsync(dto.TurmaId);
 
         if (!turma.TemVagaDisponivel(totalMatriculados))
         {
-            return Result<MatriculaDtoResponse>.Falha("Turma lotada! Capacidade máxima atingida.");
+            return Result<MatriculaDtoResponse>.Falha(MensagensTurma.TurmaLotada);
         }
         var novaMatricula = new Matricula(dto.EstudanteId, dto.TurmaId);
 
@@ -47,7 +48,7 @@ public sealed class MatricularEstudanteUsecase
 
         if (!sucesso)
         {
-            return Result<MatriculaDtoResponse>.Falha("Ocorreu um erro ao persistir a matrícula no banco de dados.");
+            return Result<MatriculaDtoResponse>.Falha(MensagensMatricula.ErroPersistenciaBanco);
         }
 
         var evento = new MatriculaSolicitadaEvent

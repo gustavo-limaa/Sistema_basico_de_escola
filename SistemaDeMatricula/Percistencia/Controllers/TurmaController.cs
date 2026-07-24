@@ -25,10 +25,10 @@ public sealed class TurmasController : MainController
     {
         var result = await useCase.ExecutarAsync(dto);
 
-        if (result.Sucesso)
-            return Ok(result.Dados);
+        if (!result.Sucesso)
+            return CustomResponse(result);
 
-        return CustomResponse(result);
+        return CreatedAtAction(nameof(ObterPorId), new { id = result.Dados!.Id }, result.Dados);
     }
 
     [HttpPut("{id:guid}")]
@@ -43,6 +43,6 @@ public sealed class TurmasController : MainController
 
     [HttpPatch("{id:guid}/restaurar")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Restaurar(Guid id, [FromServices] RestaurarTurmaUseCase useCase) =>
-        CustomResponse(await useCase.ExecutarAsync(id));
+    public async Task<IActionResult> Restaurar(Guid id, [FromServices] RestaurarTurmaUseCase useCase)
+        => CustomResponse(await useCase.ExecutarAsync(id));
 }

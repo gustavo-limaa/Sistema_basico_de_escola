@@ -1,5 +1,6 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.turma;
 using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Turmas;
@@ -16,11 +17,11 @@ public sealed class ObterPorCodigoTurma
     public async Task<Result<TurmaDtoResponse>> ExecutarAsync(string codigoTurma)
     {
         if (string.IsNullOrWhiteSpace(codigoTurma))
-            return Result<TurmaDtoResponse>.Falha("Código da turma é obrigatório.");
+            return Result<TurmaDtoResponse>.Falha(MensagensTurma.CodigoTurmaObrigatorio);
 
         var turma = await _turmaRepo.ObterPorCodigoAsync(codigoTurma);
         if (turma == null)
-            return Result<TurmaDtoResponse>.Falha("Turma não encontrada.");
+            return Result<TurmaDtoResponse>.Falha(MensagensTurma.TurmaNaoEncontrada);
 
         return Result<TurmaDtoResponse>.Ok(turma.ToTurmaDtoResponse());
     }

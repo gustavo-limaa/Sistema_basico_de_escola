@@ -1,9 +1,6 @@
 ﻿using SistemaDeMatricula.Domain.Uteis;
 using SistemaDeMatricula.Domain.Value_Object;
 using SitemaDeMatricula.Domain.Value_Objetc;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Intrinsics.X86;
 
 namespace SistemaDeMatricula.Domain.Modelos;
 

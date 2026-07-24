@@ -1,7 +1,8 @@
-﻿using SistemaDeMatricula.Domain;
+﻿using SistemaDeMatricula.Aplicacao.Dtos.Disciplina;
+using SistemaDeMatricula.Domain;
+using SistemaDeMatricula.Domain.Erros;
 using SistemaDeMatricula.Domain.Interfaces;
 using SistemaDeMatricula.Domain.Mapper;
-using SistemaDeMatricula.Aplicacao.Dtos.Disciplina;
 
 namespace SistemaDeMatricula.Aplicacao.Usecases.Disciplinas;
 
@@ -19,17 +20,13 @@ public sealed class RestaurarUseCaseDisciplina
         var disciplina = await _disciplinaRepositorio.ObterDesativadaPorIdAsync(id);
 
         if (disciplina is null)
-        {
-            return Result<DisciplinaDtoResponse>.Falha("Disciplina desativada não encontrada.");
-        }
+            return Result<DisciplinaDtoResponse>.Falha(MensagensDisciplina.DisciplinaNaoEncontrada);
 
         if (disciplina.Ativo)
-            return Result<DisciplinaDtoResponse>.Falha("Esta disciplina já está ativa e não precisa ser restaurada.");
+            return Result<DisciplinaDtoResponse>.Conflito(MensagensDisciplina.DisciplinaAtiva);
 
         disciplina.Ativar();
-
         _disciplinaRepositorio.Atualizar(disciplina);
-
         await _disciplinaRepositorio.SalvarAlteracoesAsync();
 
         return Result<DisciplinaDtoResponse>.Ok(disciplina.ToResponse());

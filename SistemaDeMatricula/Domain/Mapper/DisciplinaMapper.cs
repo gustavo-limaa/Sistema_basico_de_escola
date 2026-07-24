@@ -1,7 +1,6 @@
 ﻿using SistemaDeMatricula.Aplicacao.Dtos.Disciplina;
 using SistemaDeMatricula.Domain.Modelos;
 using SistemaDeMatricula.Domain.Value_Object;
-using SitemaDeMatricula.Domain.Value_Objetc;
 
 namespace SistemaDeMatricula.Domain.Mapper;
 
