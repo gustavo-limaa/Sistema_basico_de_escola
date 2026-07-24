@@ -18,12 +18,10 @@ public class Test_AuthorizeTurma : PermissaoTestBase
 
     private async Task<(Guid ProfessorId, Guid DisciplinaId)> CriarDependenciasAsync()
     {
-        // 1. Criar Professor usando a fábrica limpa
         var respProf = await _Client.PostAsJsonAsync("/api/professores", Data_Factory.ProfessorFakerdto.Generate());
         respProf.EnsureSuccessStatusCode();
         var prof = await respProf.Content.ReadFromJsonAsync<ProfessorDtoResponse>();
 
-        // 2. Criar Disciplina usando a fábrica limpa
         var respDisc = await _Client.PostAsJsonAsync("/api/disciplinas", Data_Factory.DisciplinaFakerdto.Generate());
         respDisc.EnsureSuccessStatusCode();
         var disc = await respDisc.Content.ReadFromJsonAsync<DisciplinaDtoResponse>();
@@ -31,25 +29,34 @@ public class Test_AuthorizeTurma : PermissaoTestBase
         return (prof!.ProfessorId, disc!.DisciplinaId);
     }
 
+    private async Task<TurmaDtoResponse> CriarTurmaValidaAsync(Guid profId, Guid discId)
+    {
+        var turmaDto = Data_Factory.TurmaFakerdto(profId, discId, 12).Generate();
+        var resposta = await _Client.PostAsJsonAsync("/api/turmas", turmaDto);
+
+        // 🎯 Se falhar no setup da turma, exibe a mensagem de erro detalhada da API
+        if (!resposta.IsSuccessStatusCode)
+        {
+            var detalheErro = await resposta.Content.ReadAsStringAsync();
+            throw new InvalidOperationException($"Erro ao preparar a Turma para o teste: {detalheErro}");
+        }
+
+        var turmaCriada = await resposta.Content.ReadFromJsonAsync<TurmaDtoResponse>();
+        return turmaCriada!;
+    }
+
     [Fact]
     public async Task Test_Authorize_POST_Turma_Com_e_sem_Autorizacao()
     {
-        // ==========================================
         // ADMIN (SUCESSO)
-        // ==========================================
         ResetarParaAdmin();
         var (profId, discId) = await CriarDependenciasAsync();
-
         var turmaDtoAdmin = Data_Factory.TurmaFakerdto(profId, discId, 12).Generate();
+
         var respostaAdmin = await _Client.PostAsJsonAsync("/api/turmas", turmaDtoAdmin);
-
         respostaAdmin.StatusCode.Should().Be(HttpStatusCode.Created);
-        var turmaCriada = await respostaAdmin.Content.ReadFromJsonAsync<TurmaDtoResponse>();
-        turmaCriada.Should().NotBeNull();
 
-        // ==========================================
-        // ESTUDANTE (FALHA)
-        // ==========================================
+        // ESTUDANTE (FALHA - FORBIDDEN)
         ResetarParaAdmin();
         var (profIdEstudante, discIdEstudante) = await CriarDependenciasAsync();
 
@@ -63,17 +70,13 @@ public class Test_AuthorizeTurma : PermissaoTestBase
     [Fact]
     public async Task Test_Authorize_GETALL_Turma_Com_Autorizacao()
     {
-        // Arrange
         ResetarParaAdmin();
         var (profId, discId) = await CriarDependenciasAsync();
-        var turmaDto = Data_Factory.TurmaFakerdto(profId, discId, 12).Generate();
-        await _Client.PostAsJsonAsync("/api/turmas", turmaDto);
+        await CriarTurmaValidaAsync(profId, discId);
 
-        // Act & Assert
         var getAllResponseAdmin = await _Client.GetAsync("/api/turmas");
         getAllResponseAdmin.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        // Act & Assert
         AutenticarComoEstudante();
         var getAllResponseEstudante = await _Client.GetAsync("/api/turmas");
         getAllResponseEstudante.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -82,127 +85,92 @@ public class Test_AuthorizeTurma : PermissaoTestBase
     [Fact]
     public async Task Test_Authorize_DELETE_Turma_Com_e_sem_Autorizacao()
     {
-        // ==========================================
         // ADMIN (SUCESSO)
-        // ==========================================
         ResetarParaAdmin();
         var (profId, discId) = await CriarDependenciasAsync();
-        var turmaDtoAdmin = Data_Factory.TurmaFakerdto(profId, discId, 12).Generate();
+        var turmaCriadaAdmin = await CriarTurmaValidaAsync(profId, discId);
 
-        var respostaAdmin = await _Client.PostAsJsonAsync("/api/turmas", turmaDtoAdmin);
-        var turmaCriadaAdmin = await respostaAdmin.Content.ReadFromJsonAsync<TurmaDtoResponse>();
-
-        var deleteResponseAdmin = await _Client.DeleteAsync($"/api/turmas/{turmaCriadaAdmin!.Id}");
+        var deleteResponseAdmin = await _Client.DeleteAsync($"/api/turmas/{turmaCriadaAdmin.Id}");
         deleteResponseAdmin.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-        // ==========================================
         // ESTUDANTE (FALHA)
-        // ==========================================
         ResetarParaAdmin();
         var (profIdt, discIdt) = await CriarDependenciasAsync();
-        var turmaDtoEstudante = Data_Factory.TurmaFakerdto(profIdt, discIdt, 12).Generate();
+        var turmaCriadaEstudante = await CriarTurmaValidaAsync(profIdt, discIdt);
 
-        var respostaEstudante = await _Client.PostAsJsonAsync("/api/turmas", turmaDtoEstudante);
-        var turmaCriadaEstudante = await respostaEstudante.Content.ReadFromJsonAsync<TurmaDtoResponse>();
-
-        AutenticarComoEstudante(); // 🎯 O estudante tenta deletar
-        var deleteResponseEstudante = await _Client.DeleteAsync($"/api/turmas/{turmaCriadaEstudante!.Id}");
-
+        AutenticarComoEstudante();
+        var deleteResponseEstudante = await _Client.DeleteAsync($"/api/turmas/{turmaCriadaEstudante.Id}");
         deleteResponseEstudante.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     [Fact]
     public async Task Test_Authorize_PUT_Turma_Com_e_sem_Autorizacao()
     {
-        // ==========================================
         // ADMIN (SUCESSO)
-        // ==========================================
         ResetarParaAdmin();
         var (profId, discId) = await CriarDependenciasAsync();
-        var turmaDtoAdmin = Data_Factory.TurmaFakerdto(profId, discId, 12).Generate();
+        var turmaCriadaAdmin = await CriarTurmaValidaAsync(profId, discId);
 
-        var respostaAdmin = await _Client.PostAsJsonAsync("/api/turmas", turmaDtoAdmin);
-        var turmaCriadaAdmin = await respostaAdmin.Content.ReadFromJsonAsync<TurmaDtoResponse>();
-
-        var dadosParaAtualizar = Data_Factory.TurmaFakerup(turmaDtoAdmin.ProfessorId, turmaDtoAdmin.DisciplinaId, 23).Generate();
-        var putResponseAdmin = await _Client.PutAsJsonAsync($"/api/turmas/{turmaCriadaAdmin!.Id}", dadosParaAtualizar);
+        var dadosParaAtualizar = Data_Factory.TurmaFakerup(profId, discId, 23).Generate();
+        var putResponseAdmin = await _Client.PutAsJsonAsync($"/api/turmas/{turmaCriadaAdmin.Id}", dadosParaAtualizar);
         putResponseAdmin.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        // ==========================================
+        if (!putResponseAdmin.IsSuccessStatusCode)
+        {
+            var detalhe500 = await putResponseAdmin.Content.ReadAsStringAsync();
+            throw new Exception($"[ERRO 500 NO PUT]: {detalhe500}");
+        }
         // ESTUDANTE (FALHA)
-        // ==========================================
         ResetarParaAdmin();
         var (profIdr, discIdr) = await CriarDependenciasAsync();
-        var turmaDto = Data_Factory.TurmaFakerdto(profIdr, discIdr, 12).Generate();
-
-        var resposta = await _Client.PostAsJsonAsync("/api/turmas", turmaDto);
-        var turmaCriada = await resposta.Content.ReadFromJsonAsync<TurmaDtoResponse>();
+        var turmaCriada = await CriarTurmaValidaAsync(profIdr, discIdr);
 
         AutenticarComoEstudante();
-        var dadosParaAtualizarEstudante = Data_Factory.TurmaFakerup(turmaDto.ProfessorId, turmaDto.DisciplinaId, 12).Generate();
-        var putEstudante = await _Client.PutAsJsonAsync($"/api/turmas/{turmaCriada!.Id}", dadosParaAtualizarEstudante);
-
+        var dadosParaAtualizarEstudante = Data_Factory.TurmaFakerup(profIdr, discIdr, 12).Generate();
+        var putEstudante = await _Client.PutAsJsonAsync($"/api/turmas/{turmaCriada.Id}", dadosParaAtualizarEstudante);
         putEstudante.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     [Fact]
     public async Task Test_Authorize_GET_TurmaById_Com_e_sem_Autorizacao()
     {
-        // Arrange Admin
         ResetarParaAdmin();
         var (profId, discId) = await CriarDependenciasAsync();
-        var turmaDtoAdmin = Data_Factory.TurmaFakerdto(profId, discId, 12).Generate();
-        var respostaAdmin = await _Client.PostAsJsonAsync("/api/turmas", turmaDtoAdmin);
-        var turmaCriadaAdmin = await respostaAdmin.Content.ReadFromJsonAsync<TurmaDtoResponse>();
+        var turmaCriadaAdmin = await CriarTurmaValidaAsync(profId, discId);
 
-        // Act & Assert Admin
-        var getByIdResponseAdmin = await _Client.GetAsync($"/api/turmas/{turmaCriadaAdmin!.Id}");
+        var getByIdResponseAdmin = await _Client.GetAsync($"/api/turmas/{turmaCriadaAdmin.Id}");
         getByIdResponseAdmin.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        // Arrange & Act Estudante
         ResetarParaAdmin();
         var (profIdT, discIdR) = await CriarDependenciasAsync();
-        var turmaDtoT = Data_Factory.TurmaFakerdto(profIdT, discIdR, 12).Generate();
-        var resposta = await _Client.PostAsJsonAsync("/api/turmas", turmaDtoT);
-        var turmaCriada = await resposta.Content.ReadFromJsonAsync<TurmaDtoResponse>();
+        var turmaCriada = await CriarTurmaValidaAsync(profIdT, discIdR);
 
         AutenticarComoEstudante();
-        var getByIdResponseEstudante = await _Client.GetAsync($"/api/turmas/{turmaCriada!.Id}");
+        var getByIdResponseEstudante = await _Client.GetAsync($"/api/turmas/{turmaCriada.Id}");
         getByIdResponseEstudante.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [Fact]
     public async Task Test_Authorize_Restaurar_TurmaById_Com_e_sem_Autorizacao()
     {
-        // ==========================================
         // ADMIN (SUCESSO)
-        // ==========================================
         ResetarParaAdmin();
         var (profId, discId) = await CriarDependenciasAsync();
-        var turmaDtoAdmin = Data_Factory.TurmaFakerdto(profId, discId, 12).Generate();
-        var respostaAdmin = await _Client.PostAsJsonAsync("/api/turmas", turmaDtoAdmin);
-        var turmaCriadaAdmin = await respostaAdmin.Content.ReadFromJsonAsync<TurmaDtoResponse>();
+        var turmaCriadaAdmin = await CriarTurmaValidaAsync(profId, discId);
 
-        await _Client.DeleteAsync($"/api/turmas/{turmaCriadaAdmin!.Id}"); // Deleta primeiro
+        await _Client.DeleteAsync($"/api/turmas/{turmaCriadaAdmin.Id}");
 
-        var restaurarResponseAdmin = await _Client.PatchAsJsonAsync($"/api/turmas/{turmaCriadaAdmin!.Id}/restaurar", new { });
+        var restaurarResponseAdmin = await _Client.PatchAsJsonAsync($"/api/turmas/{turmaCriadaAdmin.Id}/restaurar", new { });
         restaurarResponseAdmin.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        // ==========================================
         // ESTUDANTE (FALHA)
-        // ==========================================
         ResetarParaAdmin();
         var (profIdt, discIdt) = await CriarDependenciasAsync();
-        var turmaDtoEstudante = Data_Factory.TurmaFakerdto(profIdt, discIdt, 12).Generate();
+        var turmaCriadaEstudante = await CriarTurmaValidaAsync(profIdt, discIdt);
 
-        var respostaEstudante = await _Client.PostAsJsonAsync("/api/turmas", turmaDtoEstudante);
-        var turmaCriadaEstudante = await respostaEstudante.Content.ReadFromJsonAsync<TurmaDtoResponse>();
+        await _Client.DeleteAsync($"/api/turmas/{turmaCriadaEstudante.Id}");
 
-        await _Client.DeleteAsync($"/api/turmas/{turmaCriadaEstudante!.Id}");
-
-        AutenticarComoEstudante(); // 🎯 O estudante tenta restaurar
-        var restaurarResponseEstudante = await _Client.PatchAsJsonAsync($"/api/turmas/{turmaCriadaEstudante!.Id}/restaurar", new { });
-
+        AutenticarComoEstudante();
+        var restaurarResponseEstudante = await _Client.PatchAsJsonAsync($"/api/turmas/{turmaCriadaEstudante.Id}/restaurar", new { });
         restaurarResponseEstudante.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 }

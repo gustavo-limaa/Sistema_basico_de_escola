@@ -38,12 +38,15 @@ public class CriarTurmaTestUnitario
         var disciplinaFake = Data_Factory.DisciplinaFaker.Generate();
         disciplinaFake.Ativar();
 
-        // 🎯 DTO usa os IDs das instâncias válidas
+        // DTO usa os IDs das instâncias válidas
         var dto = Data_Factory.TurmaFakerdto(professorFake.Id, disciplinaFake.Id, 12).Generate();
 
         _mockprof.Setup(p => p.ObterPorIdAsync(dto.ProfessorId)).ReturnsAsync(professorFake);
         _mockdisc.Setup(d => d.ObterPorIdAsync(dto.DisciplinaId)).ReturnsAsync(disciplinaFake);
         _mockTurma.Setup(t => t.ObterPorCodigoAsync(It.IsAny<string>())).ReturnsAsync((Turma)null!);
+
+        // 🎯 O PULO DO GATO NO MOQ: Diz ao Mock que o salvamento no banco deu certo!
+        _mockTurma.Setup(t => t.SalvarAlteracoesAsync()).ReturnsAsync(true);
 
         // Act
         var resultado = await _usecase.ExecutarAsync(dto);
@@ -51,6 +54,7 @@ public class CriarTurmaTestUnitario
         // Assert
         resultado.Sucesso.Should().BeTrue(because: resultado.Mensagem);
         _mockTurma.Verify(t => t.AdicionarAsync(It.IsAny<Turma>()), Times.Once);
+        _mockTurma.Verify(t => t.SalvarAlteracoesAsync(), Times.Once);
     }
 
     [Fact]
