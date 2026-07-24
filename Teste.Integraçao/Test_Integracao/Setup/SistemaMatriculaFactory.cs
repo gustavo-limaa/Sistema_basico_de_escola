@@ -15,6 +15,9 @@ namespace SistemaDeMatricula.Testes.Test_Integracao.Setup;
 
 public class SistemaMatriculaFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
+    private static readonly SemaphoreSlim _semaphore = new(1, 1);
+    private static bool _migrationExecutada = false;
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         Environment.SetEnvironmentVariable("JWT_KEY", "ChaveTotalmenteFakeParaOsTestesDeIntegracaoPassaremSemPerigo2026!");
@@ -113,11 +116,26 @@ public class SistemaMatriculaFactory : WebApplicationFactory<Program>, IAsyncLif
         using var scope = Services.CreateScope();
         var contexto = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        // 🎯 O JEITO SEGURO: Verifica se o banco já existe na infraestrutura do EF.
-        // Se NÃO existir, aí sim ele executa a criação com segurança.
-        if (!await contexto.Database.CanConnectAsync())
+        await _semaphore.WaitAsync();
+        try
         {
-            await contexto.Database.EnsureCreatedAsync();
+            if (!_migrationExecutada)
+            {
+                // 🎯 GARANTIA TOTAL DE ESTADO LIMPO:
+                // Se a base existir sem a tabela de histórico de migrations (inconsistente),
+                // recria o banco limpo para o MigrateAsync rodar perfeito.
+                if (await contexto.Database.CanConnectAsync())
+                {
+                    await contexto.Database.EnsureDeletedAsync();
+                }
+
+                await contexto.Database.MigrateAsync();
+                _migrationExecutada = true;
+            }
+        }
+        finally
+        {
+            _semaphore.Release();
         }
 
         var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
