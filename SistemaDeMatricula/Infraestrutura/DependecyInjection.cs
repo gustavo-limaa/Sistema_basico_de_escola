@@ -1,4 +1,6 @@
-﻿using SistemaDeMatricula.Aplicacao.Usecases.Disciplinas;
+﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+using RabbitMQ.Client;
+using SistemaDeMatricula.Aplicacao.Usecases.Disciplinas;
 using SistemaDeMatricula.Aplicacao.Usecases.Estudante;
 using SistemaDeMatricula.Aplicacao.Usecases.Matriculas;
 using SistemaDeMatricula.Aplicacao.Usecases.Notas;
@@ -72,6 +74,30 @@ namespace SistemaDeMatricula.Infraestrutura
             services.AddScoped<IUsuarioLogadoService, UsuarioLogadoService>();
 
             #endregion services
+
+            return services;
+        }
+
+        public static IServiceCollection AddInfrastructureServices(
+            this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            var rabbitConnectionString = configuration["RabbitMQ:ConnectionString"]
+                ?? $"amqp://{configuration["RABBITMQ_USER"] ?? "guest"}:{configuration["RABBITMQ_PASS"] ?? "guest"}@{configuration["RABBITMQ_HOST"] ?? "localhost"}:5672/";
+
+            services
+                .AddHealthChecks()
+                .AddDbContextCheck<AppDbContext>("database_efcore")
+                .AddMySql(
+                    connectionString: configuration.GetConnectionString("DefaultConnection")!,
+                    name: "mysql_database")
+                .AddRabbitMQ(
+                    sp => new ConnectionFactory
+                    {
+                        Uri = new Uri(rabbitConnectionString)
+                    }.CreateConnectionAsync().GetAwaiter().GetResult(),
+                    name: "rabbitmq_broker",
+                    failureStatus: HealthStatus.Degraded);
 
             return services;
         }
